@@ -13,9 +13,4 @@ module EffectiveAssets
   def self.setup
     yield self
   end
-
-  def aws_upload_path
-    Rails.logger.ifno "AWS UPLOAD PATH"
-    @aws_upload_path || 'uploads/'
-  end
 end

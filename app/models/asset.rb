@@ -81,8 +81,8 @@ class Asset < ActiveRecord::Base
       if (asset = Asset.create(opts))
         Rails.logger.info "Copying s3 uploaded file to final resting place..."
         storage = Fog::Storage.new(:provider => 'AWS', :aws_access_key_id => EffectiveAssets.aws_access_key_id, :aws_secret_access_key => EffectiveAssets.aws_secret_access_key)
-        storage.copy_object(EffectiveAssets.aws_bucket, url, EffectiveAssets.aws_bucket, "assets/#{asset.id}/#{asset.file_name}")
-        storage.put_object_acl(EffectiveAssets.aws_bucket, "assets/#{asset.id}/#{asset.file_name}", EffectiveAssets.aws_acl)
+        storage.copy_object(EffectiveAssets.aws_bucket, url, EffectiveAssets.aws_bucket, "#{EffectiveAssets.aws_final_path}#{asset.id}/#{asset.file_name}")
+        storage.put_object_acl(EffectiveAssets.aws_bucket, "#{EffectiveAssets.aws_final_path}#{asset.id}/#{asset.file_name}", EffectiveAssets.aws_acl)
 
         Rails.logger.info "Deleting original..."
         directory = storage.directories.get(EffectiveAssets.aws_bucket)
@@ -140,7 +140,7 @@ class Asset < ActiveRecord::Base
 
   # Return the final location of this asset
   def url
-    self.data.present? ? self.data.url : "#{Asset.s3_base_path}/assets/#{self.id}/#{upload_file.split('/').last}"
+    self.data.present? ? self.data.url : "#{Asset.s3_base_path}/#{EffectiveAssets.aws_final_path}#{self.id}/#{upload_file.split('/').last}"
   end
 
   def file_name

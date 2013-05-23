@@ -19,5 +19,15 @@ module EffectiveAssets
         ActiveRecord::Base.extend(ActsAsAssetBox::ActiveRecord)
       end
     end
+
+    # Set up our default configuration options.
+    initializer "effective_addresses.defaults", :before => :load_config_initializers do |app|
+      EffectiveAssets.setup do |config|
+        config.aws_final_path = 'assets/'
+        config.aws_upload_path = 'uploads/'
+        config.aws_acl = 'public-read'
+      end
+    end
+
   end
 end
