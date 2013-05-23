@@ -1,5 +1,5 @@
 $ ->
-  $('body').on 'click', 'a.asset-box-remove', (event) ->
+  $(document).on 'click', 'a.asset-box-remove', (event) ->
     event.preventDefault()
     attachment_div = $(event.target).closest('div.asset-box-attachment')
     attachment_div.find('input.asset-box-remove').first().val(1)
@@ -12,7 +12,7 @@ $ ->
     asset_box_input.find("input.asset-box-remove[value!='1']:gt(#{limit})").each -> $(this).closest('div.asset-box-attachment').hide()
     asset_box_input.find("input.asset-box-remove[value!='1']:lt(#{limit})").each -> $(this).closest('div.asset-box-attachment').show()
 
-  $('body').on 'click', 'a.asset-box-upload', (event) ->
+  $(document).on 'click', 'a.asset-box-upload', (event) ->
     event.preventDefault()
     uploader = $(event.target).closest('div.asset_box_input').find('div.asset_box_uploader').first()
 
@@ -22,7 +22,7 @@ $ ->
       uploader.slideDown('slow', -> $(this).show())
 
   # This is the 'admin' insert assets screen
-  $('body').on 'click', 'a.asset-box-dialog', (event) ->
+  $(document).on 'click', 'a.asset-box-dialog', (event) ->
     event.preventDefault()
     dialog_frame = $(
       "<div title='Insert Asset'>" +

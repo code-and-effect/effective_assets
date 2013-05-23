@@ -1,14 +1,11 @@
-require 'uri'
+#require 'uri'
 # Call with DelayedJob.new.process_asset_images(...)
-
 # Run jobs locally with "rake jobs:work"
 
 class DelayedJob
-  def initialize
-    @site_id = (Site.current_site || Site.find_first).id rescue nil
-  end
-
   def process_asset(asset)
+    Rails.logger.info "ASSET UPLOAD FILE IS #{asset.upload_file}"
+
     if asset and !asset.processed? and asset.upload_file.present?
       begin
         puts "Processing an asset ID ##{asset.id}..."
@@ -73,5 +70,5 @@ class DelayedJob
       end
     end
   end
-  handle_asynchronously :reprocess_all_assets
+  #handle_asynchronously :reprocess_all_assets
 end

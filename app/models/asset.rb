@@ -69,6 +69,7 @@ class Asset < ActiveRecord::Base
 
       if (asset = Asset.create(opts))
         DelayedJob.new.process_asset(asset)
+        #DelayedJob.new().delay.process_asset(asset)
         asset
       end
     end
@@ -150,59 +151,59 @@ class Asset < ActiveRecord::Base
   # # Returns a url for the appropriate image
   # # If the asset is a file, it will return a mime-type appropriate thumbnail image
   # # Call with asset.image(:thumb) or just asset.image.
-  # def image(version = nil)
-  #   return '/assets/mime-types/file.png' if !content_type.present? or content_type == 'unknown'
+  def image(version = nil)
+    return '/assets/mime-types/file.png' if !content_type.present? or content_type == 'unknown'
 
-  #   if icon?
-  #     url
-  #   elsif image?
-  #     (version == nil or still_processing?) ? url : url.insert(url.rindex('/')+1, "#{version.to_s}_")
-  #   elsif audio?
-  #     '/assets/mime-types/mp3.png'
-  #   elsif video?
-  #     '/assets/mime-types/video.png'
-  #   elsif content_type.include? 'msword'
-  #     '/assets/mime-types/word.jpg'
-  #   elsif content_type.include? 'excel'
-  #     '/assets/mime-types/excel.jpg'
-  #   elsif content_type.include? 'application/pdf'
-  #     '/assets/mime-types/pdf.png'
-  #   elsif content_type.include? 'application/zip'
-  #     '/assets/mime-types/zip.png'
-  #   else
-  #     '/assets/mime-types/file.png'
-  #   end
-  # end
+    if icon?
+      url
+    elsif image?
+      (version == nil or still_processing?) ? url : url.insert(url.rindex('/')+1, "#{version.to_s}_")
+    elsif audio?
+      '/assets/mime-types/mp3.png'
+    elsif video?
+      '/assets/mime-types/video.png'
+    elsif content_type.include? 'msword'
+      '/assets/mime-types/word.jpg'
+    elsif content_type.include? 'excel'
+      '/assets/mime-types/excel.jpg'
+    elsif content_type.include? 'application/pdf'
+      '/assets/mime-types/pdf.png'
+    elsif content_type.include? 'application/zip'
+      '/assets/mime-types/zip.png'
+    else
+      '/assets/mime-types/file.png'
+    end
+  end
 
-  # def file_tag(version = nil, options = {})
-  #   link_title = file_name
-  #   link_title = title if title.present?
-  #   link_title = description if description.present?
+  def file_tag(version = nil, options = {})
+    link_title = file_name
+    link_title = title if title.present?
+    link_title = description if description.present?
 
-  #   view.link_to(link_title, url).gsub('"', "'").html_safe # we need all ' quotes or it breaks Insert as functionality
-  # end
+    view.link_to(link_title, url).gsub('"', "'").html_safe # we need all ' quotes or it breaks Insert as functionality
+  end
 
-  # def video_tag
-  #   view.render(:partial => 'assets/video', :locals => { :asset => self }).gsub('"', "'").html_safe # we need all ' quotes or it breaks Insert as functionality
-  # end
+  def video_tag
+    view.render(:partial => 'assets/video', :locals => { :asset => self }).gsub('"', "'").html_safe # we need all ' quotes or it breaks Insert as functionality
+  end
 
-  # # Generates an image tag based on the particular asset
-  # def image_tag(version = nil, options = {})
-  #   if image? == false
-  #     opts = {}
-  #   elsif version.present? and versions_info[version].present?
-  #     opts = { :height => versions_info[version][:height], :width => versions_info[version][:width] }
-  #   elsif version.present? and self.data.vers.present? and self.data.vers.key?(version)
-  #     opts = { :height => self.data.vers[version][:height], :width => self.data.vers[version][:width] }
-  #   elsif self.height.present? and self.width.present?
-  #     opts = { :height => self.height, :width => self.width }
-  #   else
-  #     opts = {}
-  #   end
+  # Generates an image tag based on the particular asset
+  def image_tag(version = nil, options = {})
+    if image? == false
+      opts = {}
+    elsif version.present? and versions_info[version].present?
+      opts = { :height => versions_info[version][:height], :width => versions_info[version][:width] }
+    elsif version.present? and self.data.vers.present? and self.data.vers.key?(version)
+      opts = { :height => self.data.vers[version][:height], :width => self.data.vers[version][:width] }
+    elsif self.height.present? and self.width.present?
+      opts = { :height => self.height, :width => self.width }
+    else
+      opts = {}
+    end
 
-  #   opts = opts.merge({:alt => description || title || file_name}).merge(options)
-  #   view.image_tag(image(version), opts).gsub('"', "'").html_safe # we need all ' quotes or it breaks Insert as functionality
-  # end
+    opts = opts.merge({:alt => description || title || file_name}).merge(options)
+    view.image_tag(image(version), opts).gsub('"', "'").html_safe # we need all ' quotes or it breaks Insert as functionality
+  end
 
   def video?
     content_type.include? 'video'

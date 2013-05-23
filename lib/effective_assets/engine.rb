@@ -9,7 +9,7 @@ module EffectiveAssets
     # Include Helpers to base application
     initializer 'effective_assets.action_controller' do |app|
       ActiveSupport.on_load :action_controller do
-        #helper AddressHelper
+        helper AssetHelper
       end
     end
 
