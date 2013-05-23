@@ -1,4 +1,5 @@
 require "effective_assets/engine"
+require 'carrierwave'
 require 'migrant'     # Required for rspec to run properly
 
 module EffectiveAssets
@@ -11,5 +12,10 @@ module EffectiveAssets
 
   def self.setup
     yield self
+  end
+
+  def aws_upload_path
+    Rails.logger.ifno "AWS UPLOAD PATH"
+    @aws_upload_path || 'uploads/'
   end
 end

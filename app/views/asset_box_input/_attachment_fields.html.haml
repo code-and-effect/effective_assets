@@ -1,0 +1,14 @@
+- attachable_type ||= attachment.attachable_type.titleize.gsub(" ", "_").gsub('/', '_').downcase
+- uid = (attachment.persisted? ? attachment.id : Time.now.to_i)
+- hidden ||= false
+
+.asset-box-attachment{:style => "#{(attachment.marked_for_destruction? || hidden) ? 'display: none;' : ''}"}
+  - if attachment.persisted?
+    = hidden_field_tag("#{attachable_type}[attachments_attributes][#{uid}][id]", attachment.id)
+  = hidden_field_tag("#{attachable_type}[attachments_attributes][#{uid}][asset_id]", attachment.asset_id)
+  = hidden_field_tag("#{attachable_type}[attachments_attributes][#{uid}][box]", attachment.box)
+  = hidden_field_tag("#{attachable_type}[attachments_attributes][#{uid}][_destroy]", attachment.marked_for_destruction? ? 1 : nil, :class => 'asset-box-remove')
+
+  %span.thumbnail= attachment.asset.image_tag(:thumb)
+  %p.title= attachment.asset.title
+  %a.asset-box-remove{:href => '#'} Delete
