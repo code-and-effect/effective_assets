@@ -23,6 +23,10 @@ module EffectiveAssets
         migration_template '../../../db/migrate/01_create_effective_assets.rb', 'db/migrate/create_effective_assets.rb'
       end
 
+      def install_delayed_jobs
+        run "rails generate delayed_job:active_record"
+      end
+
       def show_readme
         readme "README" if behavior == :invoke
       end

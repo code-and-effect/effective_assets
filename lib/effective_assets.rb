@@ -7,6 +7,7 @@ module EffectiveAssets
   mattr_accessor :aws_access_key_id
   mattr_accessor :aws_secret_access_key
   mattr_accessor :aws_upload_path
+  mattr_accessor :aws_acl
 
   def self.setup
     yield self
