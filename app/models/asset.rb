@@ -69,8 +69,9 @@ class Asset < ActiveRecord::Base
 
       if (asset = Asset.create(opts))
         DelayedJob.new.process_asset(asset)
-        #DelayedJob.new().delay.process_asset(asset)
         asset
+      else
+        false
       end
     end
 
@@ -79,21 +80,32 @@ class Asset < ActiveRecord::Base
     def create_from_s3_uploader(url, options = {})
       opts = {:upload_file => "#{Asset.s3_base_path}/#{url}", :user_id => 1}.merge(options)
 
-      if (asset = Asset.create(opts))
-        Rails.logger.info "Copying s3 uploaded file to final resting place..."
-        storage = Fog::Storage.new(:provider => 'AWS', :aws_access_key_id => EffectiveAssets.aws_access_key_id, :aws_secret_access_key => EffectiveAssets.aws_secret_access_key)
-        storage.copy_object(EffectiveAssets.aws_bucket, url, EffectiveAssets.aws_bucket, "#{EffectiveAssets.aws_final_path}#{asset.id}/#{asset.file_name}")
-        storage.put_object_acl(EffectiveAssets.aws_bucket, "#{EffectiveAssets.aws_final_path}#{asset.id}/#{asset.file_name}", EffectiveAssets.aws_acl)
+      asset = false
 
-        Rails.logger.info "Deleting original..."
-        directory = storage.directories.get(EffectiveAssets.aws_bucket)
-        directory.files.new(:key => url).destroy
+      Asset.transaction do
+        begin
+          asset = Asset.create!(opts)
 
-        asset.update_column(:upload_file, asset.url) # This is our upload file as far as CarrierWave is now concerned
+          Rails.logger.info "Copying s3 uploaded file to final resting place..."
+          storage = Fog::Storage.new(:provider => 'AWS', :aws_access_key_id => EffectiveAssets.aws_access_key_id, :aws_secret_access_key => EffectiveAssets.aws_secret_access_key)
+          storage.copy_object(EffectiveAssets.aws_bucket, url, EffectiveAssets.aws_bucket, "#{EffectiveAssets.aws_final_path}#{asset.id}/#{asset.file_name}")
+          storage.put_object_acl(EffectiveAssets.aws_bucket, "#{EffectiveAssets.aws_final_path}#{asset.id}/#{asset.file_name}", EffectiveAssets.aws_acl)
 
-        DelayedJob.new.process_asset(asset)
-        asset
+          Rails.logger.info "Deleting original..."
+          directory = storage.directories.get(EffectiveAssets.aws_bucket)
+          directory.files.new(:key => url).destroy
+
+          asset.update_column(:upload_file, asset.url) # This is our upload file as far as CarrierWave is now concerned
+
+          DelayedJob.new.process_asset(asset)
+        rescue => e
+          asset = false
+        end
+
+        raise ActiveRecord::Rollback unless asset
       end
+
+      asset
     end
 
     # This loads the raw contents of a string into a file and uploads that file to s3
@@ -148,63 +160,6 @@ class Asset < ActiveRecord::Base
     url.split('/').last rescue url
   end
 
-  # # Returns a url for the appropriate image
-  # # If the asset is a file, it will return a mime-type appropriate thumbnail image
-  # # Call with asset.image(:thumb) or just asset.image.
-  def image(version = nil)
-    return '/assets/mime-types/file.png' if !content_type.present? or content_type == 'unknown'
-
-    if icon?
-      url
-    elsif image?
-      (version == nil or still_processing?) ? url : url.insert(url.rindex('/')+1, "#{version.to_s}_")
-    elsif audio?
-      '/assets/mime-types/mp3.png'
-    elsif video?
-      '/assets/mime-types/video.png'
-    elsif content_type.include? 'msword'
-      '/assets/mime-types/word.jpg'
-    elsif content_type.include? 'excel'
-      '/assets/mime-types/excel.jpg'
-    elsif content_type.include? 'application/pdf'
-      '/assets/mime-types/pdf.png'
-    elsif content_type.include? 'application/zip'
-      '/assets/mime-types/zip.png'
-    else
-      '/assets/mime-types/file.png'
-    end
-  end
-
-  def file_tag(version = nil, options = {})
-    link_title = file_name
-    link_title = title if title.present?
-    link_title = description if description.present?
-
-    view.link_to(link_title, url).gsub('"', "'").html_safe # we need all ' quotes or it breaks Insert as functionality
-  end
-
-  def video_tag
-    view.render(:partial => 'assets/video', :locals => { :asset => self }).gsub('"', "'").html_safe # we need all ' quotes or it breaks Insert as functionality
-  end
-
-  # Generates an image tag based on the particular asset
-  def image_tag(version = nil, options = {})
-    if image? == false
-      opts = {}
-    elsif version.present? and versions_info[version].present?
-      opts = { :height => versions_info[version][:height], :width => versions_info[version][:width] }
-    elsif version.present? and self.data.vers.present? and self.data.vers.key?(version)
-      opts = { :height => self.data.vers[version][:height], :width => self.data.vers[version][:width] }
-    elsif self.height.present? and self.width.present?
-      opts = { :height => self.height, :width => self.width }
-    else
-      opts = {}
-    end
-
-    opts = opts.merge({:alt => description || title || file_name}).merge(options)
-    view.image_tag(image(version), opts).gsub('"', "'").html_safe # we need all ' quotes or it breaks Insert as functionality
-  end
-
   def video?
     content_type.include? 'video'
   end
@@ -245,10 +200,6 @@ class Asset < ActiveRecord::Base
       end
     end
     true
-  end
-
-  def view
-    @action_view ||= ActionView::Base.new(ActionController::Base.view_paths, {})
   end
 end
 

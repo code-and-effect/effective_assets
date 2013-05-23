@@ -70,7 +70,12 @@ class S3UploadsController < ApplicationController
         }
       )
     else
-      asset = (Asset.find(params[:asset_id].to_i) rescue nil)
+      asset = (Asset.find(params[:asset_id].to_i) rescue false)
+    end
+
+    unless asset
+      render :text => '', :status => :unprocessable_entity
+      return
     end
 
     # If the attachment information is present, then our input needs some attachment HTML

@@ -3,8 +3,9 @@
 # Run jobs locally with "rake jobs:work"
 
 class DelayedJob
+
   def process_asset(asset)
-    Rails.logger.info "ASSET UPLOAD FILE IS #{asset.upload_file}"
+    DelayedJob.configure_carrierwave
 
     if asset and !asset.processed? and asset.upload_file.present?
       begin
@@ -57,6 +58,8 @@ class DelayedJob
   handle_asynchronously :process_asset
 
   def reprocess_all_assets
+    DelayedJob.configure_carrierwave
+
     Asset.all.each do |asset|
       begin
         puts "Processing Asset ID=#{asset.id}..."
@@ -70,5 +73,24 @@ class DelayedJob
       end
     end
   end
-  #handle_asynchronously :reprocess_all_assets
+  handle_asynchronously :reprocess_all_assets
+
+  def self.configure_carrierwave
+    return if defined? @@configured_carrierwave
+
+    CarrierWave.configure do |config|
+      config.fog_credentials = {
+        :provider               => 'AWS',
+        :aws_access_key_id      => EffectiveAssets.aws_access_key_id,
+        :aws_secret_access_key  => EffectiveAssets.aws_secret_access_key
+      }
+      config.fog_directory  = EffectiveAssets.aws_bucket
+      config.fog_public     = EffectiveAssets.aws_acl.to_s.include?('public')
+      config.fog_attributes = {'Cache-Control'=>'max-age=315576000'}
+      config.cache_dir      = "#{Rails.root}/tmp/uploads" # For heroku
+    end
+
+    @@configured_carrierwave = true
+  end
+
 end
