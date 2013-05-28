@@ -84,7 +84,7 @@ class AssetUploader < CarrierWave::Uploader::Base
   end
 
   def image?(new_file)
-    new_file.present? and new_file.content_type.present? and new_file.content_type.include? 'image' and !(new_file.content_type.include? 'icon')
+    new_file.present? and new_file.content_type.to_s.include?('image') and !(new_file.content_type.include?('icon'))
   end
 
   def calculate_versions_info
