@@ -23,4 +23,3 @@ class AssetUploader < EffectiveAssetsUploader
   end
 
 end
-

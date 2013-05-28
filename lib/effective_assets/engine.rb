@@ -26,6 +26,7 @@ module EffectiveAssets
       EffectiveAssets.setup do |config|
         config.assets_table_name = :assets
         config.attachments_table_name = :attachments
+        config.uploader = AssetUploader
 
         config.aws_final_path = 'assets/'
         config.aws_upload_path = 'uploads/'

@@ -8,6 +8,8 @@ module EffectiveAssets
   mattr_accessor :assets_table_name
   mattr_accessor :attachments_table_name
 
+  mattr_accessor :uploader
+
   mattr_accessor :aws_bucket
   mattr_accessor :aws_access_key_id
   mattr_accessor :aws_secret_access_key

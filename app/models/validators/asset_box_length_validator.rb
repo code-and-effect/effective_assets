@@ -1,6 +1,6 @@
 class AssetBoxLengthValidator < ActiveModel::EachValidator
   def validate_each(record, attribute, value)
-    num_in_box = (record.attachments || []).select { |attachment| attachment.box == attribute.to_s.pluralize }.size
+    num_in_box = (record.attachments || []).select { |attachment| attachment.box == attribute.to_s.pluralize && attachment.marked_for_destruction? == false }.size
 
     if options[:with]
       record.errors[attribute] << "requires at least #{options[:with]} #{attribute.to_s.pluralize}" if num_in_box < options[:with]

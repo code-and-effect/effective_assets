@@ -31,7 +31,7 @@ module EffectiveAssetsHelper
       opts = {}
     elsif version.present? and asset.versions_info[version].present?
       opts = { :height => asset.versions_info[version][:height], :width => asset.versions_info[version][:width] }
-    elsif version.present? and asset.data.versions_info[version].present?
+    elsif version.present? and asset.data.respond_to?(:versions_info) asset.data.versions_info[version].present?
       opts = { :height => asset.data.versions_info[version][:height], :width => asset.data.versions_info[version][:width] }
     elsif asset.height.present? and asset.width.present?
       opts = { :height => asset.height, :width => asset.width }

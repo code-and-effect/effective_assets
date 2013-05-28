@@ -19,6 +19,10 @@ module EffectiveAssets
         template "effective_assets.rb", "config/initializers/effective_assets.rb"
       end
 
+      def copy_uploader
+        template "asset_uploader.rb", "app/uploaders/asset_uploader.rb"
+      end
+
       def create_migration_file
         @assets_table_name = ':' + EffectiveAssets.assets_table_name.to_s
         @attachments_table_name = ':' + EffectiveAssets.attachments_table_name.to_s
