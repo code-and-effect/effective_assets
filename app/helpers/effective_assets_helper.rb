@@ -1,11 +1,11 @@
-module AssetHelper
+module EffectiveAssetsHelper
   def assets_image_url(asset, version = nil)
     return '/assets/mime-types/file.png' if !asset.content_type.present? or asset.content_type == 'unknown'
 
     if asset.icon?
-      url
+      asset.url
     elsif asset.image?
-      (version == nil or asset.still_processing?) ? asset.url : asset.url.insert(url.rindex('/')+1, "#{version.to_s}_")
+      (version == nil or asset.still_processing?) ? asset.url : asset.url.insert(asset.url.rindex('/')+1, "#{version.to_s}_")
     elsif asset.audio?
       '/assets/mime-types/mp3.png'
     elsif asset.video?
@@ -25,12 +25,14 @@ module AssetHelper
 
   # Generates an image tag based on the particular asset
   def assets_image_tag(asset, version = nil, options = {})
+    version = :thumb
+
     if asset.image? == false
       opts = {}
     elsif version.present? and asset.versions_info[version].present?
       opts = { :height => asset.versions_info[version][:height], :width => asset.versions_info[version][:width] }
-    elsif version.present? and asset.data.vers.present? and asset.data.vers.key?(version)
-      opts = { :height => asset.data.vers[version][:height], :width => asset.data.vers[version][:width] }
+    elsif version.present? and asset.data.versions_info[version].present?
+      opts = { :height => asset.data.versions_info[version][:height], :width => asset.data.versions_info[version][:width] }
     elsif asset.height.present? and asset.width.present?
       opts = { :height => asset.height, :width => asset.width }
     else

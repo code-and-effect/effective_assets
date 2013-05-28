@@ -10,7 +10,7 @@ Add to your Gemfile:
 
 Run the installer
 
-  rails generate effective_addresses:install
+  rails generate effective_assets:install
 
   * This will install 2 migrations.  The EffectiveAssets as well as DelayedJobs
 
@@ -20,19 +20,7 @@ Migrate the database
 
 Add the javascript to your application.js:
 
-  //= require effective_addresses
-
-Use the acts_as_addressable concern:
-
-  Add the following to one or more model:
-
-    acts_as_addressable :require_billing => true
-
-Use the address form
-
-  In your formtastic form, include an editable address 'f.inputs'
-
-    = address_fields(f, :category => 'billing')
+  //= require effective_assets
 
 
 
@@ -40,6 +28,6 @@ TESTING:
 
 Don't put migrations into the dummy app
 
-effective_addresses/ > bundle exec rake app:db:test:prepare
-effective_addresses/ > bundle exec rake app:db:migrate
-effective_addresses/ > guard
+effective_assets/ > bundle exec rake app:db:test:prepare
+effective_assets/ > bundle exec rake app:db:migrate
+effective_assets/ > guard

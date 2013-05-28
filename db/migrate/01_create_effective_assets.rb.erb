@@ -1,6 +1,6 @@
 class CreateEffectiveAssets < ActiveRecord::Migration
   def self.up
-    create_table :assets do |t|
+    create_table <%= @assets_table_name %> do |t|
       t.string  :title
       t.text    :description
       t.string  :tags
@@ -20,9 +20,9 @@ class CreateEffectiveAssets < ActiveRecord::Migration
       t.timestamps
     end
 
-    add_index :assets, :content_type
+    add_index <%= @assets_table_name %>, :content_type
 
-    create_table :attachments do |t|
+    create_table <%= @attachments_table_name %> do |t|
       t.integer :asset_id
       t.string  :attachable_type
       t.integer :attachable_id
@@ -30,13 +30,13 @@ class CreateEffectiveAssets < ActiveRecord::Migration
       t.string  :box
     end
 
-    add_index :attachments, :asset_id
-    add_index :attachments, [:attachable_type, :attachable_id]
-    add_index :attachments, :attachable_id
+    add_index <%= @attachments_table_name %>, :asset_id
+    add_index <%= @attachments_table_name %>, [:attachable_type, :attachable_id]
+    add_index <%= @attachments_table_name %>, :attachable_id
   end
 
   def self.down
-    drop_table :assets
-    drop_table :attachments
+    drop_table <%= @assets_table_name %>
+    drop_table <%= @attachments_table_name %>
   end
 end

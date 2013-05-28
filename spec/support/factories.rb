@@ -1,14 +1,14 @@
 require 'factory_girl'
 
 FactoryGirl.define do
-  factory :asset do
+  factory :asset, :class => Effective::Asset do
     user_id 1
 
     sequence(:title) { |n| "Title #{n}" }
     content_type 'image/jpg'
     processed true
 
-    sequence(:upload_file) { |n| "http://#{AMAZON_S3[:bucket]}.s3.amazonaws.com/uploads/asset#{n}.jpg"}
+    sequence(:upload_file) { |n| "http://#{EffectiveAssets.aws_bucket}.s3.amazonaws.com/uploads/asset#{n}.jpg"}
     sequence(:data) { |n| "asset#{n}.jpg" }
 
     data_size 123456

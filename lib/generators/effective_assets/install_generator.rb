@@ -20,6 +20,8 @@ module EffectiveAssets
       end
 
       def create_migration_file
+        @assets_table_name = ':' + EffectiveAssets.assets_table_name.to_s
+        @attachments_table_name = ':' + EffectiveAssets.attachments_table_name.to_s
         migration_template '../../../db/migrate/01_create_effective_assets.rb', 'db/migrate/create_effective_assets.rb'
       end
 

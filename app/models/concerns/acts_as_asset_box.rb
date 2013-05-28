@@ -34,8 +34,8 @@ module ActsAsAssetBox
   end
 
   included do
-    has_many :attachments, :as => :attachable, :dependent => :delete_all
-    has_many :assets, :through => :attachments
+    has_many :attachments, :as => :attachable, :class_name => "Effective::Attachment", :dependent => :delete_all
+    has_many :assets, :through => :attachments, :class_name => "Effective::Asset"
 
     #attr_accessible :attachments_attributes
     accepts_nested_attributes_for :attachments, :reject_if => :all_blank, :allow_destroy => true
@@ -57,19 +57,22 @@ module ActsAsAssetBox
     else
       @@acts_as_asset_box_boxes = boxes
     end
+
+    class_eval do
+      def attachments_attributes=(atts)
+        current_box = ''; position = 0
+
+        atts.each do |k, v|
+          (current_box = v['box'] and position = 0) if v['box'] != current_box
+          atts[k]['position'] = (position += 1) if atts[k]['_destroy'] != '1'
+        end
+
+        assign_nested_attributes_for_collection_association(:attachments, atts, {})
+      end
+    end
   end
 
   module ClassMethods
-    def attachments_attributes=(atts)
-      current_box = ''; position = 0
-
-      atts.each do |k, v|
-        (current_box = v['box'] and position = 0) if v['box'] != current_box
-        atts[k]['position'] = (position += 1) if atts[k]['_destroy'] != '1'
-      end
-
-      assign_nested_attributes_for_collection_association(:attachments, atts, {})
-    end
   end
 
   def assets(box = nil)

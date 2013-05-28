@@ -5,11 +5,12 @@ module EffectiveAssets
     config.autoload_paths += Dir["#{config.root}/app/models/concerns"]
     config.autoload_paths += Dir["#{config.root}/app/models/inputs"]
     config.autoload_paths += Dir["#{config.root}/app/models/validators"]
+    config.autoload_paths += Dir["#{config.root}/app/models/uploaders"]
 
     # Include Helpers to base application
     initializer 'effective_assets.action_controller' do |app|
       ActiveSupport.on_load :action_controller do
-        helper AssetHelper
+        helper EffectiveAssetsHelper
       end
     end
 
@@ -23,6 +24,9 @@ module EffectiveAssets
     # Set up our default configuration options.
     initializer "effective_addresses.defaults", :before => :load_config_initializers do |app|
       EffectiveAssets.setup do |config|
+        config.assets_table_name = :assets
+        config.attachments_table_name = :attachments
+
         config.aws_final_path = 'assets/'
         config.aws_upload_path = 'uploads/'
         config.aws_acl = 'public-read'

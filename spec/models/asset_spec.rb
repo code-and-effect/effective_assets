@@ -1,10 +1,12 @@
 require 'spec_helper'
 
 # Attributes
-describe Asset do
-  it { should_not allow_mass_assignment_of(:file_size) }
-  it { should_not allow_mass_assignment_of(:width) }
-  it { should_not allow_mass_assignment_of(:height) }
+describe Effective::Asset do
+  let(:asset) { FactoryGirl.create(:asset) }
+
+  it 'should be valid' do
+    asset.valid?.should eq true
+  end
 end
 
 # describe Asset do

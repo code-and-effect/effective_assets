@@ -3,7 +3,7 @@ class AssetUploader < CarrierWave::Uploader::Base
   storage :fog
 
   def store_dir
-    "assets/#{model.id}"
+    "#{EffectiveAssets.aws_final_path}#{model.id}"
   end
 
   # resize_to_fit
@@ -25,39 +25,34 @@ class AssetUploader < CarrierWave::Uploader::Base
   # If you don't want it to do that, then replace that with resize_to_limit.
 
   version :thumb, :if => :image? do
-    process :resize_to_fit  => [256,70]
+    process :resize_to_fit => [256,70]
     process :record_info => :thumb
   end
 
   version :full_page, :if => :image? do
-    process :resize_to_limit => [940,nil]
+    process :resize_to_fit => [940,nil]
     process :record_info => :full_page
   end
 
   version :main_column, :if => :image? do
-    process :resize_to_limit => [615, nil]
+    process :resize_to_fit => [615, nil]
     process :record_info => :main_column
   end
 
   version :carousel, :if => :image? do
-    process :resize_to_limit => [540, 300]
+    process :resize_to_fit => [540, 300]
     process :record_info => :carousel
   end
 
   version :sidebar, :if => :image? do
-    process :resize_to_limit => [265, nil]
+    process :resize_to_fit => [265, nil]
     process :record_info => :sidebar
   end
 
-  # KEEP THIS UPDATED to match whatever versions and image resizing we're doing above
-  def vers
-    {
-      :thumb => {:width => 128, :height => 128},
-      :full_page => {:width => 940, :height => nil},
-      :main_column => {:width => 615, :height => nil},
-      :carousel => {:width => 540, :height => 300},
-      :sidebar => {:width => 265, :height => nil}
-    }
+  # Returns a Hash as per the versions above
+  # {:thumb=>{:width=>256, :height=>70}, :full_page=>{:width=>940, :height=>nil}}
+  def versions_info
+    @versions_info ||= calculate_versions_info
   end
 
   protected
@@ -91,5 +86,23 @@ class AssetUploader < CarrierWave::Uploader::Base
   def image?(new_file)
     new_file.present? and new_file.content_type.present? and new_file.content_type.include? 'image' and !(new_file.content_type.include? 'icon')
   end
+
+  def calculate_versions_info
+    retval = {}
+
+    self.class.versions.each do |k, v|
+      v[:uploader].processors.each do |processor|
+        dimensions = processor[1]
+
+        if processor[0].to_s.include?('resize') and dimensions.kind_of?(Array) and dimensions.length == 2
+          retval[k] = {:width => dimensions.first, :height => dimensions.last}
+          break
+        end
+      end
+    end
+
+    retval
+  end
+
 end
 

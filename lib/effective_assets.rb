@@ -5,6 +5,9 @@ require 'migrant'     # Required for rspec to run properly
 
 module EffectiveAssets
   # The following are all valid config keys
+  mattr_accessor :assets_table_name
+  mattr_accessor :attachments_table_name
+
   mattr_accessor :aws_bucket
   mattr_accessor :aws_access_key_id
   mattr_accessor :aws_secret_access_key

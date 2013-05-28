@@ -1,6 +1,9 @@
 # EffectiveAssets Rails Engine
 
 EffectiveAssets.setup do |config|
+  config.assets_table_name = :assets
+  config.attachments_table_name = :attachments
+
   # This is your S3 bucket information
   config.aws_bucket = ''
   config.aws_access_key_id = ''
