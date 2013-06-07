@@ -25,8 +25,6 @@ module EffectiveAssetsHelper
 
   # Generates an image tag based on the particular asset
   def assets_image_tag(asset, version = nil, options = {})
-    version = :thumb
-
     if asset.image? == false
       opts = {}
     elsif version.present? and asset.versions_info[version].present?

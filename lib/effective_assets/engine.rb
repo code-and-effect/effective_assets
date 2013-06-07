@@ -22,7 +22,7 @@ module EffectiveAssets
     end
 
     # Set up our default configuration options.
-    initializer "effective_addresses.defaults", :before => :load_config_initializers do |app|
+    initializer "effective_assets.defaults", :before => :load_config_initializers do |app|
       EffectiveAssets.setup do |config|
         config.assets_table_name = :assets
         config.attachments_table_name = :attachments
@@ -31,6 +31,14 @@ module EffectiveAssets
         config.aws_final_path = 'assets/'
         config.aws_upload_path = 'uploads/'
         config.aws_acl = 'public-read'
+      end
+    end
+
+    # ActiveAdmin (optional)
+    # This prepends the load path so someone can override the assets.rb if they want.
+    initializer 'effective_assets.active_admin' do
+      if defined?(ActiveAdmin)
+        ActiveAdmin.application.load_paths.unshift Dir["#{config.root}/active_admin"]
       end
     end
 

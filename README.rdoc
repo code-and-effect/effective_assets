@@ -22,6 +22,29 @@ Add the javascript to your application.js:
 
   //= require effective_assets
 
+Add Asset Boxes to your models
+
+  acts_as_asset_box :pictures => 1..3, :logo => true, :more_pictures => false
+
+Use the formtastic input
+
+  = f.input :pictures, :as => :asset_box, :uploader => true
+
+(optional) Integration with ActiveAdmin
+
+  Add to your ActiveAdmin.js file
+
+  //= require effective_assets
+
+  And to your ActiveAdmin stylesheet
+
+  body.active_admin {
+    @import "effective_assets";
+  }
+
+
+  * It will include an 'Assets' tab if ActiveAdmin is in use
+
 
 
 TESTING:
