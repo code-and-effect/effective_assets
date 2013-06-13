@@ -42,8 +42,7 @@ Use the formtastic input
     @import "effective_assets";
   }
 
-
-  * It will include an 'Assets' tab if ActiveAdmin is in use
+  * It will automatically include an 'Assets' tab if ActiveAdmin is in use
 
 
 

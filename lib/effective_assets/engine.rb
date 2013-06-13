@@ -23,15 +23,7 @@ module EffectiveAssets
 
     # Set up our default configuration options.
     initializer "effective_assets.defaults", :before => :load_config_initializers do |app|
-      EffectiveAssets.setup do |config|
-        config.assets_table_name = :assets
-        config.attachments_table_name = :attachments
-        config.uploader = AssetUploader
-
-        config.aws_final_path = 'assets/'
-        config.aws_upload_path = 'uploads/'
-        config.aws_acl = 'public-read'
-      end
+      eval File.read("#{config.root}/lib/generators/templates/effective_assets.rb")
     end
 
     # ActiveAdmin (optional)

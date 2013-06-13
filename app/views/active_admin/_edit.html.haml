@@ -5,7 +5,9 @@
       %p.inline-hints= assets_image_tag(asset, :thumb)
     %li
       %label.label Uploaded by
-      %p= asset.user
+      %p
+        - if defined? User
+          = asset.try(:user)
     = f.input :title, :hint => "Give this asset a title"
     = f.input :description, :as => :string, :hint => "Give this asset a description"
     = f.input :tags, :hint => "Used for searching and filtering.  Separate multiple tags with a comma (i.e. blue,car,ford)"
