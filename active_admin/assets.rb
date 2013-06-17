@@ -58,7 +58,7 @@ if defined?(ActiveAdmin)
       default_actions
     end
 
-    form :partial => "active_admin/form"
+    form :partial => "active_admin/effective_assets/form"
 
     show :title => :title do
       attributes_table do

@@ -156,7 +156,7 @@ module Effective
 
     # Return the final location of this asset
     def url
-      "#{Asset.s3_base_path}/#{EffectiveAssets.aws_final_path}#{self.id}/#{upload_file.split('/').last}"
+      "#{Asset.s3_base_path}/#{EffectiveAssets.aws_final_path}#{self.id.to_i}/#{upload_file.to_s.split('/').last}"
     end
 
     def file_name
