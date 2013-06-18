@@ -18,7 +18,14 @@ module EffectiveAssets
   mattr_accessor :aws_final_path # We then authenticate and use Fog to copy the object from upload_path to final_path
   mattr_accessor :aws_acl
 
+  mattr_accessor :authorization_method
+
   def self.setup
     yield self
+  end
+
+  def self.authorized?(controller, resource, action)
+    raise ActiveResource::UnauthorizedAccess.new('') unless (controller || self).instance_exec(controller, action, resource, &EffectiveAssets.authorization_method)
+    true
   end
 end

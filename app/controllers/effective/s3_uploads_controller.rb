@@ -3,8 +3,7 @@ require 'base64'
 
 module Effective
   class S3UploadsController < ApplicationController
-    authorize_resource :class => 'Effective::Asset' if defined? CanCan
-    #before_filter :authenticate_user!   # This is devise, ensure we're logged in to upload assets
+    skip_authorize_resource if defined?(CanCan)
 
     respond_to :js, :xml
 
@@ -13,7 +12,7 @@ module Effective
     def index
       # This is actually a 'new' action.  Not an index.  The s3 flash uploader is hardcoded to check this url as an xml request
 
-      #raise CanCan::AccessDenied if defined? CanCan && cannot?(:create, Asset)
+      EffectiveAssets.authorized?(self, :create, Effective::Asset)
 
       bucket          = EffectiveAssets.aws_bucket
       access_key_id   = EffectiveAssets.aws_access_key_id
@@ -58,6 +57,8 @@ module Effective
     end
 
     def create
+      EffectiveAssets.authorized?(self, :create, Effective::Asset)
+
       # If we're passed Asset information, then create an Asset
       if params[:file_path].present?
         asset = Asset.create_from_s3_uploader(params[:file_path],

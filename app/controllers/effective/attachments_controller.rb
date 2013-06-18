@@ -1,10 +1,14 @@
 module Effective
   class AttachmentsController < ApplicationController
-    authorize_resource :class => 'Effective::Asset' if defined? CanCan
+    skip_authorize_resource if defined?(CanCan)
     respond_to :json
 
     def show
-      respond_with Asset.find(params[:id])  # This does actually search Assets
+      @asset = Asset.find(params[:id]) # This should actually search Assets
+
+      EffectiveAssets.authorized?(self, :read, @asset)
+
+      respond_with @asset
     end
   end
 end
