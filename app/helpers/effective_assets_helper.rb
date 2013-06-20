@@ -1,5 +1,33 @@
 module EffectiveAssetsHelper
-  def assets_image_url(asset, version = nil)
+  # Generates an image tag based on the particular asset
+  def effective_asset_image_tag(asset, version = nil, options = {})
+    if asset.image? == false
+      opts = {}
+    elsif version.present? and asset.versions_info[version].present?
+      opts = { :height => asset.versions_info[version][:height], :width => asset.versions_info[version][:width] }
+    elsif version.present? and asset.data.respond_to?(:versions_info) and asset.data.versions_info[version].present?
+      opts = { :height => asset.data.versions_info[version][:height], :width => asset.data.versions_info[version][:width] }
+    elsif asset.height.present? and asset.width.present?
+      opts = { :height => asset.height, :width => asset.width }
+    else
+      opts = {}
+    end
+
+    opts = opts.merge({:alt => asset.description || asset.title || asset.file_name}).merge(options)
+    image_tag(_effective_asset_image_url(asset, version), opts).gsub('"', "'").html_safe # we need all ' quotes or it breaks Insert as functionality
+  end
+
+  def effective_asset_link_to(asset, version = nil, options = {})
+    link_title = asset.title || asset.file_name || asset.description || "Asset ##{asset.id}"
+
+    link_to(link_title, url).gsub('"', "'").html_safe # we need all ' quotes or it breaks Insert as functionality
+  end
+
+  def effective_asset_video_tag(asset)
+    render(:partial => 'assets/video', :locals => { :asset => asset }).gsub('"', "'").html_safe # we need all ' quotes or it breaks Insert as functionality
+  end
+
+  def _effective_asset_image_url(asset, version = nil)
     return '/assets/mime-types/file.png' if !asset.content_type.present? or asset.content_type == 'unknown'
 
     if asset.icon?
@@ -21,34 +49,6 @@ module EffectiveAssetsHelper
     else
       '/assets/mime-types/file.png'
     end
-  end
-
-  # Generates an image tag based on the particular asset
-  def assets_image_tag(asset, version = nil, options = {})
-    if asset.image? == false
-      opts = {}
-    elsif version.present? and asset.versions_info[version].present?
-      opts = { :height => asset.versions_info[version][:height], :width => asset.versions_info[version][:width] }
-    elsif version.present? and asset.data.respond_to?(:versions_info) and asset.data.versions_info[version].present?
-      opts = { :height => asset.data.versions_info[version][:height], :width => asset.data.versions_info[version][:width] }
-    elsif asset.height.present? and asset.width.present?
-      opts = { :height => asset.height, :width => asset.width }
-    else
-      opts = {}
-    end
-
-    opts = opts.merge({:alt => asset.description || asset.title || asset.file_name}).merge(options)
-    image_tag(assets_image_url(asset, version), opts).gsub('"', "'").html_safe # we need all ' quotes or it breaks Insert as functionality
-  end
-
-  def assets_file_tag(asset, version = nil, options = {})
-    link_title = asset.title || asset.file_name || asset.description || "Asset ##{asset.id}"
-
-    link_to(link_title, url).gsub('"', "'").html_safe # we need all ' quotes or it breaks Insert as functionality
-  end
-
-  def assets_video_tag(asset)
-    render(:partial => 'assets/video', :locals => { :asset => asset }).gsub('"', "'").html_safe # we need all ' quotes or it breaks Insert as functionality
   end
 
 
