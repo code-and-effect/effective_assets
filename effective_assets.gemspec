@@ -20,7 +20,7 @@ Gem::Specification.new do |s|
   s.add_dependency "carrierwave"
   s.add_dependency "coffee-rails"
   s.add_dependency "delayed_job_active_record"
-  s.add_dependency "fog"
+  s.add_dependency "fog", ">= 1.8.0"
   s.add_dependency "formtastic"
   s.add_dependency "haml"
   s.add_dependency "psych"

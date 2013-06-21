@@ -26,7 +26,7 @@
         fileTypes: '<%= file_types.present? ? file_types.map { |t| "*.#{t.to_s}"}.join(';') : '*.*' %>',
         fileTypeDescs: 'Uploadable Files',
         selectMultipleFiles: <%= limit > 1 ? 'true' : 'false' %>,
-        keyPrefix: '<%= EffectiveAssets.aws_upload_path %>',
+        keyPrefix: '<%= "#{EffectiveAssets.aws_upload_path.chomp('/')}" + '/' %>',
         signaturePath: '/s3_uploads.xml',
         swfFilePath: '/assets/effective_assets/s3_upload.swf',
         buttonUpPath: '/assets/effective_assets/s3_up_button.gif',

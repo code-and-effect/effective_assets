@@ -24,7 +24,7 @@ module EffectiveAssets
     yield self
   end
 
-  def self.authorized?(controller, resource, action)
+  def self.authorized?(controller, action, resource)
     raise ActiveResource::UnauthorizedAccess.new('') unless (controller || self).instance_exec(controller, action, resource, &EffectiveAssets.authorization_method)
     true
   end

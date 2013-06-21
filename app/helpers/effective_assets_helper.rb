@@ -20,7 +20,7 @@ module EffectiveAssetsHelper
   def effective_asset_link_to(asset, version = nil, options = {})
     link_title = asset.title || asset.file_name || asset.description || "Asset ##{asset.id}"
 
-    link_to(link_title, url).gsub('"', "'").html_safe # we need all ' quotes or it breaks Insert as functionality
+    link_to(link_title, asset.url).gsub('"', "'").html_safe # we need all ' quotes or it breaks Insert as functionality
   end
 
   def effective_asset_video_tag(asset)

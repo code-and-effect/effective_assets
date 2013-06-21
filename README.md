@@ -211,5 +211,7 @@ You are not granted rights or licenses to the trademarks of Code and Effect
 This gem heavily relies on:
 
 CarrierWave (https://github.com/carrierwaveuploader/carrierwave)
+
 DelayedJob (https://github.com/collectiveidea/delayed_job)
+
 swf_s3_upload (https://github.com/nathancolgate/s3-swf-upload-plugin)
