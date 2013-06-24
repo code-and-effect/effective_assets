@@ -5,7 +5,7 @@ require "effective_assets/version"
 
 # Describe your gem and declare its dependencies:
 Gem::Specification.new do |s|
-  s.name        = "Effective Assets"
+  s.name        = "effective_assets"
   s.version     = EffectiveAssets::VERSION
   s.authors     = ["Code and Effect"]
   s.email       = ["info@codeandeffect.com"]
