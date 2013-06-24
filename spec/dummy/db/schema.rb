@@ -11,24 +11,6 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 1) do
-
-  create_table "addresses", :force => true do |t|
-    t.string   "addressable_type"
-    t.integer  "addressable_id"
-    t.string   "category",         :limit => 64
-    t.string   "full_name"
-    t.string   "address1"
-    t.string   "address2"
-    t.string   "city"
-    t.string   "state_code"
-    t.string   "country_code"
-    t.string   "postal_code"
-    t.datetime "updated_at"
-    t.datetime "created_at"
-  end
-
-  add_index "addresses", ["addressable_id"], :name => "index_addresses_on_addressable_id"
-  add_index "addresses", ["addressable_type", "addressable_id"], :name => "index_addresses_on_addressable_type_and_addressable_id"
+ActiveRecord::Schema.define(:version => 0) do
 
 end

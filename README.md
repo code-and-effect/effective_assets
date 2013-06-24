@@ -215,3 +215,14 @@ CarrierWave (https://github.com/carrierwaveuploader/carrierwave)
 DelayedJob (https://github.com/collectiveidea/delayed_job)
 
 swf_s3_upload (https://github.com/nathancolgate/s3-swf-upload-plugin)
+
+
+### Testing
+
+The test suite for this gem is unfortunately not yet complete.
+
+Run tests by:
+
+```ruby
+rake spec
+```

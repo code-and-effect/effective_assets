@@ -4,8 +4,6 @@ require File.expand_path("../dummy/config/environment", __FILE__)
 
 require 'rspec/rails'
 require 'rspec/autorun'
-require 'capybara/rspec'
-require 'capybara/poltergeist'
 require 'factory_girl_rails'
 
 # Requires supporting ruby files with custom matchers and macros, etc,
@@ -14,12 +12,6 @@ Dir[Rails.root.join("spec/support/**/*.rb")].each {|f| require f }
 
 RSpec.configure do |config|
   config.fixture_path = "#{::Rails.root}/spec/fixtures"
-
-  config.include Capybara::DSL
-
-  Capybara.current_driver = :poltergeist
-  Capybara.javascript_driver = :poltergeist
-  Capybara.default_wait_time = 5
 
   Rails.logger.level = 4    # Output only minimal stuff to test.log
 
