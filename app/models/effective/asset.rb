@@ -132,8 +132,8 @@ module Effective
     end
 
     before_validation do
-      if !content_type.present? or content_type == 'null' or content_type == 'unknown' or content_type == 'application/octet-stream'
-        self.content_type = case url.to_s[-4, 4].downcase
+      if [nil, 'null', 'unknown', 'application/octet-stream'].include?(content_type)
+        self.content_type = case File.extname(URI.parse(url).path).downcase
           when '.mp3' ; 'audio/mp3'
           when '.mp4' ; 'video/mp4'
           when '.mov' ; 'video/mov'
@@ -179,14 +179,6 @@ module Effective
 
     def audio?
       content_type.include? 'audio'
-    end
-
-    def as_json(options={})
-      {:thumbnail => image_tag(:thumb).html_safe}.merge super
-    end
-
-    def still_processing?
-      !processed
     end
 
     def versions_info
