@@ -11,7 +11,7 @@ module Effective
         begin
           puts "Processing an asset ID ##{asset.id}..."
 
-          if asset.upload_file.include?("#{Asset.s3_base_path}")
+          if asset.upload_file.include?("#{Effective::Asset.s3_base_path}")
             if asset.image?
               puts "Asset is an image in our S3 assets directory.  Downloading and processing..."
 
@@ -30,7 +30,7 @@ module Effective
               asset.processed = true
               asset.save!
             end
-          elsif asset.upload_file.include?(Asset.string_base_path)
+          elsif asset.upload_file.include?(Effective::Asset.string_base_path)
             puts "Asset is a string-based asset.  Processing..."
 
             asset.data.cache_stored_file!
@@ -60,7 +60,7 @@ module Effective
     def reprocess_all_assets
       DelayedJob.configure_carrierwave
 
-      Asset.all.each do |asset|
+      Effective::Asset.all.each do |asset|
         begin
           puts "Processing Asset ID=#{asset.id}..."
           asset.data.cache_stored_file!
@@ -89,8 +89,6 @@ module Effective
         config.fog_attributes = {'Cache-Control'=>'max-age=315576000'}
         config.cache_dir      = "#{Rails.root}/tmp/uploads" # For heroku
       end
-
-      Rails.logger.info "CONFIGURED CARRIERWAVE"
 
       @@configured_carrierwave = true
     end
