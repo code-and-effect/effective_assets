@@ -61,7 +61,7 @@ module Effective
 
       # If we're passed Asset information, then create an Asset
       if params[:file_path].present?
-        asset = Asset.create_from_s3_uploader(params[:file_path],
+        asset = Effective::Asset.create_from_s3_uploader(params[:file_path],
           {
             :title => params[:title],
             :description => params[:description],
@@ -72,7 +72,7 @@ module Effective
           }
         )
       else
-        asset = (Asset.find(params[:asset_id].to_i) rescue false)
+        asset = (Effective::Asset.find(params[:asset_id].to_i) rescue false)
       end
 
       unless asset
@@ -82,7 +82,7 @@ module Effective
 
       # If the attachment information is present, then our input needs some attachment HTML
       if params.key?(:attachable_type)
-        attachment = Attachment.new
+        attachment = Effective::Attachment.new
         attachment.attachable_type = params[:attachable_type].try(:classify)
         attachment.attachable_id = params[:attachable_id].try(:to_i) if params[:attachable_id].present? # attachable_id can be nil if we're on a New action
         attachment.asset_id = asset.try(:id)
