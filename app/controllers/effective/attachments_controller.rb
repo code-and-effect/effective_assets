@@ -4,7 +4,7 @@ module Effective
     respond_to :json
 
     def show
-      @asset = Asset.find(params[:id]) # This should actually search Assets
+      @asset = Effective::Asset.find(params[:id]) # This should actually search Assets
 
       EffectiveAssets.authorized?(self, :read, @asset)
 
