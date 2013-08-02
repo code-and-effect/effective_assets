@@ -34,7 +34,7 @@ if defined?(ActiveAdmin)
               li link_to 'Insert as Original', '#', :class => 'asset-insertable', :data => { 'asset-id' => asset.id, 'asset' => effective_asset_image_tag(asset) }
             end
 
-            if asset.still_processing?
+            unless asset.processed?
               li image_tag('/assets/effective_assets/spinner.gif', :alt => 'Generating additional image sizes...')
               li 'Generating additional sizes...'
               li "Please #{link_to 'Refresh', '#', :title => 'Refresh this page', :onclick => 'window.location.reload();'} in a moment.".html_safe
