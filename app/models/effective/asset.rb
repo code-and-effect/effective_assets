@@ -132,7 +132,7 @@ module Effective
     end
 
     before_validation do
-      if [nil, 'null', 'unknown', 'application/octet-stream'].include?(content_type)
+      if [nil, 'null', 'unknown', 'application/octet-stream', ''].include?(content_type)
         self.content_type = case File.extname(URI.parse(url).path).downcase
           when '.mp3' ; 'audio/mp3'
           when '.mp4' ; 'video/mp4'
