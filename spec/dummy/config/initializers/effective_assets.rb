@@ -7,9 +7,9 @@ EffectiveAssets.setup do |config|
   config.uploader = AssetUploader
 
   # This is your S3 bucket information
-  config.aws_bucket = ''
-  config.aws_access_key_id = ''
-  config.aws_secret_access_key = ''
+  config.aws_bucket = 'as-rails-skeleton'
+  config.aws_access_key_id = 'AKIAJOLWUEBMTM5QJTQQ'
+  config.aws_secret_access_key = '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'
 
   config.aws_final_path = 'assets/'
   config.aws_upload_path = 'uploads/'
