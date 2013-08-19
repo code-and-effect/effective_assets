@@ -28,11 +28,11 @@ module AssetBox
   end
 
   def insert_uploader_html
-    "<a href='#' class='asset-box-upload'>Upload...</a>".html_safe
+    "<a href='#' class='asset-box-upload'>#{options[:upload_label]}</a>".html_safe
   end
 
   def uploader_html
-    template.render(:partial => 'asset_box_input/uploader', :locals => {:attachable_id => attachable_id, :attachable_type => attachable_type, :box => method.to_s.pluralize, :uid => @@uid, :file_types => options[:file_types], :limit => limit, :uploader_visible => options[:uploader_visible]}).html_safe
+    template.render(:partial => 'asset_box_input/uploader', :locals => {:attachable_id => attachable_id, :attachable_type => attachable_type, :box => method.to_s.pluralize, :uid => @@uid, :file_types => options[:file_types], :limit => limit, :uploader_visible => options[:uploader_visible], :start_label => options[:start_label], :stop_label => options[:stop_label], :clear_label => options[:clear_label]}).html_safe
   end
 
   def insert_dialog_html
@@ -71,7 +71,7 @@ module AssetBox
   end
 
   def options
-    {:uploader => false, :dialog => false, :uploader_visible => false}.merge(super)
+    {:uploader => false, :dialog => false, :uploader_visible => false, :upload_label => 'Upload...', :start_label => 'Start Uploading', :stop_label => 'Stop Uploading', :clear_label => 'Clear Queue'}.merge(super)
   end
 
 end
