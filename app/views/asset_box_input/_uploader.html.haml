@@ -114,6 +114,6 @@
   %div{:id => "s3_swf_#{uid}"}
 
   %div
-    %input.StartButton{:onclick => "s3_swf_#{uid}_object.startUploading(); return false;", :type => "submit", :value => "Start Uploading"}
-    %input.ResetButton{:onclick => "s3_swf_#{uid}_object.clearQueue(); return false;", :type => "submit", :value => "Clear Queue"}
-    %input.StopButton{:onclick => "s3_swf_#{uid}_object.stopUploading(); return false;", :type => "submit", :value => "Stop Uploading"}
+    %input.StartButton{:onclick => "s3_swf_#{uid}_object.startUploading(); return false;", :type => "submit", :value => start_label}
+    %input.ResetButton{:onclick => "s3_swf_#{uid}_object.clearQueue(); return false;", :type => "submit", :value => clear_label}
+    %input.StopButton{:onclick => "s3_swf_#{uid}_object.stopUploading(); return false;", :type => "submit", :value => stop_label}
