@@ -100,7 +100,11 @@ Use the custom formtastic input for uploading (direct to S3) and attaching asset
 ```ruby
 = f.input :pictures, :as => :asset_box, :uploader => true
 = f.input :videos, :as => :asset_box, :limit => 2, :file_types => [:jpg, :gif, :png]
+
 = f.input :logo, :as => :asset_box, :uploader => true, :uploader_visible => true  # Show the uploader right away
+= f.input :logo, :as => :asset_box, :uploader => true, :upload_label => "Attach...", :start_label => 'Start', :stop_label => 'Stop', :clear_label => 'Clear' # Customize the button labels
+
+= f.input :pictures, :as => :asset_box, :dialog => true, :dialog_url => '/admin/effective_assets' # Use the attach dialog
 ```
 
 Note: Passing :limit => 2 will have no effect on a singular asset_box, which by definition has a limit of 1.
