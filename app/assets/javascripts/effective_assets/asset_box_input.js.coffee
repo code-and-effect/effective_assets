@@ -23,10 +23,12 @@ $ ->
 
   # This is the 'admin' insert assets screen
   $(document).on 'click', 'a.asset-box-dialog', (event) ->
+    obj = $(event.target)
+
     event.preventDefault()
     dialog_frame = $(
       "<div title='Insert Asset'>" +
-        "<iframe id='wym_insert_asset_iframe' src='/admin/assets' width='100%' height='100%' marginWidth='0' marginHeight='0' frameBorder='0' scrolling='auto' title='Insert Asset'></iframe>" +
+        "<iframe id='wym_insert_asset_iframe' src='#{obj.data('dialog-url')}' width='100%' height='100%' marginWidth='0' marginHeight='0' frameBorder='0' scrolling='auto' title='Insert Asset'></iframe>" +
       "</div>"
     )
 
@@ -38,7 +40,7 @@ $ ->
       buttons: { Close: -> $(this).dialog("close") }
     })
 
-    asset_box = $(event.target).closest('div.asset_box_input')
+    asset_box = obj.closest('div.asset_box_input')
 
     single_mode = (asset_box.data('limit') == 1)
     attachable_id = asset_box.data('attachable-id')

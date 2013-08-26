@@ -36,7 +36,7 @@ module AssetBox
   end
 
   def insert_dialog_html
-    "<a href='#' class='asset-box-dialog'>Attach...</a>".html_safe
+    "<a href='#' class='asset-box-dialog' data-dialog-url='#{options[:dialog_url]}'>Attach...</a>".html_safe
   end
 
   def build_values_html
@@ -71,7 +71,7 @@ module AssetBox
   end
 
   def options
-    {:uploader => false, :dialog => false, :uploader_visible => false, :upload_label => 'Upload...', :start_label => 'Start Uploading', :stop_label => 'Stop Uploading', :clear_label => 'Clear Queue'}.merge(super)
+    {:uploader => false, :dialog => false, :dialog_url => '/admin/effective_assets', :uploader_visible => false, :upload_label => 'Upload...', :start_label => 'Start Uploading', :stop_label => 'Stop Uploading', :clear_label => 'Clear Queue'}.merge(super)
   end
 
 end
