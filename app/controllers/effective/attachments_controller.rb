@@ -1,6 +1,6 @@
 module Effective
   class AttachmentsController < ApplicationController
-    skip_authorize_resource if defined?(CanCan)
+    skip_authorization_check if defined?(CanCan)
     respond_to :json
 
     def show

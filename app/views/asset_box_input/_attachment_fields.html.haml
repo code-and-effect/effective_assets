@@ -9,6 +9,6 @@
   = hidden_field_tag("#{attachable_type}[attachments_attributes][#{uid}][box]", attachment.box)
   = hidden_field_tag("#{attachable_type}[attachments_attributes][#{uid}][_destroy]", attachment.marked_for_destruction? ? 1 : nil, :class => 'asset-box-remove')
 
-  %span.thumbnail= effective_asset_image_tag(attachment.asset, :thumb)
+  %span.asset-preview= effective_asset_image_tag(attachment.asset, :thumb)
   %p.title= link_to attachment.asset.title, attachment.asset.url
   %a.asset-box-remove{:href => '#'} Delete
