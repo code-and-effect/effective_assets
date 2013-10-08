@@ -165,6 +165,16 @@ rescue_from ActiveResource::UnauthorizedAccess do |exception|
 end
 ```
 
+### Strong Parameters
+
+Make your controller aware of the acts_as_asset_box passed parameters:
+
+```ruby
+def permitted_params
+  params.permit(:attachments_attributes => [:asset_id, :box, :_destroy])
+end
+```
+
 ### Image Processing and Resizing
 
 CarrierWave is used under the covers to do all the image resizing.

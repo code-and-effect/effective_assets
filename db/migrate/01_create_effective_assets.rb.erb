@@ -21,6 +21,7 @@ class CreateEffectiveAssets < ActiveRecord::Migration
     end
 
     add_index <%= @assets_table_name %>, :content_type
+    add_index <%= @assets_table_name %>, :user_id
 
     create_table <%= @attachments_table_name %> do |t|
       t.integer :asset_id
