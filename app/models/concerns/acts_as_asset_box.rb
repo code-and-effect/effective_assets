@@ -37,7 +37,6 @@ module ActsAsAssetBox
     has_many :attachments, :as => :attachable, :class_name => "Effective::Attachment", :dependent => :delete_all
     has_many :assets, :through => :attachments, :class_name => "Effective::Asset"
 
-    #attr_accessible :attachments_attributes
     accepts_nested_attributes_for :attachments, :reject_if => :all_blank, :allow_destroy => true
 
     # Setup validations

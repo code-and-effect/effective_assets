@@ -26,7 +26,7 @@ Gem::Specification.new do |s|
   s.add_dependency "psych"
   s.add_dependency "migrant"
   s.add_dependency "mini_magick"
-  s.add_dependency "s3_swf_upload"
+  s.add_dependency "jquery-fileupload-rails"
 
   s.add_development_dependency "factory_girl_rails"
   s.add_development_dependency "rspec-rails"

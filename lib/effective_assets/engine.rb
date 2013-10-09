@@ -11,6 +11,7 @@ module EffectiveAssets
     initializer 'effective_assets.action_controller' do |app|
       ActiveSupport.on_load :action_controller do
         helper EffectiveAssetsHelper
+        helper EffectiveAssetsS3Helper
       end
     end
 

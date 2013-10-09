@@ -2,7 +2,7 @@
 - uid = (attachment.persisted? ? attachment.id : Time.now.to_i)
 - hidden ||= false
 
-.asset-box-attachment{:style => "#{(attachment.marked_for_destruction? || hidden) ? 'display: none;' : ''}"}
+.attachment{:style => "#{(attachment.marked_for_destruction? || hidden) ? 'display: none;' : ''}"}
   - if attachment.persisted?
     = hidden_field_tag("#{attachable_type}[attachments_attributes][#{uid}][id]", attachment.id)
   = hidden_field_tag("#{attachable_type}[attachments_attributes][#{uid}][asset_id]", attachment.asset_id)

@@ -3,7 +3,7 @@ class EffectiveAssetsUploader < CarrierWave::Uploader::Base
   storage :fog
 
   def store_dir
-    "#{EffectiveAssets.aws_final_path.chomp('/')}/#{model.id}"
+    "#{EffectiveAssets.aws_path.chomp('/')}/#{model.id}"
   end
 
   # Returns a Hash as per the versions above
