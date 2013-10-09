@@ -78,29 +78,14 @@ module Effective
         end
       end
 
-      # We have just uploaded an asset via our s3 uploader
-      # We want this image to be immediately available.
-      def create_from_s3_uploader(url, options = {})
-        opts = {:upload_file => "#{Asset.s3_base_path}/#{url}", :user_id => 1}.merge(options)
-
+      # A file is about to be uploaded from the FileUploader. We want to create an Asset to reserve the ID
+      # After the file is uploaded, the asset.update_and_process will be called
+      def create_from_s3_uploader(user_id)
         asset = false
 
         Asset.transaction do
           begin
-            asset = Asset.create!(opts)
-
-            Rails.logger.info "Copying s3 uploaded file to final resting place..."
-            storage = Fog::Storage.new(:provider => 'AWS', :aws_access_key_id => EffectiveAssets.aws_access_key_id, :aws_secret_access_key => EffectiveAssets.aws_secret_access_key)
-            storage.copy_object(EffectiveAssets.aws_bucket, url, EffectiveAssets.aws_bucket, "#{EffectiveAssets.aws_final_path.chomp('/')}/#{asset.id}/#{asset.file_name}")
-            storage.put_object_acl(EffectiveAssets.aws_bucket, "#{EffectiveAssets.aws_final_path.chomp('/')}/#{asset.id}/#{asset.file_name}", EffectiveAssets.aws_acl)
-
-            Rails.logger.info "Deleting original..."
-            directory = storage.directories.get(EffectiveAssets.aws_bucket)
-            directory.files.new(:key => url).destroy
-
-            asset.update_column(:upload_file, asset.url) # This is our upload file as far as CarrierWave is now concerned
-
-            Effective::DelayedJob.new.process_asset(asset)
+            asset = Asset.create!(:user_id => user_id || 1)
           rescue => e
             Rails.logger.info e.message
             Rails.logger.info e.backtrace.join('\n')
@@ -152,13 +137,30 @@ module Effective
       end
     end
 
+    # This is called by the S3_uplods_controller after a file is done uploading
+    def update_and_process(opts = {})
+      self.upload_file = opts[:upload_file]
+      self.data_size = opts[:data_size]
+      self.content_type = opts[:content_type]
+      self.title = title
+
+      if save
+        Effective::DelayedJob.new.process_asset(self)
+      end
+    end
+
     def title
       self[:title].present? ? self[:title] : file_name
     end
 
     # Return the final location of this asset
     def url
-      "#{Asset.s3_base_path}/#{EffectiveAssets.aws_final_path.chomp('/')}/#{self.id.to_i}/#{upload_file.to_s.split('/').last}"
+      "#{Asset.s3_base_path}/#{EffectiveAssets.aws_path.chomp('/')}/#{self.id.to_i}/#{upload_file.to_s.split('/').last}"
+    end
+
+    # Returns the S3 Key needed for the uploader
+    def s3_key_for_uploader
+      "#{EffectiveAssets.aws_path.chomp('/')}/#{self.id.to_i}/${filename}"
     end
 
     def file_name

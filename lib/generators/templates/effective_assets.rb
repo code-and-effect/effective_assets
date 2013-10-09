@@ -11,8 +11,7 @@ EffectiveAssets.setup do |config|
   config.aws_access_key_id = ''
   config.aws_secret_access_key = ''
 
-  config.aws_final_path = 'assets/'
-  config.aws_upload_path = 'uploads/'
+  config.aws_path = 'assets/'
   config.aws_acl = 'public-read'
 
   config.authorization_method = Proc.new { |controller, action, resource| can?(action, resource) }

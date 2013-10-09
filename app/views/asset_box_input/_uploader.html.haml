@@ -1,119 +1,19 @@
-.asset_box_uploader{:style => "#{uploader_visible ? '' : 'display: none;'}"}
-  .file_lists
-    %ul.file_done_list.file_list
-    %ul.file_todo_list.file_list
-  .queue_size
-    %span.numerator
-    %span.denominator
-  .overall
-    %span.progress
-      %span.amount
-    %span.status
+.asset-box-uploader{:style => "#{uploader_visible ? '' : 'display: none;'}", :id => "s3_#{uid}"}
+  = s3_uploader_fields
+  %input{:type => 'file', :multiple => 'multiple', :name => 'file'}
+
+  .uploads
+
+  = render :partial => progress_bar_partial
 
   %script{:type => 'text/javascript'}
     :erb
 
-      $("div.asset_box_input[data-swf='s3_swf_<%= uid %>'][data-mode='multiple']").find('div.attachments').first().sortable();
-      preload_spinner = new Image();
-      preload_spinner.src = '/assets/effective_assets/spinner.gif';
-
-      var s3_swf_<%= uid %>_object = s3_swf_init('s3_swf_<%= uid %>', {
-        buttonWidth: 100,
-        buttonHeight: 30,
-        flashVersion: '9.0.0',
-        queueSizeLimit: <%= limit %>,
-        fileSizeLimit: 524288000,
-        fileTypes: '<%= file_types.present? ? file_types.map { |t| "*.#{t.to_s}"}.join(';') : '*.*' %>',
-        fileTypeDescs: 'Uploadable Files',
-        selectMultipleFiles: <%= limit > 1 ? 'true' : 'false' %>,
-        keyPrefix: '<%= "#{EffectiveAssets.aws_upload_path.chomp('/')}" + '/' %>',
-        signaturePath: '/s3_uploads.xml',
-        swfFilePath: '/assets/effective_assets/s3_upload.swf',
-        buttonUpPath: '/assets/effective_assets/s3_up_button.gif',
-        buttonOverPath: '/assets/effective_assets/s3_over_button.gif',
-        buttonDownPath: '/assets/effective_assets/s3_down_button.gif',
-        swfVarObj: 's3_swf_<%= uid %>_object',
-          onFileSizeLimitReached: function(file) {
-            alert('That file is too big');
-          },
-          onQueueSizeLimitReached: function(queue) {
-            alert('There are too many files in the queue');
-          },
-          onQueueEmpty: function(queue) {
-            alert('You gotta have at least one file in there');
-          },
-          onSignatureSecurityError: function(file,security_error_event) {
-            alert('There was an error');
-          },
-          onSignatureIOError: function(file,io_error_event) {
-            alert('There was an error');
-          },
-          onSignatureXMLError: function(file,error_message) {
-            alert('There was an error');
-          },
-          onUploadError: function(upload_options,error) {
-            alert('There was an error');
-          },
-          onUploadIOError: function(upload_options,io_error_event) {
-            alert('There was an error');
-          },
-          onUploadSecurityError: function(upload_options,security_error_event) {
-            alert('There was an error');
-          },
-          onQueueClear: function(queue) {
-            s3_queueClearHandler('s3_swf_<%= uid %>', queue);
-          },
-          onUploadingFinish: function() {
-            s3_uploadingFinishHandler('s3_swf_<%= uid %>');
-          },
-          onUploadingStart: function() {
-            s3_uploadingStartHandler('s3_swf_<%= uid %>');
-          },
-          onQueueChange: function(queue) {
-            s3_queueChangeHandler('s3_swf_<%= uid %>', queue);
-          },
-          onUploadProgress: function(upload_options,progress_event) {
-            s3_progressHandler('s3_swf_<%= uid %>', progress_event);
-          },
-          onUploadComplete: function(upload_options,event) {
-            var obj         = $("div.asset_box_input[data-swf='s3_swf_<%= uid %>']").find('div.asset_box_uploader').first();
-            var one_file    = obj.find('.file_todo_list').find("li.file_to_upload").first()
-            var title       = one_file.find('input.title').val();
-            var description = one_file.find('input.description').val();
-            var tags        = one_file.find('input.tags').val();
-
-            s3_addFileToDoneList('s3_swf_<%= uid %>', upload_options.FileName, upload_options.FileSize);
-
-            $.ajax({
-              url: '<%= s3_uploads_path %>',
-              beforeSend: function(jqXHR, settings) {
-                s3_showAttachmentLoading('s3_swf_<%= uid %>', title);
-              },
-              complete: function(jqXHR, textStatus) {
-                s3_loadAttachmentHtml('s3_swf_<%= uid %>', jqXHR.responseText);
-              },
-              global: false,
-              type: 'POST',
-              dataType: 'script',
-              data: {
-                'authenticity_token' : '<%= form_authenticity_token %>',
-                'file_name' : upload_options.FileName,
-                'file_path' : upload_options.key,
-                'file_size' : upload_options.FileSize,
-                'box'       : '<%= box %>',
-                'attachable_type' : '<%= attachable_type %>',
-                'attachable_id' : '<%= attachable_id %>',
-                'content_type' : upload_options.ContentType,
-                'title' : title,
-                'description' : description,
-                'tags' : tags
-              }
-            })
-          }
-        });
-  %div{:id => "s3_swf_#{uid}"}
-
-  %div
-    %input.StartButton{:onclick => "s3_swf_#{uid}_object.startUploading(); return false;", :type => "submit", :value => start_label}
-    %input.ResetButton{:onclick => "s3_swf_#{uid}_object.clearQueue(); return false;", :type => "submit", :value => clear_label}
-    %input.StopButton{:onclick => "s3_swf_#{uid}_object.stopUploading(); return false;", :type => "submit", :value => stop_label}
+      $("#s3_<%= uid %>").S3Uploader({
+        url: '<%= s3_uploader_url %>',
+        progress_bar_target: $("#s3_<%= uid %>").children('.uploads').first(),
+        progress_bar_template: $("#s3_<%= uid %>").children("script[type='text/x-tmpl']").first(),
+        remove_completed_progress_bar: false,
+        create_asset_url: '<%= s3_uploads_url %>',
+        update_asset_url: '<%= s3_uploads_url %>/:id',
+      });
