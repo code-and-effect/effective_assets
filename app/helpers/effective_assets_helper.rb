@@ -27,6 +27,16 @@ module EffectiveAssetsHelper
     render(:partial => 'assets/video', :locals => { :asset => asset }).gsub('"', "'").html_safe # we need all ' quotes or it breaks Insert as functionality
   end
 
+  def effective_asset_title(asset)
+    [
+      asset.title,
+      asset.description,
+      asset.tags,
+      "Size: #{number_to_human_size(asset.data_size)}",
+      "Content Type: #{asset.content_type}"
+    ].compact.join("\n")
+  end
+
   def _effective_asset_image_url(asset, version = nil)
     return '/assets/mime-types/file.png' if !asset.content_type.present? or asset.content_type == 'unknown'
 
@@ -50,6 +60,7 @@ module EffectiveAssetsHelper
       '/assets/mime-types/file.png'
     end
   end
+
 
 
 end

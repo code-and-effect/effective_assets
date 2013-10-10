@@ -21,7 +21,7 @@ $.fn.S3Uploader = (options) ->
     progress_bar_template: null
     click_submit_target: null
     allow_multiple_files: true
-    valid_s3_keys: ['utf8', 'key', 'acl', 'AWSAccessKeyId', 'policy', 'signature', 'success_action_status', 'X-Requested-With', 'content-type']
+    valid_s3_keys: ['key', 'acl', 'AWSAccessKeyId', 'policy', 'signature', 'success_action_status', 'X-Requested-With', 'content-type']
     create_asset_url: null
     update_asset_url: null
 
@@ -62,7 +62,7 @@ $.fn.S3Uploader = (options) ->
       progress: (e, data) ->
         if data.context
           progress = parseInt(data.loaded / data.total * 100, 10)
-          data.context.find('.bar').css('width', progress + '%')
+          data.context.find('.bar').css('width', progress + '%').html(format_bitrate(data.bitrate))
 
       done: (e, data) ->
         content = build_content_object $uploadForm, data.files[0], data.result
@@ -70,7 +70,7 @@ $.fn.S3Uploader = (options) ->
         if settings.update_asset_url
           update_asset_and_load_attachment(content)
 
-        data.context.remove() if data.context && settings.remove_completed_progress_bar # remove progress bar
+        data.context.fadeOut('slow', -> $(this).remove()) if data.context && settings.remove_completed_progress_bar # remove progress bar
         $uploadForm.trigger("s3_upload_complete", [content])
 
         current_files.splice($.inArray(data, current_files), 1) # remove that element from the array
@@ -80,11 +80,16 @@ $.fn.S3Uploader = (options) ->
         content = build_content_object $uploadForm, data.files[0], data.result
         content.error_thrown = data.errorThrown
 
-        data.context.remove() if data.context && settings.remove_failed_progress_bar # remove progress bar
+        data.context.fadeOut('slow', -> $(this).remove()) if data.context && settings.remove_failed_progress_bar # remove progress bar
         $uploadForm.trigger("s3_upload_failed", [content])
 
       formData: (form) ->
-        data = form.serializeArray()
+        inputs = form.find($uploadForm).children('input')
+        inputs.each -> $(this).prop('disabled', false)
+        data = inputs.serializeArray()
+
+        inputs = form.find($uploadForm).children("input:not([name='file'])")
+        inputs.each -> $(this).prop('disabled', true)
 
         fileType = ""
         if "type" of @files[0]
@@ -170,12 +175,23 @@ $.fn.S3Uploader = (options) ->
         box: asset_box.data('box')
       async: true
       success: (data) ->
-        #asset_box_input.find('.attachments > div.asset-box-loading').first().remove()
         asset_box.find('.attachments').prepend($(data))
 
         limit = asset_box.data('limit') - 1
-        asset_box.find("input.asset-box-remove[value!='1']:gt(" + limit + ")").each -> $(this).closest('div.attachment').hide()
-        asset_box.find("input.asset-box-remove[value!='1']:lt(" + limit + ")").each -> $(this).closest('div.attachment').show()
+        asset_box.find("input.asset-box-remove[value!='1']:gt(" + limit + ")").each -> $(this).closest('.attachment').hide()
+        asset_box.find("input.asset-box-remove[value!='1']:lt(" + limit + ")").each -> $(this).closest('.attachment').show()
+
+  format_bitrate = (bits) ->
+    if typeof bits != 'number'
+      ''
+    else if (bits >= 1000000000)
+      (bits / 1000000000).toFixed(2) + ' Gbit/s'
+    else if (bits >= 1000000)
+      (bits / 1000000).toFixed(2) + ' Mbit/s'
+    else if (bits >= 1000)
+      (bits / 1000).toFixed(2) + ' kbit/s'
+    else
+      bits.toFixed(2) + ' bit/s'
 
   #public methods
   @initialize = ->

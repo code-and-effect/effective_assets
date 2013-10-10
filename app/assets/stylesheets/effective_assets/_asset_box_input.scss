@@ -1,8 +1,3 @@
-@mixin clearfix {
-  display: block;
-  &:after { content:"\0020";display:block;height:0;clear:both;visibility:hidden;overflow:hidden; }
-}
-
 @mixin border-radius ($radius) {
   position: relative;
   -webkit-border-radius: $radius;
@@ -15,20 +10,42 @@
 .asset-box-input {
 
   .attachments {
-    @include clearfix;
-
     .attachment {
-      position: relative;
       width: 128px;
-      float: left;
-      margin-right: 20px;
-      height: 190px;
+      height: 110px;
+      margin-left: 10px;
 
-      p.title {
-        font-size: 14px;
-        color: #818181;
-        padding: 10px;
-        margin: 0;
+      > div {
+        position: relative;
+        height: 110px;
+        padding: 5px;
+      }
+
+      .attachment-remove {
+        position: absolute;
+        top: 5px;
+        right: 5px;
+      }
+
+      .attachment-image {
+        margin-top: 8px;
+        overflow: hidden;
+        max-height: 80px;
+
+        img {
+          display: block;
+          margin: 0 auto;
+        }
+      }
+
+      .attachment-title {
+        position: absolute;
+        bottom: 5px;
+        left: 5px;
+        right: 5px;
+        overflow: hidden;
+        word-break: keep-all;
+        text-align: center;
       }
     }
   }
@@ -53,5 +70,12 @@
         }
       }
     }
+  }
+}
+
+
+body.active_admin {
+  .asset-box-input {
+    margin-left: 20%;
   }
 }

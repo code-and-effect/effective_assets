@@ -1,7 +1,7 @@
 $ ->
-  $(document).on 'click', 'a.asset-box-remove', (event) ->
+  $(document).on 'click', 'a.attachment-remove', (event) ->
     event.preventDefault()
-    attachment_div = $(event.target).closest('div.attachment')
+    attachment_div = $(event.target).closest('.attachment')
     attachment_div.find('input.asset-box-remove').first().val(1)
     attachment_div.hide()
 
@@ -9,12 +9,12 @@ $ ->
     asset_box_input = attachment_div.closest('div.asset-box-input')
     limit = asset_box_input.data('limit')
 
-    asset_box_input.find("input.asset-box-remove[value!='1']:gt(#{limit})").each -> $(this).closest('div.attachment').hide()
-    asset_box_input.find("input.asset-box-remove[value!='1']:lt(#{limit})").each -> $(this).closest('div.attachment').show()
+    asset_box_input.find("input.asset-box-remove[value!='1']:gt(#{limit})").each -> $(this).closest('.attachment').hide()
+    asset_box_input.find("input.asset-box-remove[value!='1']:lt(#{limit})").each -> $(this).closest('.attachment').show()
 
   $(document).on 'click', 'a.asset-box-upload', (event) ->
     event.preventDefault()
-    uploader = $(event.target).closest('div.asset-box-input').find('div.asset-box-uploader').first()
+    uploader = $(event.target).closest('.asset-box-input').find('.asset-box-uploader').first()
 
     if uploader.is(':visible')
       uploader.slideUp('slow', -> $(this).hide())
