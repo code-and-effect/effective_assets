@@ -2,7 +2,7 @@ module EffectiveAssetsS3Helper
 
   def s3_uploader_fields(options = {})
     S3Uploader.new(options).fields.map do |name, value|
-      hidden_field_tag(name, value)
+      hidden_field_tag(name, value, :disabled => 'disabled')
     end.join.html_safe
   end
 
@@ -45,7 +45,6 @@ module EffectiveAssetsS3Helper
       {
         expiration: @options[:expiration],
         conditions: [
-          ['starts-with', '$utf8', ''],
           ['starts-with', '$key', @options[:key_starts_with]],
           ['starts-with', '$x-requested-with', ''],
           ['content-length-range', 0, @options[:max_file_size]],

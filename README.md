@@ -171,7 +171,7 @@ Make your controller aware of the acts_as_asset_box passed parameters:
 
 ```ruby
 def permitted_params
-  params.permit(:attachments_attributes => [:asset_id, :box, :_destroy])
+  params.permit(:attachments_attributes => [:id, :asset_id, :box, :_destroy])
 end
 ```
 

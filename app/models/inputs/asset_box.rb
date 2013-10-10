@@ -6,9 +6,9 @@ module AssetBox
     input_wrapping do
       output = label_html
       output += header_html
-      output += "<div class='attachments'>".html_safe
+      output += "<ul class='attachments thumbnails'>".html_safe
       output += build_values_html
-      output += "</div>".html_safe
+      output += "</ul>".html_safe
 
       if options[:uploader]
         output += insert_uploader_html
@@ -72,11 +72,11 @@ module AssetBox
 
   def options
     {
-      :uploader => false,
+      :uploader => true,
+      :uploader_visible => true,
       :uploader_progress_bar_partial => 'asset_box_input/progress_bar_template',
       :dialog => false,
       :dialog_url => '/admin/effective_assets',
-      :uploader_visible => false,
       :upload_label => 'Upload...',
       :start_label => 'Start Uploading',
       :stop_label => 'Stop Uploading',

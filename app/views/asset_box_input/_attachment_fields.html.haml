@@ -2,13 +2,17 @@
 - uid = (attachment.persisted? ? attachment.id : Time.now.to_i)
 - hidden ||= false
 
-.attachment{:style => "#{(attachment.marked_for_destruction? || hidden) ? 'display: none;' : ''}"}
+%li.attachment{:style => "#{(attachment.marked_for_destruction? || hidden) ? 'display: none;' : ''}", :title => effective_asset_title(attachment.asset)}
+  .thumbnail
+    %a.attachment-remove{:href => '#'}
+      %img{:src => asset_path('effective_assets/icon_close.png'), :alt => 'Delete'}
+    .attachment-image
+      = effective_asset_image_tag(attachment.asset)
+    .attachment-title
+      = link_to attachment.asset.title, attachment.asset.url, :target => '_blank'
+
   - if attachment.persisted?
     = hidden_field_tag("#{attachable_type}[attachments_attributes][#{uid}][id]", attachment.id)
   = hidden_field_tag("#{attachable_type}[attachments_attributes][#{uid}][asset_id]", attachment.asset_id)
   = hidden_field_tag("#{attachable_type}[attachments_attributes][#{uid}][box]", attachment.box)
   = hidden_field_tag("#{attachable_type}[attachments_attributes][#{uid}][_destroy]", attachment.marked_for_destruction? ? 1 : nil, :class => 'asset-box-remove')
-
-  %span.asset-preview= effective_asset_image_tag(attachment.asset, :thumb)
-  %p.title= link_to attachment.asset.title, attachment.asset.url
-  %a.asset-box-remove{:href => '#'} Delete
