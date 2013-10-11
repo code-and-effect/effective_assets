@@ -12,15 +12,6 @@ $ ->
     asset_box_input.find("input.asset-box-remove[value!='1']:gt(#{limit})").each -> $(this).closest('.attachment').hide()
     asset_box_input.find("input.asset-box-remove[value!='1']:lt(#{limit})").each -> $(this).closest('.attachment').show()
 
-  $(document).on 'click', 'a.asset-box-upload', (event) ->
-    event.preventDefault()
-    uploader = $(event.target).closest('.asset-box-input').find('.asset-box-uploader').first()
-
-    if uploader.is(':visible')
-      uploader.slideUp('slow', -> $(this).hide())
-    else
-      uploader.slideDown('slow', -> $(this).show())
-
   # This is the 'admin' insert assets screen
   $(document).on 'click', 'a.asset-box-dialog', (event) ->
     obj = $(event.target)

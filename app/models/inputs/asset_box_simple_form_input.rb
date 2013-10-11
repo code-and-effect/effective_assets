@@ -2,7 +2,7 @@
 # = f.input :fav_icon, :as => :asset_box_simple_form, :limit => 4, :file_types => [:jpg, :gif, :png]
 # = f.input :logo, :as => :asset_box_simple_form, :uploader => false, :dialog => true
 
-# = f.input :logo, :as => :asset_box_simple_form, :uploader => true, :uploader_visible => true
+# = f.input :logo, :as => :asset_box_simple_form, :uploader => true
 
 if defined?(SimpleForm)
   class AssetBoxSimpleFormInput < SimpleForm::Inputs::Base

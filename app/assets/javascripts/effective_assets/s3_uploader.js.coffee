@@ -24,6 +24,7 @@ $.fn.S3Uploader = (options) ->
     valid_s3_keys: ['key', 'acl', 'AWSAccessKeyId', 'policy', 'signature', 'success_action_status', 'X-Requested-With', 'content-type']
     create_asset_url: null
     update_asset_url: null
+    file_types: 'any'
 
   $.extend settings, options
 
@@ -40,6 +41,12 @@ $.fn.S3Uploader = (options) ->
 
       add: (e, data) ->
         file = data.files[0]
+
+        if settings.file_types != 'any'
+          types = new RegExp("(\.|\/)(#{settings.file_types})$")
+          unless types.test(file.type) || types.test(file.name)
+            alert("Unable to add #{file.name}.\n\nOnly #{settings.file_types.replace(/\|/g, ', ')} files allowed.")
+            return false
 
         unless settings.before_add and not settings.before_add(file)
           current_files.push data
