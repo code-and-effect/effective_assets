@@ -14,7 +14,6 @@ $.fn.S3Uploader = (options) ->
   settings =
     url: ''
     before_add: null
-    additional_data: null
     remove_completed_progress_bar: true
     remove_failed_progress_bar: false
     progress_bar_target: null
@@ -106,7 +105,8 @@ $.fn.S3Uploader = (options) ->
           value: fileType
 
         # Remove anything we can't submit to S3
-        data = data.filter (e) -> e.name in settings.valid_s3_keys
+        for item in data
+          data.splice(data.indexOf(data), 1) unless item.name in settings.valid_s3_keys
 
         # Ask our server for a unique ID for this Asset
         asset = create_asset(@files[0])
@@ -131,8 +131,8 @@ $.fn.S3Uploader = (options) ->
     if result # Use the S3 response to set the URL to avoid character encodings bugs
       content.url            = $(result).find("Location").text()
       content.filepath       = $('<a />').attr('href', content.url)[0].pathname
-    else # IE <= 9 retu      rn a null result object so we use the file object instead
-      domain                 = $uploadForm.attr('action')
+    else # IE <= 9 return a null result object so we use the file object instead
+      domain                 = settings.url
       content.filepath       = $uploadForm.find('input[name=key]').val().replace('/${filename}', '')
       content.url            = domain + content.filepath + '/' + encodeURIComponent(file.name)
 
@@ -142,7 +142,6 @@ $.fn.S3Uploader = (options) ->
     content.filetype         = file.type if 'type' of file
     content.asset_id         = file.asset_id if 'asset_id' of file
     content.relativePath     = build_relativePath(file) if has_relativePath(file)
-    content = $.extend content, settings.additional_data if settings.additional_data
     content
 
   has_relativePath = (file) ->
