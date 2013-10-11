@@ -4,9 +4,9 @@ A full solution for managing assets (images, files, videos, etc).
 
 Attach one or more assets to any model with validations.
 
-Includes an upload direct to Amazon S3 implementation based on s3_swf_upload and image processing in the background with CarrierWave and DelayedJob
+Includes an upload direct to Amazon S3 implementation based on jQuery-File-Upload and image processing in the background with CarrierWave and DelayedJob
 
-Formtastic input for displaying, organizing, and uploading assets direct to s3.
+Both Formtastic and SimpleForm inputs for displaying, organizing, and uploading assets direct to s3.
 
 Includes (optional but recommended) integration with ActiveAdmin
 
@@ -59,8 +59,8 @@ And to your ActiveAdmin stylesheet
 
 ```ruby
 body.active_admin {
-  @import "effective_assets";
 }
+@import "effective_assets";
 ```
 
 If ActiveAdmin is installed, there will automatically be an 'Effective Assets' page.
@@ -93,28 +93,34 @@ end
 
 The user in this example is only valid if exists a fav_icon, 2 videos, and 5..10 images.
 
-### Uploading & Attaching
+### Uploading & AttachingF
 
-Use the custom formtastic input for uploading (direct to S3) and attaching assets to the 'pictures' box.
+Use the custom Formtastic input for uploading (direct to S3) and attaching assets to the 'pictures' box.
 
 ```ruby
 = f.input :pictures, :as => :asset_box, :uploader => true
 = f.input :videos, :as => :asset_box, :limit => 2, :file_types => [:jpg, :gif, :png]
 
-= f.input :logo, :as => :asset_box, :uploader => true, :uploader_visible => true  # Show the uploader right away
-= f.input :logo, :as => :asset_box, :uploader => true, :upload_label => "Attach...", :start_label => 'Start', :stop_label => 'Stop', :clear_label => 'Clear' # Customize the button labels
-
 = f.input :pictures, :as => :asset_box, :dialog => true, :dialog_url => '/admin/effective_assets' # Use the attach dialog
+```
+
+Use the custom SimpleForm input for uploading (direct to S3) and attaching assets to the 'pictures' box.
+
+```ruby
+= f.input :pictures, :as => :asset_box_simple_form, :uploader => true
+= f.input :videos, :as => :asset_box_simple_form, :limit => 2, :file_types => [:jpg, :gif, :png]
+
+= f.input :pictures, :as => :asset_box_simple_form, :dialog => true, :dialog_url => '/admin/effective_assets' # Use the attach dialog
 ```
 
 Note: Passing :limit => 2 will have no effect on a singular asset_box, which by definition has a limit of 1.
 
-We use the s3_swf_upload gem for direct-to-s3 uploading.  The process is as follows:
+We use the jQuery-File-Upload gem for direct-to-s3 uploading.  The process is as follows:
 
 - User sees the form and clicks Browse.  Selects 1 or more files, then clicks Start Uploading
-- The s3_uploader reads configuration options from effective_assets.rb initializer, and connects to S3
-- The file is uploaded directly to its 'final' resting place.
-- A post is then made back to the effective#s3_uploads_controller which creates the Asset object and sets up a task in DelayedJob to process the asset (for image resizing)
+- The server makes a post to the S3UploadsController#create action to initialize an asset, and get a unique ID
+- The file is uploaded directly to its 'final' resting place. "assets/:id/filename"
+- A put is then made back to the effective#s3_uploads_controller#update which updates the Asset object and sets up a task in DelayedJob to process the asset (for image resizing)
 - An attachment is created, which joins the Asset to the parent Object (User in our example) in the appropriate position.
 - The DelayedJob task should be running and will handle any image resizing as defined by the AssetUploader
 - The asset will appear in the form, and the user may click&drag the asset around to set the position.
@@ -228,7 +234,7 @@ CarrierWave (https://github.com/carrierwaveuploader/carrierwave)
 
 DelayedJob (https://github.com/collectiveidea/delayed_job)
 
-swf_s3_upload (https://github.com/nathancolgate/s3-swf-upload-plugin)
+jQuery-File-Upload (https://github.com/blueimp/jQuery-File-Upload)
 
 
 ### Testing
