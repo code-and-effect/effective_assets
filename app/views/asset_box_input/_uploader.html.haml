@@ -1,10 +1,11 @@
 .uploads
-.asset-box-uploader{:style => "#{uploader_visible ? '' : 'display: none;'}", :id => "s3_#{uid}"}
+.asset-box-uploader{:id => "s3_#{uid}"}
   = s3_uploader_fields
+
   - if limit > 1
-    %input{:type => 'file', :multiple => 'multiple', :name => 'file'}
+    %input{:type => 'file', :name => 'file', :multiple => 'multiple', :disabled => disabled}
   - else
-    %input{:type => 'file', :name => 'file'}
+    %input{:type => 'file', :name => 'file', :disabled => disabled}
 
   = render :partial => progress_bar_partial
 
@@ -17,6 +18,7 @@
         progress_bar_template: $("#s3_<%= uid %>").children("script[type='text/x-tmpl']").first(),
         remove_completed_progress_bar: true,
         allow_multiple_files: <%= limit > 1 %>,
+        file_types: '<%= [file_types].flatten.join('|').to_s %>',
         create_asset_url: '<%= s3_uploads_url %>',
         update_asset_url: '<%= s3_uploads_url %>/:id',
       });
