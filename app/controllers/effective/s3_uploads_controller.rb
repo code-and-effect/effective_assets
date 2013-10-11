@@ -21,22 +21,25 @@ module Effective
 
       EffectiveAssets.authorized?(self, :update, asset)
 
-      if asset.update_and_process(params)
-        # If the attachment information is present, then our input needs some attachment HTML
-        if params.key?(:attachable_type)
-          attachment = Effective::Attachment.new
-          attachment.attachable_type = params[:attachable_type].try(:classify)
-          attachment.attachable_id = params[:attachable_id].try(:to_i) if params[:attachable_id].present? # attachable_id can be nil if we're on a New action
-          attachment.asset_id = asset.try(:id)
-          attachment.box = params[:box]
-          attachment.position = 0
-
-          render :partial => 'asset_box_input/attachment_fields', :locals => {:attachment => attachment}, :status => 200, :content_type => 'text/html'
-        else
-          render :text => '', :status => 200
+      unless params[:skip_update]  # This is useful for the acts_as_asset_box Attach action
+        if asset.update_and_process(params) == false
+          render :text => '', :status => :unprocessable_entity
+          return
         end
+      end
+
+      # If the attachment information is present, then our input needs some attachment HTML
+      if params.key?(:attachable_type)
+        attachment = Effective::Attachment.new
+        attachment.attachable_type = params[:attachable_type].try(:classify)
+        attachment.attachable_id = params[:attachable_id].try(:to_i) if params[:attachable_id].present? # attachable_id can be nil if we're on a New action
+        attachment.asset_id = asset.try(:id)
+        attachment.box = params[:box]
+        attachment.position = 0
+
+        render :partial => 'asset_box_input/attachment_fields', :locals => {:attachment => attachment}, :status => 200, :content_type => 'text/html'
       else
-        render :text => '', :status => :unprocessable_entity
+        render :text => '', :status => 200
       end
     end
 

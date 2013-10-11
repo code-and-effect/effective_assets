@@ -132,6 +132,9 @@ module Effective
           when '.png' ; 'image/png'
           when '.bmp' ; 'image/bmp'
           when '.ico' ; 'image/x-icon'
+          when '.txt' ; 'text/plain'
+          when '.doc' ; 'application/msword'
+          when '.docx' ; 'application/msword'
           else ; 'unknown'
         end
       end

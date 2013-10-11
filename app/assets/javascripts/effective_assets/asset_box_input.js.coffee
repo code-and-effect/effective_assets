@@ -31,12 +31,11 @@ $ ->
       buttons: { Close: -> $(this).dialog("close") }
     })
 
-    asset_box = obj.closest('div.asset-box-input')
+    asset_box = obj.closest('.asset-box-input')
 
     single_mode = (asset_box.data('limit') == 1)
     attachable_id = asset_box.data('attachable-id')
     attachable_type = asset_box.data('attachable-type')
-    attachable_swf = asset_box.data('swf')
     attachable_box = asset_box.data('box')
     authenticity_token = asset_box.closest('form').find("input[name='authenticity_token']").first().val()
 
@@ -44,20 +43,27 @@ $ ->
       $(this).contents().find('a.asset-insertable').on 'click', (event) ->
         event.preventDefault()
 
+        # This is a bit hacky and abuses the s3uploads#update controller
         # Initialize a new Attachment and get the HTML for it.
         $.ajax({
-          url: '/s3_uploads',
-          beforeSend: (jqXHR, settings) -> s3_showAttachmentLoading(attachable_swf, '...'),
-          complete: (jqXHR, textStatus) -> s3_loadAttachmentHtml(attachable_swf, jqXHR.responseText),
+          url: "/s3_uploads/#{$(this).data('asset-id')}",
+          complete: (jqXHR, textStatus) ->
+            asset_box.find('.attachments').prepend($(jqXHR.responseText))
+
+            limit = asset_box.data('limit') - 1
+            asset_box.find("input.asset-box-remove[value!='1']:gt(" + limit + ")").each -> $(this).closest('.attachment').hide()
+            asset_box.find("input.asset-box-remove[value!='1']:lt(" + limit + ")").each -> $(this).closest('.attachment').show()
+
           global: false,
-          type: 'POST',
+          type: 'PUT',
           dataType: 'script',
           data: {
             'authenticity_token' : authenticity_token,
             'box'       : attachable_box,
             'attachable_type' : attachable_type,
             'attachable_id' : attachable_id,
-            'asset_id' : $(this).data('asset-id')
+            'asset_id' : $(this).data('asset-id'),
+            'skip_update' : true
           }
         })
 
