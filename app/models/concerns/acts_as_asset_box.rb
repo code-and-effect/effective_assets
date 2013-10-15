@@ -38,13 +38,14 @@ module ActsAsAssetBox
     has_many :assets, :through => :attachments, :class_name => "Effective::Asset"
 
     accepts_nested_attributes_for :attachments, :reject_if => :all_blank, :allow_destroy => true
+    cattr_accessor :acts_as_asset_box_boxes
 
     # Setup validations
     boxes = @acts_as_asset_box_opts.try(:flatten) || []
     if boxes.first.kind_of?(Hash) # We were passed some validation requirements
       boxes = boxes.first
 
-      @@acts_as_asset_box_boxes = boxes.keys
+      self.acts_as_asset_box_boxes = boxes.keys
 
       boxes.each do |box, validation|
         if validation == true
@@ -54,7 +55,7 @@ module ActsAsAssetBox
         end
       end
     else
-      @@acts_as_asset_box_boxes = boxes
+      self.acts_as_asset_box_boxes = boxes
     end
 
     class_eval do
@@ -90,7 +91,7 @@ module ActsAsAssetBox
 
   # This handles all the boxes type function calls
   def method_missing(method_name, *args, &block)
-    (@@acts_as_asset_box_boxes || []).include?(method_name.to_sym) ? assets(method_name) : super
+    (self.class.acts_as_asset_box_boxes || []).include?(method_name.to_sym) ? assets(method_name) : super
   end
 end
 
