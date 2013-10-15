@@ -1,5 +1,5 @@
 - attachable_type ||= attachment.attachable_type.titleize.gsub(" ", "_").gsub('/', '_').downcase
-- uid = (attachment.persisted? ? attachment.id : Time.now.to_i)
+- uid = (attachment.persisted? ? attachment.id : Time.now.to_f.to_s.split('.')[1] + Random.rand(10000).to_s)
 - hidden ||= false
 
 %li.attachment{:style => "#{(attachment.marked_for_destruction? || hidden) ? 'display: none;' : ''}", :title => effective_asset_title(attachment.asset)}

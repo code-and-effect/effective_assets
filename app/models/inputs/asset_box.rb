@@ -49,7 +49,7 @@ module AssetBox
       count += 1 unless attachment.marked_for_destruction?
 
       template.render(
-        :partial => 'asset_box_input/attachment_fields',
+        :partial => 'asset_box_input/attachment',
         :locals => {
           :attachment => attachment,
           :attachable_type => attachable_type,
