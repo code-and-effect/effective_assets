@@ -50,23 +50,26 @@
     }
   }
 
-  .asset-box-uploader {
-    .uploads {
-      .upload {
-        border-top: solid 1px #CCC;
-        width: 400px;
-        padding-top: 10px;
-        margin-top: 10px;
+  .uploads {
+    .upload {
+      border-top: solid 1px #CCC;
+      width: 400px;
+      padding-top: 10px;
+      margin-top: 10px;
 
-        .progress {
-          margin-top: 8px;
-          border: solid 1px #555;
-          @include border-radius(3px);
+      .progress {
+        margin-top: 8px;
+        border: solid 1px #555;
+        @include border-radius(3px);
 
-          .bar {
-            height: 100%;
-            background: #3EC144;
-          }
+        .spinner {
+          height: 20px;
+          width: 20px;
+        }
+
+        .bar {
+          height: 100%;
+          background: #3EC144;
         }
       }
     }

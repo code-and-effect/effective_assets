@@ -69,6 +69,7 @@ $.fn.S3Uploader = (options) ->
         if data.context
           progress = parseInt(data.loaded / data.total * 100, 10)
           data.context.find('.bar').css('width', progress + '%').html(format_bitrate(data.bitrate))
+          data.context.find('.progress > span').remove()
 
       done: (e, data) ->
         content = build_content_object $uploadForm, data.files[0], data.result
