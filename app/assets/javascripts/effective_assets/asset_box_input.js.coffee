@@ -9,6 +9,10 @@ applySortable = ->
 $ -> applySortable()
 $(document).on 'page:change', -> applySortable()
 
+$(document).on 's3_file_added', (event, file) ->
+  obj = $(event.target)
+  obj.closest('.error').removeClass('error')
+  obj.parent().siblings('.help-inline,.inline-errors').remove()
 
 $(document).on 'click', 'a.attachment-remove', (event) ->
   event.preventDefault()
