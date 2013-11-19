@@ -21,7 +21,11 @@ module EffectiveAssetsHelper
     options_title = options.delete(:title)
     link_title = options_title || asset.title || asset.file_name || asset.description || "Asset ##{asset.id}"
 
-    link_to(link_title, _effective_asset_image_url(asset, version), options).gsub('"', "'").html_safe # we need all ' quotes or it breaks Insert as functionality
+    if asset.image?
+      link_to(link_title, _effective_asset_image_url(asset, version), options).gsub('"', "'").html_safe # we need all ' quotes or it breaks Insert as functionality
+    else
+      link_to(link_title, asset.url, options).gsub('"', "'").html_safe # we need all ' quotes or it breaks Insert as functionality
+    end
   end
 
   def effective_asset_video_tag(asset)
