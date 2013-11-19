@@ -49,6 +49,7 @@ $.fn.S3Uploader = (options) ->
 
         unless settings.before_add and not settings.before_add(file)
           current_files.push data
+          $uploadForm.trigger("s3_file_added", [e, file])
           if (template = settings.progress_bar_template).length > 0
             data.context = $($.trim(tmpl(template.html(), file)))
             $(data.context).appendTo(settings.progress_bar_target || $uploadForm)
