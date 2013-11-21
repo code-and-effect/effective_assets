@@ -153,7 +153,7 @@ module Effective
     end
 
     def title
-      self[:title].present? ? self[:title] : file_name
+      self[:title].present? ? self[:title] : URI.unescape(file_name)
     end
 
     # Return the final location of this asset
@@ -188,6 +188,10 @@ module Effective
 
     def versions_info
       self[:versions_info] || {}
+    end
+
+    def upload_file=(upload_file)
+      self[:upload_file] = URI.escape(upload_file)
     end
 
     protected
