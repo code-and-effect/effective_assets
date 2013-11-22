@@ -37,7 +37,9 @@ module Effective
         attachment.box = params[:box]
         attachment.position = 0
 
-        render :partial => 'asset_box_input/attachment', :locals => {:attachment => attachment}, :status => 200, :content_type => 'text/html'
+        partial = (params[:attachment_style].to_s == 'table' ? 'attachment_as_table' : 'attachment_as_thumbnail')
+
+        render :partial => "asset_box_input/#{partial}", :locals => {:attachment => attachment}, :status => 200, :content_type => 'text/html'
       else
         render :text => '', :status => 200
       end
