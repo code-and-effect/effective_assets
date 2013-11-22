@@ -93,7 +93,7 @@ end
 
 The user in this example is only valid if exists a fav_icon, 2 videos, and 5..10 images.
 
-### Uploading & AttachingF
+### Uploading & Attaching
 
 Use the custom Formtastic input for uploading (direct to S3) and attaching assets to the 'pictures' box.
 
@@ -102,6 +102,8 @@ Use the custom Formtastic input for uploading (direct to S3) and attaching asset
 = f.input :videos, :as => :asset_box, :limit => 2, :file_types => [:jpg, :gif, :png]
 
 = f.input :pictures, :as => :asset_box, :dialog => true, :dialog_url => '/admin/effective_assets' # Use the attach dialog
+
+:attachment_style => :table
 ```
 
 Use the custom SimpleForm input for uploading (direct to S3) and attaching assets to the 'pictures' box.
