@@ -18,7 +18,7 @@ module AssetBox
   end
 
   def header_html
-    "<div class='asset-box-input #{method.to_s.pluralize}' data-box='#{method.to_s.pluralize}' data-uploader='s3_#{@@uid}' data-limit='#{limit}' data-attachable-id='#{attachable_id}' data-attachable-type='#{attachable_type}' data-attachment-style='#{options[:attachment_style]}'>".html_safe
+    "<div class='asset-box-input #{method.to_s.pluralize}' data-box='#{method.to_s.pluralize}' data-uploader='s3_#{@@uid}' data-limit='#{limit}' data-attachable-id='#{attachable_id}' data-attachable-type='#{attachable_type}' data-attachable-object-name='#{attachable_object_name}' data-attachment-style='#{options[:attachment_style]}'>".html_safe
   end
 
   def footer_html
@@ -29,9 +29,6 @@ module AssetBox
     template.render(
       :partial => 'asset_box_input/uploader',
       :locals => {
-        :attachable_id => attachable_id,
-        :attachable_type => attachable_type,
-        :box => method.to_s.pluralize,
         :uid => @@uid,
         :limit => limit,
         :disabled => options[:disabled],
@@ -75,9 +72,9 @@ module AssetBox
         :partial => "asset_box_input/#{options[:attachment_style] == :table ? 'attachment_as_table' : 'attachment_as_thumbnail'}",
         :locals => {
           :attachment => attachment,
-          :attachable_type => attachable_type,
           :hidden => (count > attachments_limit),
-          :disabled => options[:disabled]
+          :disabled => options[:disabled],
+          :attachable_object_name => attachable_object_name,
         }
       )
     end.join.html_safe
@@ -94,6 +91,10 @@ module AssetBox
 
   def attachable_id
     options[:attachable_id] || (object.try(:id) rescue nil)
+  end
+
+  def attachable_object_name
+    builder.object_name
   end
 
   def limit

@@ -29,17 +29,18 @@ module Effective
       end
 
       # If the attachment information is present, then our input needs some attachment HTML
-      if params.key?(:attachable_type)
+      if params.key?(:attachable_object_name)
         attachment = Effective::Attachment.new
         attachment.attachable_type = params[:attachable_type].try(:classify)
         attachment.attachable_id = params[:attachable_id].try(:to_i) if params[:attachable_id].present? # attachable_id can be nil if we're on a New action
         attachment.asset_id = asset.try(:id)
         attachment.box = params[:box]
         attachment.position = 0
+        attachable_object_name = params[:attachable_object_name].to_s
 
         partial = (params[:attachment_style].to_s == 'table' ? 'attachment_as_table' : 'attachment_as_thumbnail')
 
-        render :partial => "asset_box_input/#{partial}", :locals => {:attachment => attachment}, :status => 200, :content_type => 'text/html'
+        render :partial => "asset_box_input/#{partial}", :locals => {:attachment => attachment, :attachable_object_name => attachable_object_name}, :status => 200, :content_type => 'text/html'
       else
         render :text => '', :status => 200
       end

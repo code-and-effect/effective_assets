@@ -1,4 +1,3 @@
-- attachable_type ||= attachment.attachable_type.titleize.gsub(" ", "_").gsub('/', '_').downcase
 - uid = (attachment.persisted? ? attachment.id : Time.now.to_f.to_s.split('.')[1] + Random.rand(10000).to_s)
 - hidden ||= false
 
@@ -12,7 +11,8 @@
       = link_to attachment.asset.title, attachment.asset.url, :target => '_blank'
 
   - if attachment.persisted?
-    = hidden_field_tag("#{attachable_type}[attachments_attributes][#{uid}][id]", attachment.id)
-  = hidden_field_tag("#{attachable_type}[attachments_attributes][#{uid}][asset_id]", attachment.asset_id)
-  = hidden_field_tag("#{attachable_type}[attachments_attributes][#{uid}][box]", attachment.box)
-  = hidden_field_tag("#{attachable_type}[attachments_attributes][#{uid}][_destroy]", attachment.marked_for_destruction? ? 1 : nil, :class => 'asset-box-remove')
+    = hidden_field_tag(attachable_object_name + "[attachments_attributes][#{uid}][id]", attachment.id)
+  = hidden_field_tag(attachable_object_name + "[attachments_attributes][#{uid}][asset_id]", attachment.asset_id)
+  = hidden_field_tag(attachable_object_name + "[attachments_attributes][#{uid}][box]", attachment.box)
+  = hidden_field_tag(attachable_object_name + "[attachments_attributes][#{uid}][_destroy]", attachment.marked_for_destruction? ? 1 : nil, :class => 'asset-box-remove')
+  = hidden_field_tag(attachable_object_name + "[attachments_attributes][#{uid}][position]", 1)
