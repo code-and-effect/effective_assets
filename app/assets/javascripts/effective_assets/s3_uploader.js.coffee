@@ -180,6 +180,7 @@ $.fn.S3Uploader = (options) ->
         content_type: file.filetype
         attachable_type: asset_box.data('attachable-type')
         attachable_id: asset_box.data('attachable-id')
+        attachable_object_name: asset_box.data('attachable-object-name')
         attachment_style: asset_box.data('attachment-style')
         box: asset_box.data('box')
       async: true

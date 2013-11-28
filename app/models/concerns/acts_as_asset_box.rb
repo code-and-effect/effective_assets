@@ -61,6 +61,8 @@ module ActsAsAssetBox
 
     class_eval do
       def attachments_attributes=(atts)
+        @last_atts == atts ? return : @last_atts = atts
+
         current_box = ''; position = 0
 
         atts.each do |k, v|
@@ -68,7 +70,7 @@ module ActsAsAssetBox
           atts[k]['position'] = (position += 1) if atts[k]['_destroy'] != '1'
         end
 
-        assign_nested_attributes_for_collection_association(:attachments, atts, {})
+        assign_nested_attributes_for_collection_association(:attachments, atts, mass_assignment_options)
       end
     end
   end
