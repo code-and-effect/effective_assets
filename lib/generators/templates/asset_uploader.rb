@@ -20,6 +20,18 @@ class AssetUploader < EffectiveAssetsUploader
   version :thumb, :if => :image? do
     process :resize_to_fit => [70, 70]
     process :record_info => :thumb
+    # process :watermark => [70, 70]
   end
+
+  # If you want to do a watermark, you can use something like this
+  # def watermark(width, height)
+  #   manipulate! do |image|
+  #     logo = MiniMagick::Image.open("#{ Rails.root }/app/assets/images/watermark.png")
+  #     logo.resize("#{ width }x#{ height }>")
+  #     result = image.composite(logo) do |comp|
+  #       comp.gravity "center"
+  #     end
+  #   end
+  # end
 
 end
