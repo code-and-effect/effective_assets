@@ -43,7 +43,7 @@ rake db:migrate
 If you intend to use the form helper method to display and upload assets, require the javascript in your application.js
 
 ```ruby
-//= require effective_addresses
+//= require effective_assets
 ```
 
 If you intend to use ActiveAdmin (optional, but highly recommended)
@@ -81,7 +81,7 @@ class User
 end
 ```
 
-Calling @user.fav_icon will return a single Effective::Asset.  Calling @user.pictures will return an array (relation) of Effective::Assets
+Calling @user.fav_icon will return a single Effective::Asset.  Calling @user.pictures will return an array of Effective::Assets
 
 To use with validations:
 
@@ -99,11 +99,10 @@ Use the custom Formtastic input for uploading (direct to S3) and attaching asset
 
 ```ruby
 = f.input :pictures, :as => :asset_box, :uploader => true
-= f.input :videos, :as => :asset_box, :limit => 2, :file_types => [:jpg, :gif, :png]
+= f.input :videos, :as => :asset_box, :limit => 2, :file_types => [:jpg, :gif, :png], :attachment_style => :table
 
 = f.input :pictures, :as => :asset_box, :dialog => true, :dialog_url => '/admin/effective_assets' # Use the attach dialog
 
-:attachment_style => :table
 ```
 
 Use the custom SimpleForm input for uploading (direct to S3) and attaching assets to the 'pictures' box.
@@ -179,7 +178,7 @@ Make your controller aware of the acts_as_asset_box passed parameters:
 
 ```ruby
 def permitted_params
-  params.permit(:attachments_attributes => [:id, :asset_id, :box, :_destroy])
+  params.require(:base_object).permit(:attachments_attributes => [:id, :asset_id, :attachable_type, :attachable_id, :position, :box, :_destroy])
 end
 ```
 

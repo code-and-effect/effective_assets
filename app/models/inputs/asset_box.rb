@@ -94,7 +94,7 @@ module AssetBox
   end
 
   def attachable_object_name
-    builder.object_name
+    (@builder || builder).object_name
   end
 
   def limit
