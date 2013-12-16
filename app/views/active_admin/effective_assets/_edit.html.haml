@@ -2,7 +2,7 @@
   = f.inputs "Asset" do
     %li
       %label.label Asset
-      %p.inline-hints= effective_asset_image_tag(asset, :thumb)
+      %p.inline-hints= effective_asset_image_tag(asset, nil, {:height => 100, :width => 100})
     %li
       %label.label Uploaded by
       %p
@@ -16,11 +16,11 @@
       %label.label Files
       %p.inline-hints{:style => 'font-style: normal'}
         - if asset.image?
-          = link_to "Original", assets_image_url(asset), :class => 'asset-insertable', :data => {'asset-id' => asset.id, 'asset' => effective_asset_image_tag(asset)}
+          = link_to "Original", _effective_asset_image_url(asset), :class => 'asset-insertable', :data => {'asset-id' => asset.id, 'asset' => effective_asset_image_tag(asset)}
           = "#{asset.width || '?'}x#{asset.height || '?'}px #{number_to_human_size(asset.data_size, :precision => 3)}"
           - asset.versions_info.each do |version, attributes|
             %br
-            = link_to "#{version.to_s.gsub('_',' ').titleize}", assets_image_url(asset, version), :class => 'asset-insertable', :data => {'asset-id' => asset.id, 'asset' => assets_image_tag(asset, version) }
+            = link_to "#{version.to_s.gsub('_',' ').titleize}", _effective_asset_image_url(asset, version), :class => 'asset-insertable', :data => {'asset-id' => asset.id, 'asset' => effective_asset_image_tag(asset, version) }
             = "#{attributes[:width]}x#{attributes[:height]}px #{number_to_human_size(attributes[:data_size], :precision => 3)}"
         - elsif asset.icon?
           = link_to asset.file_name, asset.image, :class => 'asset-insertable', :data => {'asset-id' => asset.id, 'asset' => effective_asset_image_tag(asset)}

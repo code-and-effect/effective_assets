@@ -17,7 +17,7 @@ if defined?(ActiveAdmin)
       selectable_column
 
       column 'Thumbnail' do |asset|
-        effective_asset_image_tag(asset, :thumb)
+        effective_asset_image_tag(asset, nil, {:height => 100, :width => 100})
       end
 
       column 'Title' do |asset|
@@ -39,7 +39,7 @@ if defined?(ActiveAdmin)
               li 'Generating additional sizes...'
               li "Please #{link_to 'Refresh', '#', :title => 'Refresh this page', :onclick => 'window.location.reload();'} in a moment.".html_safe
             else
-              asset.data.vers.each do |title, dimensions|
+              asset.versions_info.each do |title, dimensions|
                 li link_to "Insert as #{title.to_s.gsub('_',' ').titleize} (#{dimensions[:width]}x#{dimensions[:height]}px)", '#', :class => 'asset-insertable', :data => { 'asset-id' => asset.id, 'asset' => effective_asset_image_tag(asset) }
               end
             end
@@ -68,7 +68,7 @@ if defined?(ActiveAdmin)
         row :content_type
         row :created_at
         row :thumb do
-          effective_asset_image_tag(effective_asset, :thumb)
+          effective_asset_image_tag(effective_asset, nil, {:height => 100, :width => 100})
         end
         row :files do
           ul do
@@ -82,7 +82,7 @@ if defined?(ActiveAdmin)
 
               effective_asset.versions_info.each do |version, attributes|
                 li do
-                  a :href => effective_asset_image_url(effective_asset, version), :target => 'blank' do
+                  a :href => _effective_asset_image_url(effective_asset, version), :target => 'blank' do
                     "#{version.to_s.gsub('_',' ').titleize}"
                   end
                   span "#{attributes[:width]}x#{attributes[:height]}px #{number_to_human_size(attributes[:data_size], :precision => 3)}"
@@ -90,7 +90,7 @@ if defined?(ActiveAdmin)
               end
             else  # Asset is not an image
               li do
-                a :href => effetive_asset_image_url(effective_asset) do "#{effective_asset.file_name}" end
+                a :href => _effetive_asset_image_url(effective_asset) do "#{effective_asset.file_name}" end
               end
             end
           end
