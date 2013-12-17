@@ -48,7 +48,7 @@ module EffectiveAssetsHelper
     if asset.icon?
       asset.url
     elsif asset.image?
-      (version == nil or !asset.processed) ? asset.url : asset.url.insert(asset.url.rindex('/')+1, "#{version.to_s}_")
+      asset.url(version)
     elsif asset.audio?
       '/assets/mime-types/mp3.png'
     elsif asset.video?

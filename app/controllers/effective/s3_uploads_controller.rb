@@ -9,8 +9,11 @@ module Effective
     def create
       EffectiveAssets.authorized?(self, :create, Effective::Asset)
 
-      if (@asset = Effective::Asset.create_from_s3_uploader(current_user.try(:id)))
-        render(:text => {:id => @asset.id, :s3_key => @asset.s3_key_for_uploader}.to_json, :status => 200)
+      # Here we initialize an empty placeholder Asset, so we can reserve the ID
+      @asset = Effective::Asset.new(:user_id => ((current_user.try(:id) || 1) rescue 1), :upload_file => 'placeholder')
+
+      if @asset.save
+        render(:text => {:id => @asset.id, :s3_key => asset_s3_key(@asset)}.to_json, :status => 200)
       else
         render(:text => '', :status => 400)
       end
@@ -22,7 +25,7 @@ module Effective
       EffectiveAssets.authorized?(self, :update, asset)
 
       unless params[:skip_update]  # This is useful for the acts_as_asset_box Attach action
-        if Effective::Asset.update_from_s3_uploader(asset, params) == false
+        if update_placeholder_asset(asset, params) == false
           render :text => '', :status => :unprocessable_entity
           return
         end
@@ -32,7 +35,7 @@ module Effective
       if params.key?(:attachable_object_name)
         attachment = Effective::Attachment.new
         attachment.attachable_type = params[:attachable_type].try(:classify)
-        attachment.attachable_id = params[:attachable_id].try(:to_i) if params[:attachable_id].present? # attachable_id can be nil if we're on a New action
+        attachment.attachable_id = params[:attachable_id].try(:to_i)
         attachment.asset_id = asset.try(:id)
         attachment.box = params[:box]
         attachment.position = 0
@@ -44,6 +47,24 @@ module Effective
       else
         render :text => '', :status => 200
       end
+    end
+
+    private
+
+    def update_placeholder_asset(asset, opts)
+      asset.upload_file = opts[:upload_file]
+      asset.data_size = opts[:data_size]
+      asset.content_type = opts[:content_type]
+      asset.aws_acl = opts[:aws_acl]
+      asset.title = asset.title # This sets the Title from the filename
+      asset[:data] = asset.file_name  # Using asset[:data] rather than asset.data just makes CarrierWave work
+
+      # If our S3 Uploader has any issue uploading/saving the asset, destroy the placeholder empty one
+      asset.save ? true : (asset.try(:destroy) and false)
+    end
+
+    def asset_s3_key(asset)
+      "#{EffectiveAssets.aws_path.chomp('/')}/#{asset.id.to_i}/${filename}"
     end
 
   end

@@ -25,7 +25,7 @@ module Effective
       tags            :string
 
       content_type    :string, :validates => [:presence]
-      upload_file     :string    # The full url of the file, as originally uploaded
+      upload_file     :string, :validates => [:presence]    # The full url of the file, as originally uploaded
 
       processed       :boolean, :default => false
       aws_acl         :string, :default => 'public-read', :validates => [:presence, :inclusion => {:in => ['public-read', 'authenticated-read']}]
@@ -43,10 +43,9 @@ module Effective
 
     serialize :versions_info, Hash
 
-    #attr_accessible :title, :description, :tags, :content_type, :data_size, :upload_file, :user, :user_id, :id
-    #validates_presence_of :user_id
-
+    before_validation :set_content_type
     before_save :update_asset_dimensions
+    after_commit :enqueue_delayed_job
 
     default_scope order('created_at DESC')
 
@@ -72,9 +71,8 @@ module Effective
       def create_from_url(url, options = {})
         opts = {:upload_file => url, :user_id => 1, :aws_acl => EffectiveAssets.aws_acl}.merge(options)
 
-        Asset.create(opts).tap do |asset|
-          Effective::DelayedJob.new.process_asset(asset) if asset
-        end
+        asset = Asset.new(opts)
+        asset.save ? asset : false
       end
 
       # This loads the raw contents of a string into a file and uploads that file to s3
@@ -88,73 +86,12 @@ module Effective
         asset = Asset.new(opts)
         asset.data = AssetStringIO.new(filename, str)
 
-        if asset.save
-          Effective::DelayedJob.new.process_asset(asset)
-          asset
-        end
-      end
-
-      # A file is about to be uploaded from the FileUploader. We want to create an Asset to reserve the ID
-      # After the file is uploaded, the asset.update_and_process will be called
-      def create_from_s3_uploader(user_id)
-        asset = false
-
-        Asset.transaction do
-          begin
-            asset = Asset.create!(:user_id => user_id || 1)
-          rescue => e
-            Rails.logger.info e.message
-            Rails.logger.info e.backtrace.join('\n')
-            asset = false
-          end
-
-          raise ActiveRecord::Rollback unless asset
-        end
-
-        asset
-      end
-
-      # This is called by the S3_uplods_controller after a file is done uploading
-      def update_from_s3_uploader(asset, opts = {})
-        asset.upload_file = opts[:upload_file]
-        asset.title = asset.title
-        asset.data_size = opts[:data_size]
-        asset.content_type = opts[:content_type]
-        asset.aws_acl = opts[:aws_acl]
-        asset[:data] = asset.file_name  # Using asset[:data] rather than asset.data just makes CarrierWave work
-
-        if asset.save
-          Effective::DelayedJob.new.process_asset(asset)
-        end
+        asset.save ? asset : false
       end
     end # End of Class methods
 
-    before_validation do
-      if [nil, 'null', 'unknown', 'application/octet-stream', ''].include?(content_type)
-        self.content_type = case File.extname(URI.parse(public_url).path).downcase
-          when '.mp3' ; 'audio/mp3'
-          when '.mp4' ; 'video/mp4'
-          when '.mov' ; 'video/mov'
-          when '.m2v' ; 'video/m2v'
-          when '.m4v' ; 'video/m4v'
-          when '.3gp' ; 'video/3gp'
-          when '.3g2' ; 'video/3g2'
-          when '.avi' ; 'video/avi'
-          when '.jpg' ; 'image/jpg'
-          when '.gif' ; 'image/gif'
-          when '.png' ; 'image/png'
-          when '.bmp' ; 'image/bmp'
-          when '.ico' ; 'image/x-icon'
-          when '.txt' ; 'text/plain'
-          when '.doc' ; 'application/msword'
-          when '.docx' ; 'application/msword'
-          else ; 'unknown'
-        end
-      end
-    end
-
     def title
-      self[:title].present? ? self[:title] : URI.unescape(file_name)
+      self[:title].presence || URI.unescape(file_name)
     end
 
     def url(version = nil)
@@ -171,13 +108,8 @@ module Effective
       version.present? ? data.send(version).file.authenticated_url : data.file.authenticated_url
     end
 
-    # Returns the S3 Key needed for the uploader
-    def s3_key_for_uploader
-      "#{EffectiveAssets.aws_path.chomp('/')}/#{self.id.to_i}/${filename}"
-    end
-
     def file_name
-      public_url.split('/').last rescue public_url
+      upload_file.to_s.split('/').last rescue upload_file
     end
 
     def video?
@@ -201,13 +133,37 @@ module Effective
     end
 
     def upload_file=(upload_file)
-      self[:upload_file] = URI.escape(upload_file)
+      self[:upload_file] = URI.escape(upload_file || '')
     end
 
     protected
-     # Called in the DelayedJob
-     def update_asset_dimensions
-      if data.present? and data_changed? and image?
+
+    def set_content_type
+      if [nil, 'null', 'unknown', 'application/octet-stream', ''].include?(content_type)
+        self.content_type = case File.extname(URI.parse(public_url).path).downcase
+          when '.mp3' ; 'audio/mp3'
+          when '.mp4' ; 'video/mp4'
+          when '.mov' ; 'video/mov'
+          when '.m2v' ; 'video/m2v'
+          when '.m4v' ; 'video/m4v'
+          when '.3gp' ; 'video/3gp'
+          when '.3g2' ; 'video/3g2'
+          when '.avi' ; 'video/avi'
+          when '.jpg' ; 'image/jpg'
+          when '.gif' ; 'image/gif'
+          when '.png' ; 'image/png'
+          when '.bmp' ; 'image/bmp'
+          when '.ico' ; 'image/x-icon'
+          when '.txt' ; 'text/plain'
+          when '.doc' ; 'application/msword'
+          when '.docx' ; 'application/msword'
+          else ; 'unknown'
+        end
+      end
+    end
+
+    def update_asset_dimensions
+      if data.present? && data_changed? && image?
         begin
           image = MiniMagick::Image.open(self.data.path)
           self.width = image[:width]
@@ -217,6 +173,13 @@ module Effective
       end
       true
     end
+
+    def enqueue_delayed_job
+      if !self.processed && self.upload_file.present? && self.upload_file != 'placeholder'
+        Effective::DelayedJob.new.process_asset(self)
+      end
+    end
+
   end
 
   class AssetStringIO < StringIO
