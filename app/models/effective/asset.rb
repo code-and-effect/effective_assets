@@ -26,7 +26,9 @@ module Effective
 
       content_type    :string, :validates => [:presence]
       upload_file     :string    # The full url of the file, as originally uploaded
+
       processed       :boolean, :default => false
+      aws_acl         :string, :default => 'public-read', :validates => [:presence, :inclusion => {:in => ['public-read', 'authenticated-read']}]
 
       data            :string
 
@@ -53,13 +55,13 @@ module Effective
     scope :audio, -> { where('content_type LIKE ?', '%audio%') }
     scope :files, -> { where('(content_type NOT LIKE ?) AND (content_type NOT LIKE ?) AND (content_type NOT LIKE ?)', '%image%', '%video%', '%audio%') }
 
-    scope :today, -> { where("created_at >= ?", Date.today.beginning_of_day) }
-    scope :this_week, -> { where("created_at >= ?", Date.today.beginning_of_week) }
-    scope :this_month, -> { where("created_at >= ?", Date.today.beginning_of_month) }
+    scope :today, -> { where("created_at >= ?", Time.zone.today.beginning_of_day) }
+    scope :this_week, -> { where("created_at >= ?", Time.zone.today.beginning_of_week) }
+    scope :this_month, -> { where("created_at >= ?", Time.zone.today.beginning_of_month) }
 
     class << self
       def s3_base_path
-        "http://#{EffectiveAssets.aws_bucket}.s3.amazonaws.com"
+        "https://#{EffectiveAssets.aws_bucket}.s3.amazonaws.com/"
       end
 
       def string_base_path
@@ -68,13 +70,27 @@ module Effective
 
       # Just call me with Asset.create_from_url('http://somewhere.com/somthing.jpg')
       def create_from_url(url, options = {})
-        opts = {:upload_file => url, :user_id => 1}.merge(options)
+        opts = {:upload_file => url, :user_id => 1, :aws_acl => EffectiveAssets.aws_acl}.merge(options)
 
-        if (asset = Asset.create(opts))
+        Asset.create(opts).tap do |asset|
+          Effective::DelayedJob.new.process_asset(asset) if asset
+        end
+      end
+
+      # This loads the raw contents of a string into a file and uploads that file to s3
+      # Expect to be passed something like
+      # Asset.create_from_string('some binary stuff from a string', :filename => 'icon_close.png', :content_type => 'image/png')
+      def create_from_string(str, options = {})
+        filename = options.delete(:filename) || "file-#{Time.now.strftime('%Y-%m-%d-%H-%M-%S')}.txt"
+
+        opts = {:upload_file => "#{Asset.string_base_path}#{filename}", :user_id => 1, :aws_acl => EffectiveAssets.aws_acl}.merge(options)
+
+        asset = Asset.new(opts)
+        asset.data = AssetStringIO.new(filename, str)
+
+        if asset.save
           Effective::DelayedJob.new.process_asset(asset)
           asset
-        else
-          false
         end
       end
 
@@ -98,27 +114,24 @@ module Effective
         asset
       end
 
-      # This loads the raw contents of a string into a file and uploads that file to s3
-      # Expect to be passed something like
-      # Asset.create_from_string('some binary stuff from a string', :filename => 'icon_close.png', :content_type => 'image/png')
-      def create_from_string(str, options = {})
-        filename = options.delete(:filename) || "file-#{Time.now.strftime('%Y-%m-%d-%H-%M-%S')}.txt"
-
-        opts = {:upload_file => "#{Asset.string_base_path}#{filename}", :user_id => 1}.merge(options)
-
-        asset = Asset.new(opts)
-        asset.data = AssetStringIO.new(filename, str)
+      # This is called by the S3_uplods_controller after a file is done uploading
+      def update_from_s3_uploader(asset, opts = {})
+        asset.upload_file = opts[:upload_file]
+        asset.title = asset.title
+        asset.data_size = opts[:data_size]
+        asset.content_type = opts[:content_type]
+        asset.aws_acl = opts[:aws_acl]
+        asset[:data] = asset.file_name  # Using asset[:data] rather than asset.data just makes CarrierWave work
 
         if asset.save
           Effective::DelayedJob.new.process_asset(asset)
-          asset
         end
       end
-    end
+    end # End of Class methods
 
     before_validation do
       if [nil, 'null', 'unknown', 'application/octet-stream', ''].include?(content_type)
-        self.content_type = case File.extname(URI.parse(url).path).downcase
+        self.content_type = case File.extname(URI.parse(public_url).path).downcase
           when '.mp3' ; 'audio/mp3'
           when '.mp4' ; 'video/mp4'
           when '.mov' ; 'video/mov'
@@ -140,25 +153,22 @@ module Effective
       end
     end
 
-    # This is called by the S3_uplods_controller after a file is done uploading
-    def update_and_process(opts = {})
-      self.upload_file = opts[:upload_file]
-      self.data_size = opts[:data_size]
-      self.content_type = opts[:content_type]
-      self.title = title
-
-      if save
-        Effective::DelayedJob.new.process_asset(self)
-      end
-    end
-
     def title
       self[:title].present? ? self[:title] : URI.unescape(file_name)
     end
 
-    # Return the final location of this asset
-    def url
-      "#{Asset.s3_base_path}/#{EffectiveAssets.aws_path.chomp('/')}/#{self.id.to_i}/#{upload_file.to_s.split('/').last}"
+    def url(version = nil)
+      aws_acl == 'authenticated-read' ? authenticated_url(version) : public_url(version)
+    end
+
+    def public_url(version = nil)
+      uri = "#{Asset.s3_base_path.chomp('/')}/#{EffectiveAssets.aws_path.chomp('/')}/#{id.to_i}/#{upload_file.to_s.split('/').last}"
+      version.present? ? uri.insert(uri.rindex('/')+1, "#{version.to_s}_") : uri
+    end
+
+    def authenticated_url(version = nil, expire_in = 10.minutes)
+      data.fog_authenticated_url_expiration = expire_in
+      version.present? ? data.send(version).file.authenticated_url : data.file.authenticated_url
     end
 
     # Returns the S3 Key needed for the uploader
@@ -167,7 +177,7 @@ module Effective
     end
 
     def file_name
-      url.split('/').last rescue url
+      public_url.split('/').last rescue public_url
     end
 
     def video?

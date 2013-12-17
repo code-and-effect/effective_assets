@@ -5,45 +5,33 @@
 module Effective
   class DelayedJob
     def process_asset(asset)
-      if asset and !asset.processed? and asset.upload_file.present?
+      if asset.present? && !asset.processed? && asset.upload_file.present?
         begin
-          puts "Processing an asset ID ##{asset.id}..."
+          puts "Processing asset ##{asset.id} from #{asset.upload_file}."
 
-          if asset.upload_file.include?("#{Effective::Asset.s3_base_path}")
-            if asset.image?
-              puts "Asset is an image in our S3 assets directory.  Downloading and processing..."
-
-              # Carrierwave must download the file, process it, then re-upload it to S3
-              asset.remote_data_url = asset.upload_file
-              asset.processed = true
-              asset.save!
-            else
-              puts "Asset is a non-image in our S3 uploads directory.  Copying to final location..."
-
-              # We have uploaded a video, or something non-image to our S3 bucket.
-              # We do not currently process anything.
-
-              puts "Marking local asset as processed..."
-              asset.update_column(:data, asset.file_name)
-              asset.processed = true
-              asset.save!
-            end
-          elsif asset.upload_file.include?(Effective::Asset.string_base_path)
-            puts "Asset is a string-based asset.  Processing..."
+          if asset.upload_file.include?(Effective::Asset.string_base_path)
+            puts "String-based Asset processing and uploading..."
 
             asset.data.cache_stored_file!
             asset.data.retrieve_from_cache!(asset.data.cache_name)
             asset.data.recreate_versions!
-            asset.processed = true
-            asset.save!
+          elsif asset.upload_file.include?(Effective::Asset.s3_base_path)
+            puts "S3 Uploaded Asset downloading and processing..."
+            # Carrierwave must download the file, process it, then upload the generated versions to S3
+            # We only want to process if it's an image, so we don't download zips or videos
+            if asset.image?
+              asset.remote_data_url = asset.url
+            end
           else
-            puts "Asset is not an s3 uploaded asset.  Downloading and processing..."
+            puts "Non S3 Asset downloading and processing..."
 
-            # Carrierwave must download the file, process it, then re-upload it to S3
+            # Carrierwave must download the file, process it, then upload it and generated verions to S3
+            # We only want to process if it's an image, so we don't download zips or videos
             asset.remote_data_url = asset.upload_file
-            asset.processed = true
-            asset.save!
           end
+
+          asset.processed = true
+          asset.save!
 
           puts "Successfully processed the asset."
         rescue => e
@@ -58,7 +46,7 @@ module Effective
     def reprocess_all_assets
       Effective::Asset.all.each do |asset|
         begin
-          puts "Processing Asset ID=#{asset.id}..."
+          puts "Processing Asset ##{asset.id}..."
           asset.data.cache_stored_file!
           asset.data.retrieve_from_cache!(asset.data.cache_name)
           asset.data.recreate_versions!

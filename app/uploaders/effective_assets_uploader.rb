@@ -3,13 +3,25 @@ class EffectiveAssetsUploader < CarrierWave::Uploader::Base
   storage :fog
 
   def store_dir
-    "#{EffectiveAssets.aws_path.chomp('/')}/#{model.id}"
+    "#{EffectiveAssets.aws_path.chomp('/')}/#{model.id.to_i}"
   end
 
   # Returns a Hash as per the versions above
   # {:thumb=>{:width=>256, :height=>70}, :full_page=>{:width=>940, :height=>nil}}
   def versions_info
     @versions_info ||= calculate_versions_info
+  end
+
+  def fog_public
+    model.aws_acl == 'public-read' rescue true
+  end
+
+  def fog_authenticated_url_expiration
+    @fog_authenticated_url_expiration || 10.minutes
+  end
+
+  def fog_authenticated_url_expiration=(expires_in)
+    @fog_authenticated_url_expiration = expires_in
   end
 
   protected
