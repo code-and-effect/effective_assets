@@ -8,6 +8,8 @@ Includes an upload direct to Amazon S3 implementation based on jQuery-File-Uploa
 
 Both Formtastic and SimpleForm inputs for displaying, organizing, and uploading assets direct to s3.
 
+Works with AWS public-read and authenticated-read for easy secured downloads.
+
 Includes (optional but recommended) integration with ActiveAdmin
 
 ## Getting Started
@@ -52,7 +54,6 @@ Add to your ActiveAdmin.js file:
 
 ```ruby
 //= require effective_assets
-
 ```
 
 And to your ActiveAdmin stylesheet
@@ -69,29 +70,29 @@ If ActiveAdmin is installed, there will automatically be an 'Effective Assets' p
 
 ### Model
 
-When including the acts_as_asset_box mixin, the idea of 'boxes' is presented.  A box is just a category, which can have any name.
+Use the 'acts_as_asset_box' mixin to define a set of 'boxes' all your assets fall into.  A box is just a category, which can have any name.
 
 If the box is declared as a singular, 'photo', then it will be a singular asset.  When defined as a plural, 'photos', it will be a set of photos.
 
-The following will create 3 separate sets of assets:
+The following will create 4 separate sets of assets:
 
 ```ruby
 class User
-  acts_as_asset_box :fav_icon, :pictures, :logos
+  acts_as_asset_box :avatar, :photos, :videos, :mp3s
 end
 ```
 
-Calling @user.fav_icon will return a single Effective::Asset.  Calling @user.pictures will return an array of Effective::Assets
+Calling @user.avatar will return a single Effective::Asset.  Calling @user.photos will return an array of Effective::Assets
 
 To use with validations:
 
 ```ruby
 class User
-  acts_as_asset_box :fav_icon => true, :pictures => false, :videos => 2, :images => 5..10
+  acts_as_asset_box :avatar => true, :photos => false, :videos => 2, :mp3s => 5..10
 end
 ```
 
-The user in this example is only valid if exists a fav_icon, 2 videos, and 5..10 images.
+The user in this example is only valid if exists an avatar, 2 videos, and 5..10 mp3s.
 
 ### Uploading & Attaching
 
@@ -102,7 +103,6 @@ Use the custom Formtastic input for uploading (direct to S3) and attaching asset
 = f.input :videos, :as => :asset_box, :limit => 2, :file_types => [:jpg, :gif, :png], :attachment_style => :table
 
 = f.input :pictures, :as => :asset_box, :dialog => true, :dialog_url => '/admin/effective_assets' # Use the attach dialog
-
 ```
 
 Use the custom SimpleForm input for uploading (direct to S3) and attaching assets to the 'pictures' box.
@@ -114,11 +114,17 @@ Use the custom SimpleForm input for uploading (direct to S3) and attaching asset
 = f.input :pictures, :as => :asset_box_simple_form, :dialog => true, :dialog_url => '/admin/effective_assets' # Use the attach dialog
 ```
 
+You may also upload secure (AWS: 'authenticated-read') assets with the same uploader
+
+```ruby
+= f.input :pictures, :as => :asset_box_simple_form, :aws_acl => 'authenticated-read'
+```
+
 Note: Passing :limit => 2 will have no effect on a singular asset_box, which by definition has a limit of 1.
 
 We use the jQuery-File-Upload gem for direct-to-s3 uploading.  The process is as follows:
 
-- User sees the form and clicks Browse.  Selects 1 or more files, then clicks Start Uploading
+- User sees the form and clicks Browse.  Selects 1 or more files, then clicks Start Uploading.
 - The server makes a post to the S3UploadsController#create action to initialize an asset, and get a unique ID
 - The file is uploaded directly to its 'final' resting place. "assets/:id/filename"
 - A put is then made back to the effective#s3_uploads_controller#update which updates the Asset object and sets up a task in DelayedJob to process the asset (for image resizing)

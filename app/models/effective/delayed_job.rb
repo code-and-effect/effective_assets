@@ -5,7 +5,7 @@
 module Effective
   class DelayedJob
     def process_asset(asset)
-      if asset.present? && !asset.processed? && asset.upload_file.present?
+      if asset.present? && !asset.processed? && asset.upload_file.present? && asset.upload_file != 'placeholder'
         begin
           puts "Processing asset ##{asset.id} from #{asset.upload_file}."
 
