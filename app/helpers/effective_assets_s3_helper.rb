@@ -7,7 +7,7 @@ module EffectiveAssetsS3Helper
   end
 
   def s3_uploader_url
-    "https://s3.amazonaws.com/#{EffectiveAssets.aws_bucket}/"
+    Effective::Asset.s3_base_path.chomp('/') + '/'
   end
 
   # Copied and modified from https://github.com/waynehoover/s3_direct_upload/blob/master/lib/s3_direct_upload/form_helper.rb
@@ -17,7 +17,7 @@ module EffectiveAssetsS3Helper
         aws_access_key_id: EffectiveAssets.aws_access_key_id,
         aws_secret_access_key: EffectiveAssets.aws_secret_access_key,
         bucket: EffectiveAssets.aws_bucket,
-        acl: EffectiveAssets.aws_acl,
+        aws_acl: EffectiveAssets.aws_acl,
         expiration: 10.hours.from_now.utc.iso8601,
         max_file_size: 1000.megabytes,
         key_starts_with: "#{EffectiveAssets.aws_path.chomp('/')}/",
@@ -28,7 +28,7 @@ module EffectiveAssetsS3Helper
     def fields
       {
         :key => @options[:key],
-        :acl => @options[:acl],
+        :acl => @options[:aws_acl],
         'AWSAccessKeyId' => @options[:aws_access_key_id],
         :policy => policy,
         :signature => signature,
@@ -50,7 +50,7 @@ module EffectiveAssetsS3Helper
           ['content-length-range', 0, @options[:max_file_size]],
           ['starts-with','$content-type', @options[:content_type_starts_with] || ''],
           {:bucket => @options[:bucket]},
-          {:acl => @options[:acl]},
+          {:acl => @options[:aws_acl]},
           {:success_action_status => '201'}
         ] + (@options[:conditions] || [])
       }

@@ -22,7 +22,7 @@ module Effective
       EffectiveAssets.authorized?(self, :update, asset)
 
       unless params[:skip_update]  # This is useful for the acts_as_asset_box Attach action
-        if asset.update_and_process(params) == false
+        if Effective::Asset.update_from_s3_uploader(asset, params) == false
           render :text => '', :status => :unprocessable_entity
           return
         end

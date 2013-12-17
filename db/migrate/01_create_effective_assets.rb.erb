@@ -11,6 +11,7 @@ class CreateEffectiveAssets < ActiveRecord::Migration
       t.string  :upload_file
       t.string  :data
       t.boolean :processed, :default => false
+      t.string  :aws_acl, :default => 'public-read'
 
       t.integer :data_size
       t.integer :height

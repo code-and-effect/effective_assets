@@ -12,7 +12,7 @@ EffectiveAssets.setup do |config|
   config.aws_secret_access_key = ''
 
   config.aws_path = 'assets/'
-  config.aws_acl = 'public-read'
+  config.aws_acl = 'public-read' # Options are: public-read, authenticated-read can be overridden on the asset_box_input
 
   config.authorization_method = Proc.new { |controller, action, resource| can?(action, resource) }
 end

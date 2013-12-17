@@ -18,7 +18,7 @@ module AssetBox
   end
 
   def header_html
-    "<div class='asset-box-input #{method.to_s.pluralize}' data-box='#{method.to_s.pluralize}' data-uploader='s3_#{@@uid}' data-limit='#{limit}' data-attachable-id='#{attachable_id}' data-attachable-type='#{attachable_type}' data-attachable-object-name='#{attachable_object_name}' data-attachment-style='#{options[:attachment_style]}'>".html_safe
+    "<div class='asset-box-input #{method.to_s.pluralize}' data-box='#{method.to_s.pluralize}' data-uploader='s3_#{@@uid}' data-limit='#{limit}' data-attachable-id='#{attachable_id}' data-attachable-type='#{attachable_type}' data-attachable-object-name='#{attachable_object_name}' data-attachment-style='#{options[:attachment_style]}' data-aws-acl='#{options[:aws_acl]}'>".html_safe
   end
 
   def footer_html
@@ -33,7 +33,8 @@ module AssetBox
         :limit => limit,
         :disabled => options[:disabled],
         :file_types => options[:file_types],
-        :progress_bar_partial => options[:progress_bar_partial]
+        :progress_bar_partial => options[:progress_bar_partial],
+        :aws_acl => options[:aws_acl]
       }
     ).html_safe
   end
@@ -110,6 +111,7 @@ module AssetBox
       :dialog_url => '/admin/effective_assets',
       :disabled => false,
       :file_types => [:any],
+      :aws_acl => EffectiveAssets.aws_acl
     }.merge(super)
   end
 
