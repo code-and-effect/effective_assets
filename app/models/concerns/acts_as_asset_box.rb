@@ -80,16 +80,53 @@ module ActsAsAssetBox
 
   def assets(box = nil)
     box = (box.present? ? box.to_s : 'assets')
+    boxes = box.pluralize
 
-    if box == box.pluralize
-      attachments.select { |attachment| attachment.box == box }.map { |attachment| attachment.asset }
+    if box == boxes
+      attachments.select { |attachment| attachment.box == boxes }.map { |attachment| attachment.asset }
     else
-      attachments.to_a.find { |attachment| attachment.box == box.pluralize }.try(:asset)
+      attachments.to_a.find { |attachment| attachment.box == boxes }.try(:asset)
     end
   end
 
   def asset
     assets(:asset)
+  end
+
+  def add_to_asset_box(box, *assets)
+    box = (box.present? ? box.to_s : 'assets')
+    boxes = box.pluralize
+    assets = assets.flatten
+
+    return false unless assets.present? && assets.all? { |obj| obj.kind_of?(Effective::Asset) }
+
+    if box == boxes # If we're adding to a pluralized box, we want to add our attachment onto the end
+      pos = attachments.select { |attachment| attachment.box == boxes }.last.try(:position).to_i + 1
+    else # If we're adding to a singular box, we want our attachments to be on the front
+      pos = attachments.to_a.find { |attachment| attachment.box == boxes }.try(:position).to_i
+
+      # Push all the attachments forward
+      attachments.each { |att| att.position = (att.position + assets.length) if att.box == boxes }
+    end
+
+    # Build the attachments
+    assets.each_with_index do |asset, x|
+      attachments.build(
+        :asset_id => asset.id,
+        :attachable_type => self.class.name,
+        :attachable_id => self.id,
+        :position => (pos+x),
+        :box => boxes
+      )
+    end
+
+    attachments.sort_by!(&:position)
+
+    true
+  end
+
+  def add_to_asset_box!(box, *assets)
+    add_to_asset_box(box, assets) && save!
   end
 
 end
