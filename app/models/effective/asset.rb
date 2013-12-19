@@ -136,6 +136,10 @@ module Effective
       self[:upload_file] = URI.escape(upload_file || '')
     end
 
+    def to_s
+      title
+    end
+
     protected
 
     def set_content_type
