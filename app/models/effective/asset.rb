@@ -144,7 +144,7 @@ module Effective
 
     def set_content_type
       if [nil, 'null', 'unknown', 'application/octet-stream', ''].include?(content_type)
-        self.content_type = case File.extname(URI.parse(public_url).path).downcase
+        self.content_type = case File.extname(public_url).downcase
           when '.mp3' ; 'audio/mp3'
           when '.mp4' ; 'video/mp4'
           when '.mov' ; 'video/mov'
