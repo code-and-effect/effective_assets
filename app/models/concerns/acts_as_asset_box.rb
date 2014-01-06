@@ -111,13 +111,10 @@ module ActsAsAssetBox
 
     # Build the attachments
     assets.each_with_index do |asset, x|
-      attachments.build(
-        :asset_id => asset.id,
-        :attachable_type => self.class.name,
-        :attachable_id => self.id,
-        :position => (pos+x),
-        :box => boxes
-      )
+      attachment = self.attachments.build(:position => (pos+x), :box => boxes)
+      
+      attachment.attachable = self
+      attachment.asset = asset
     end
 
     attachments.sort_by!(&:position)
