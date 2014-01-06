@@ -21,9 +21,7 @@ Gem::Specification.new do |s|
   s.add_dependency "coffee-rails"
   s.add_dependency "delayed_job_active_record"
   s.add_dependency "fog", ">= 1.8.0"
-  s.add_dependency "formtastic"
   s.add_dependency "haml"
-  s.add_dependency "psych"
   s.add_dependency "migrant"
   s.add_dependency "mini_magick"
   s.add_dependency "jquery-fileupload-rails"
@@ -32,7 +30,6 @@ Gem::Specification.new do |s|
   s.add_development_dependency "rspec-rails"
   s.add_development_dependency "shoulda-matchers"
   s.add_development_dependency "sqlite3"
-  s.add_development_dependency "psych"
 
   s.add_development_dependency "guard"
   s.add_development_dependency "guard-rspec"
