@@ -74,7 +74,7 @@ if defined?(ActiveAdmin)
           ul do
             if effective_asset.image?
               li do
-                a :href => _effective_asset_image_url(effective_asset), :target => "blank" do
+                a :href => effective_asset.url, :target => "blank" do
                   "Original"
                 end
                 span "#{effective_asset.width || '?'}x#{effective_asset.height || '?'}px #{number_to_human_size(effective_asset.data_size, :precision => 3)}"
@@ -82,7 +82,7 @@ if defined?(ActiveAdmin)
 
               effective_asset.versions_info.each do |version, attributes|
                 li do
-                  a :href => _effective_asset_image_url(effective_asset, version), :target => 'blank' do
+                  a :href => effective_asset.url(version), :target => 'blank' do
                     "#{version.to_s.gsub('_',' ').titleize}"
                   end
                   span "#{attributes[:width]}x#{attributes[:height]}px #{number_to_human_size(attributes[:data_size], :precision => 3)}"
@@ -90,7 +90,7 @@ if defined?(ActiveAdmin)
               end
             else  # Asset is not an image
               li do
-                a :href => _effetive_asset_image_url(effective_asset) do "#{effective_asset.file_name}" end
+                a :href => effective_asset.url do "#{effective_asset.file_name}" end
               end
             end
           end
