@@ -81,6 +81,8 @@ module Effective
       def create_from_string(str, options = {})
         filename = options.delete(:filename) || "file-#{Time.now.strftime('%Y-%m-%d-%H-%M-%S')}.txt"
 
+        filename = URI.escape(filename).gsub(/%\d\d|[^a-zA-Z0-9.-]/, '_')  # Replace anything not A-Z, a-z, 0-9, . -
+
         opts = {:upload_file => "#{Asset.string_base_path}#{filename}", :user_id => 1, :aws_acl => EffectiveAssets.aws_acl}.merge(options)
 
         asset = Asset.new(opts)
