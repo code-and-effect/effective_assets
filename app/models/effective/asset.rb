@@ -47,7 +47,7 @@ module Effective
     before_save :update_asset_dimensions
     after_commit :enqueue_delayed_job
 
-    default_scope order('created_at DESC')
+    default_scope -> { order('created_at DESC') }
 
     scope :images, -> { where('content_type LIKE ?', '%image%') }
     scope :videos, -> { where('content_type LIKE ?', '%video%') }

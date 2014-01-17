@@ -12,6 +12,8 @@ Works with AWS public-read and authenticated-read for easy secured downloads.
 
 Includes (optional but recommended) integration with ActiveAdmin
 
+Rails 3.2.x and Rails4 support
+
 ## Getting Started
 
 Add to your Gemfile:
