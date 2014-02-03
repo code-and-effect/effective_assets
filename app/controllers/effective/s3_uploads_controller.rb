@@ -1,16 +1,17 @@
 module Effective
   class S3UploadsController < ApplicationController
     skip_authorization_check if defined?(CanCan)
+    skip_before_filter :verify_authenticity_token
 
     # When we create an Asset, we're effectively reserving the ID
     # But the Asset itself isn't really there or uploaded yet.
     # But we want to start uploading to the final s3 path
 
     def create
-      EffectiveAssets.authorized?(self, :create, Effective::Asset)
-
       # Here we initialize an empty placeholder Asset, so we can reserve the ID
       @asset = Effective::Asset.new(:user_id => ((current_user.try(:id) || 1) rescue 1), :upload_file => 'placeholder')
+
+      EffectiveAssets.authorized?(self, :create, @asset)
 
       if @asset.save
         render(:text => {:id => @asset.id, :s3_key => asset_s3_key(@asset)}.to_json, :status => 200)
@@ -20,12 +21,12 @@ module Effective
     end
 
     def update
-      asset = Effective::Asset.find(params[:id])
+      @asset = Effective::Asset.find(params[:id])
 
-      EffectiveAssets.authorized?(self, :update, asset)
+      EffectiveAssets.authorized?(self, :update, @asset)
 
       unless params[:skip_update]  # This is useful for the acts_as_asset_box Attach action
-        if update_placeholder_asset(asset, params) == false
+        if update_placeholder_asset(@asset, params) == false
           render :text => '', :status => :unprocessable_entity
           return
         end
@@ -36,14 +37,15 @@ module Effective
         attachment = Effective::Attachment.new
         attachment.attachable_type = params[:attachable_type].try(:classify)
         attachment.attachable_id = params[:attachable_id].try(:to_i)
-        attachment.asset_id = asset.try(:id)
+        attachment.asset_id = @asset.try(:id)
         attachment.box = params[:box]
         attachment.position = 0
         attachable_object_name = params[:attachable_object_name].to_s
+        attachment_actions = params[:attachment_actions]
 
         partial = (params[:attachment_style].to_s == 'table' ? 'attachment_as_table' : 'attachment_as_thumbnail')
 
-        render :partial => "asset_box_input/#{partial}", :locals => {:attachment => attachment, :attachable_object_name => attachable_object_name}, :status => 200, :content_type => 'text/html'
+        render :partial => "asset_box_input/#{partial}", :locals => {:attachment => attachment, :attachable_object_name => attachable_object_name, :attachment_actions => attachment_actions}, :status => 200, :content_type => 'text/html'
       else
         render :text => '', :status => 200
       end

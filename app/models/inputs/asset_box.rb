@@ -18,7 +18,7 @@ module AssetBox
   end
 
   def header_html
-    "<div class='asset-box-input #{method.to_s.pluralize}' data-box='#{method.to_s.pluralize}' data-uploader='s3_#{@@uid}' data-limit='#{limit}' data-attachable-id='#{attachable_id}' data-attachable-type='#{attachable_type}' data-attachable-object-name='#{attachable_object_name}' data-attachment-style='#{options[:attachment_style]}' data-aws-acl='#{options[:aws_acl]}'>".html_safe
+    "<div class='asset-box-input #{method.to_s.pluralize}' data-box='#{method.to_s.pluralize}' data-uploader='s3_#{@@uid}' data-limit='#{limit}' data-attachable-id='#{attachable_id}' data-attachable-type='#{attachable_type}' data-attachable-object-name='#{attachable_object_name}' data-attachment-style='#{options[:attachment_style]}' data-attachment-actions='#{options[:attachment_actions].to_json()}' data-aws-acl='#{options[:aws_acl]}'>".html_safe
   end
 
   def footer_html
@@ -64,8 +64,7 @@ module AssetBox
 
   def build_values_html
     count = 0
-    attachments_limit = limit
-
+    
     attachments.map do |attachment|
       count += 1 unless attachment.marked_for_destruction?
 
@@ -73,7 +72,8 @@ module AssetBox
         :partial => "asset_box_input/#{options[:attachment_style] == :table ? 'attachment_as_table' : 'attachment_as_thumbnail'}",
         :locals => {
           :attachment => attachment,
-          :hidden => (count > attachments_limit),
+          :attachment_actions => options[:attachment_actions].map(&:to_s),
+          :hidden => (count > limit),
           :disabled => options[:disabled],
           :attachable_object_name => attachable_object_name,
         }
@@ -107,6 +107,7 @@ module AssetBox
       :uploader => true,
       :progress_bar_partial => 'asset_box_input/progress_bar_template',
       :attachment_style => :thumbnail,  # or :table
+      :attachment_actions => [:delete],
       :dialog => false,
       :dialog_url => '/admin/effective_assets',
       :disabled => false,
