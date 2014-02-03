@@ -27,7 +27,7 @@ module EffectiveAssets
   end
 
   def self.authorized?(controller, action, resource)
-    raise ActiveResource::UnauthorizedAccess.new('') unless (controller || self).instance_exec(controller, action, resource, &EffectiveAssets.authorization_method)
+    raise Effective::AccessDenied.new() unless (controller || self).instance_exec(controller, action, resource, &EffectiveAssets.authorization_method)
     true
   end
 

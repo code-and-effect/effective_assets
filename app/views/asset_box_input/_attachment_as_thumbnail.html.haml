@@ -3,8 +3,9 @@
 
 %li.attachment{:style => "#{(attachment.marked_for_destruction? || hidden) ? 'display: none;' : ''}", :title => effective_asset_title(attachment.asset)}
   .thumbnail
-    %a.attachment-remove{:href => '#'}
-      %img{:src => asset_path('effective_assets/icon_close.png'), :alt => 'Delete'}
+    - if attachment_actions.include?('delete')
+      %a.attachment-remove{:href => '#'}
+        %img{:src => asset_path('effective_assets/icon_close.png'), :alt => 'Delete'}
     .attachment-image
       = effective_asset_image_tag(attachment.asset)
     .attachment-title

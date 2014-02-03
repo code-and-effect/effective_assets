@@ -1,16 +1,26 @@
 - uid = (attachment.persisted? ? attachment.id : Time.now.to_f.to_s.split('.')[1] + Random.rand(10000).to_s)
 - hidden ||= false
 
-%tr.attachment{:style => "#{(attachment.marked_for_destruction? || hidden) ? 'display: none;' : ''}", :title => effective_asset_title(attachment.asset)}
-  %td.attachment-title
+%tr.attachment{:style => "#{(attachment.marked_for_destruction? || hidden) ? 'display: none;' : ''}"}
+  %td.attachment-title{:title => effective_asset_title(attachment.asset)}
     = link_to attachment.asset.title, attachment.asset.url, :target => '_blank'
   %td.attachment-type
     = attachment.asset.content_type
   %td.attachment-size
     = number_to_human_size(attachment.asset.data_size)
   %td
-    %a.attachment-remove{:href => '#'}
-      %img{:src => asset_path('effective_assets/icon_close.png'), :alt => 'Delete'}
+    - if attachment_actions.include?('insert')
+      - asset = attachment.asset
+      - if asset.image? || asset.icon?
+        %a.btn.btn-primary.attachment-insert{:href => '#', 'data-asset' => effective_asset_image_tag(asset)} Insert
+      - elsif asset.video?
+        %a.btn.btn-primary.attachment-insert{:href => '#', 'data-asset' => effective_asset_video_tag(asset)} Insert
+      - else
+        %a.btn.btn-primary.attachment-insert{:href => '#', 'data-asset' => effective_asset_link_to(asset)} Insert
+
+    - if attachment_actions.include?('delete')
+      %a.attachment-remove{:href => '#', :title => 'Remove'}
+        %img{:src => asset_path('effective_assets/icon_close.png'), :alt => 'Remove'}
 
     - if attachment.persisted?
       = hidden_field_tag(attachable_object_name + "[attachments_attributes][#{uid}][id]", attachment.id)
