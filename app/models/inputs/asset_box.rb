@@ -18,7 +18,17 @@ module AssetBox
   end
 
   def header_html
-    "<div class='asset-box-input #{method.to_s.pluralize}' data-box='#{method.to_s.pluralize}' data-uploader='s3_#{@@uid}' data-limit='#{limit}' data-attachable-id='#{attachable_id}' data-attachable-type='#{attachable_type}' data-attachable-object-name='#{attachable_object_name}' data-attachment-style='#{options[:attachment_style]}' data-attachment-actions='#{options[:attachment_actions].to_json()}' data-aws-acl='#{options[:aws_acl]}'>".html_safe
+    "<div class='asset-box-input #{method.to_s.pluralize}' 
+      data-box='#{method.to_s.pluralize}' 
+      data-uploader='s3_#{@@uid}' 
+      data-limit='#{limit}' 
+      data-attachable-id='#{attachable_id}' 
+      data-attachable-type='#{attachable_type}' 
+      data-attachable-object-name='#{attachable_object_name}' 
+      data-attachment-style='#{options[:attachment_style]}' 
+      data-attachment-actions='#{options[:attachment_actions].to_json()}' 
+      data-aws-acl='#{options[:aws_acl]}'
+    >".html_safe
   end
 
   def footer_html
