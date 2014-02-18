@@ -13,12 +13,10 @@ $.fn.S3Uploader = (options) ->
 
   settings =
     url: ''
-    before_add: null
     remove_completed_progress_bar: true
     remove_failed_progress_bar: false
     progress_bar_target: null
     progress_bar_template: null
-    click_submit_target: null
     allow_multiple_files: true
     valid_s3_keys: ['key', 'acl', 'AWSAccessKeyId', 'policy', 'signature', 'success_action_status', 'X-Requested-With', 'content-type']
     create_asset_url: null
@@ -28,11 +26,6 @@ $.fn.S3Uploader = (options) ->
   $.extend settings, options
 
   current_files = []
-  forms_for_submit = []
-  if settings.click_submit_target
-    settings.click_submit_target.click ->
-      form.submit() for form in forms_for_submit
-      false
 
   setUploadForm = ->
     $uploadForm.fileupload
@@ -41,27 +34,21 @@ $.fn.S3Uploader = (options) ->
       add: (e, data) ->
         file = data.files[0]
 
+        # Check File Type
         if settings.file_types != 'any'
           types = new RegExp("(\.|\/)(#{settings.file_types})$")
           unless types.test(file.type) || types.test(file.name)
             alert("Unable to add #{file.name}.\n\nOnly #{settings.file_types.replace(/\|/g, ', ')} files allowed.")
             return false
 
-        unless settings.before_add and not settings.before_add(file)
-          current_files.push data
-          $uploadForm.trigger("s3_file_added", [e, file])
-          if (template = settings.progress_bar_template).length > 0
-            data.context = $($.trim(tmpl(template.html(), file)))
-            $(data.context).appendTo(settings.progress_bar_target || $uploadForm)
-          else if !settings.allow_multiple_files
-            data.context = settings.progress_bar_target
-          if settings.click_submit_target
-            if settings.allow_multiple_files
-              forms_for_submit.push data
-            else
-              forms_for_submit = [data]
-          else
-            data.submit()
+        # We're all good. Let's go ahead and add this
+        current_files.push data
+        $uploadForm.trigger("s3_file_added", [e, file])
+
+        template = settings.progress_bar_template
+        data.context = $($.trim(tmpl(template.html(), file)))
+        $(data.context).appendTo(settings.progress_bar_target)
+        data.submit()
 
       start: (e) ->
         $uploadForm.trigger("s3_uploads_start", [e])
@@ -73,7 +60,9 @@ $.fn.S3Uploader = (options) ->
           data.context.find('.progress > span').remove()
 
       done: (e, data) ->
-        content = build_content_object $uploadForm, data.files[0], data.result
+        console.log "DONE: #{data.files[0]} #{data.result}"
+
+        content = build_content_object($uploadForm, data.files[0], data.result)
 
         if settings.update_asset_url
           update_asset_and_load_attachment(content)
@@ -138,6 +127,12 @@ $.fn.S3Uploader = (options) ->
       content.filepath       = $uploadForm.find('input[name=key]').val().replace('/${filename}', '')
       content.url            = domain + content.filepath + '/' + encodeURIComponent(file.name)
 
+    console.log "THE URL WE GOT WAS"
+    console.log content.url
+
+    content.url              = s3urlDecode(content.url)
+    content.filepath         = s3urlDecode(content.filepath)
+
     content.filename         = file.name
     content.filesize         = file.size if 'size' of file
     content.lastModifiedDate = file.lastModifiedDate if 'lastModifiedDate' of file
@@ -151,6 +146,8 @@ $.fn.S3Uploader = (options) ->
 
   build_relativePath = (file) ->
     file.relativePath || (file.webkitRelativePath.split("/")[0..-2].join("/") + "/" if file.webkitRelativePath)
+
+  s3urlDecode = (url) -> url.replace(/%2F/g, "/")
 
   create_asset = (file) ->
     asset = 'false'
@@ -175,9 +172,10 @@ $.fn.S3Uploader = (options) ->
       url: settings.update_asset_url.replace(':id', file.asset_id)
       type: 'PUT'
       data:
-        upload_file: unescape(file.url)
+        upload_file: file.url
         data_size: file.filesize
         content_type: file.filetype
+        title: file.filename
         attachable_type: asset_box.data('attachable-type')
         attachable_id: asset_box.data('attachable-id')
         attachable_object_name: asset_box.data('attachable-object-name')
