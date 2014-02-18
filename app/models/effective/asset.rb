@@ -93,7 +93,7 @@ module Effective
     end # End of Class methods
 
     def title
-      self[:title].presence || URI.unescape(file_name)
+      self[:title].presence || file_name
     end
 
     def url(version = nil)
@@ -101,8 +101,11 @@ module Effective
     end
 
     def public_url(version = nil)
-      uri = "#{Asset.s3_base_path.chomp('/')}/#{EffectiveAssets.aws_path.chomp('/')}/#{id.to_i}/#{upload_file.to_s.split('/').last}"
-      version.present? ? uri.insert(uri.rindex('/')+1, "#{version.to_s}_") : uri
+      if data.present?
+        version.present? ? data.send(version).file.url : data.file.url
+      else
+       "#{Asset.s3_base_path.chomp('/')}/#{EffectiveAssets.aws_path.chomp('/')}/#{id.to_i}/#{file_name}"
+      end
     end
 
     def authenticated_url(version = nil, expire_in = 10.minutes)
@@ -134,10 +137,6 @@ module Effective
       self[:versions_info] || {}
     end
 
-    def upload_file=(upload_file)
-      self[:upload_file] = URI.escape(upload_file || '')
-    end
-
     def to_s
       title
     end
@@ -146,7 +145,7 @@ module Effective
 
     def set_content_type
       if [nil, 'null', 'unknown', 'application/octet-stream', ''].include?(content_type)
-        self.content_type = case File.extname(public_url).downcase
+        self.content_type = case File.extname(file_name).downcase
           when '.mp3' ; 'audio/mp3'
           when '.mp4' ; 'video/mp4'
           when '.mov' ; 'video/mov'

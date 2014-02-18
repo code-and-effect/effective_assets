@@ -42,7 +42,7 @@ class EffectiveAssetsUploader < CarrierWave::Uploader::Base
   def record_info(version)
     if model and model.respond_to?(:versions_info) and @file.present?
       info = {}
-      info[:data_size] = @file.size
+      info[:data_size] = @file.try(:size).to_i
 
       img = MiniMagick::Image.open(@file.file)
       info[:width] = img[:width]

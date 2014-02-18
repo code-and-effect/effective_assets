@@ -57,9 +57,8 @@ module Effective
       asset.upload_file = opts[:upload_file]
       asset.data_size = opts[:data_size]
       asset.content_type = opts[:content_type]
+      asset.title = opts[:title]
       asset.aws_acl = opts[:aws_acl]
-      asset.title = asset.title # This sets the Title from the filename
-      asset[:data] = asset.file_name  # Using asset[:data] rather than asset.data just makes CarrierWave work
 
       # If our S3 Uploader has any issue uploading/saving the asset, destroy the placeholder empty one
       asset.save ? true : (asset.try(:destroy) and false)
