@@ -59,6 +59,7 @@ module Effective
       asset.content_type = opts[:content_type]
       asset.title = opts[:title]
       asset.aws_acl = opts[:aws_acl]
+      asset[:data] = opts[:title]
 
       # If our S3 Uploader has any issue uploading/saving the asset, destroy the placeholder empty one
       asset.save ? true : (asset.try(:destroy) and false)

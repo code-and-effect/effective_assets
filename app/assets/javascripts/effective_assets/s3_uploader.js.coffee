@@ -142,7 +142,7 @@ $.fn.S3Uploader = (options) ->
   build_relativePath = (file) ->
     file.relativePath || (file.webkitRelativePath.split("/")[0..-2].join("/") + "/" if file.webkitRelativePath)
 
-  s3urlDecode = (url) -> url.replace(/%2F/g, "/")
+  s3urlDecode = (url) -> url.replace(/%2F/g, "/").replace(/\+/g, '%20')
 
   create_asset = (file) ->
     asset = 'false'
