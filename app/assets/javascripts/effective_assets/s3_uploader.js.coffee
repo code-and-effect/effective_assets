@@ -60,8 +60,6 @@ $.fn.S3Uploader = (options) ->
           data.context.find('.progress > span').remove()
 
       done: (e, data) ->
-        console.log "DONE: #{data.files[0]} #{data.result}"
-
         content = build_content_object($uploadForm, data.files[0], data.result)
 
         if settings.update_asset_url
@@ -127,9 +125,6 @@ $.fn.S3Uploader = (options) ->
       content.filepath       = $uploadForm.find('input[name=key]').val().replace('/${filename}', '')
       content.url            = domain + content.filepath + '/' + encodeURIComponent(file.name)
 
-    console.log "THE URL WE GOT WAS"
-    console.log content.url
-
     content.url              = s3urlDecode(content.url)
     content.filepath         = s3urlDecode(content.filepath)
 
@@ -187,9 +182,18 @@ $.fn.S3Uploader = (options) ->
       success: (data) ->
         asset_box.find('.attachments').prepend($(data))
 
-        limit = asset_box.data('limit') - 1
-        asset_box.find("input.asset-box-remove[value!='1']:gt(" + limit + ")").each -> $(this).closest('.attachment').hide()
-        asset_box.find("input.asset-box-remove[value!='1']:lt(" + limit + ")").each -> $(this).closest('.attachment').show()
+        limit = asset_box.data('limit')
+
+        asset_box.find("input.asset-box-remove").each (index) ->
+          if "#{$(this).val()}" == '1'  # If we're going to delete it...
+            $(this).closest('.attachment').hide()
+            limit = limit + 1
+            return
+
+          if index >= limit
+            $(this).closest('.attachment').hide()
+          else
+            $(this).closest('.attachment').show()
 
   format_bitrate = (bits) ->
     if typeof bits != 'number'
