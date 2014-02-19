@@ -17,6 +17,7 @@ $(document).on 's3_file_added', (event, file) ->
 $(document).on 'click', 'a.attachment-remove', (event) ->
   event.preventDefault()
   attachment_div = $(event.target).closest('.attachment')
+
   attachment_div.find('input.asset-box-remove').first().val(1)
   attachment_div.hide()
 
@@ -24,8 +25,16 @@ $(document).on 'click', 'a.attachment-remove', (event) ->
   asset_box_input = attachment_div.closest('div.asset-box-input')
   limit = asset_box_input.data('limit')
 
-  asset_box_input.find("input.asset-box-remove[value!='1']:gt(#{limit})").each -> $(this).closest('.attachment').hide()
-  asset_box_input.find("input.asset-box-remove[value!='1']:lt(#{limit})").each -> $(this).closest('.attachment').show()
+  asset_box_input.find("input.asset-box-remove").each (index) ->
+    if "#{$(this).val()}" == '1' # If we're going to delete it...
+      $(this).closest('.attachment').hide()
+      limit = limit + 1
+      return
+
+    if index >= limit
+      $(this).closest('.attachment').hide()
+    else
+      $(this).closest('.attachment').show()
 
 # This is the 'admin' insert assets screen
 $(document).on 'click', 'a.asset-box-dialog', (event) ->
