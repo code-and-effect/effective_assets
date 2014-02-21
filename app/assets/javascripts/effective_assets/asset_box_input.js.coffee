@@ -1,5 +1,5 @@
 applySortable = ->
-  $('.asset-box-input > .attachments').sortable
+  $(".asset-box-input .attachments").sortable
     items: '> .attachment'
     containment: 'parent'
     cursor: 'move'
@@ -36,59 +36,66 @@ $(document).on 'click', 'a.attachment-remove', (event) ->
     else
       $(this).closest('.attachment').show()
 
-# This is the 'admin' insert assets screen
-$(document).on 'click', 'a.asset-box-dialog', (event) ->
-  obj = $(event.target)
 
+# This is ActiveAdmin's Attach... functionality
+$(document).on 'click', 'a.asset-box-dialog', (event) ->
   event.preventDefault()
+
+  obj = $(event.target)
+  asset_box = obj.closest('.asset-box-input')
+
   dialog_frame = $(
     "<div title='Insert Asset'>" +
-      "<iframe id='wym_insert_asset_iframe' src='#{obj.data('dialog-url')}' width='100%' height='100%' marginWidth='0' marginHeight='0' frameBorder='0' scrolling='auto' title='Insert Asset'></iframe>" +
+      "<iframe id='effective_assets_iframe' src='#{obj.data('dialog-url')}' width='100%' height='100%' marginWidth='0' marginHeight='0' frameBorder='0' scrolling='auto' title='Insert Asset'></iframe>" +
     "</div>"
   )
 
   dialog_frame.dialog({
     modal: true,
-    height: $(window).height() * 0.85,
-    width: "85%",
-    close: (event, ui) -> $(this).remove()
+    closeOnEscape: true,
+    height: $(window).height() * 0.90,
+    width: "90%",
+    resizable: false,
+    appendTo: asset_box,
+    close: (event, ui) -> $(this).remove(),
     buttons: { Close: -> $(this).dialog("close") }
   })
 
-  asset_box = obj.closest('.asset-box-input')
+  $(".ui-widget-overlay").addClass('effective-assets-overlay')
+  $(".ui-dialog").addClass('effective-assets-dialog').css('left', ($(window).height() - $(window).height()*0.90) + 'px')
 
-  single_mode = (asset_box.data('limit') == 1)
-  attachable_id = asset_box.data('attachable-id')
-  attachable_type = asset_box.data('attachable-type')
-  attachable_box = asset_box.data('box')
-  authenticity_token = asset_box.closest('form').find("input[name='authenticity_token']").first().val()
-
-  $('#wym_insert_asset_iframe', dialog_frame).on 'load', ->
+  $('#effective_assets_iframe', dialog_frame).on 'load', ->
     $(this).contents().find('a.asset-insertable').on 'click', (event) ->
       event.preventDefault()
 
-      # This is a bit hacky and abuses the s3uploads#update controller
-      # Initialize a new Attachment and get the HTML for it.
-      $.ajax({
-        url: "/s3_uploads/#{$(this).data('asset-id')}",
-        complete: (jqXHR, textStatus) ->
-          asset_box.find('.attachments').prepend($(jqXHR.responseText))
+      $.ajax
+        url: "/s3_uploads/#{$(this).data('asset-id')}"
+        type: 'PUT'
+        data:
+          skip_update: true
+          attachable_type: asset_box.data('attachable-type')
+          attachable_id: asset_box.data('attachable-id')
+          attachable_object_name: asset_box.data('attachable-object-name')
+          attachment_style: asset_box.data('attachment-style')
+          attachment_actions: asset_box.data('attachment-actions')
+          aws_acl: asset_box.data('aws-acl')
+          box: asset_box.data('box')
+        async: true
+        success: (data) ->
+          asset_box.find('.attachments').prepend($(data))
 
-          limit = asset_box.data('limit') - 1
-          asset_box.find("input.asset-box-remove[value!='1']:gt(" + limit + ")").each -> $(this).closest('.attachment').hide()
-          asset_box.find("input.asset-box-remove[value!='1']:lt(" + limit + ")").each -> $(this).closest('.attachment').show()
+          limit = asset_box.data('limit')
 
-        global: false,
-        type: 'PUT',
-        dataType: 'script',
-        data: {
-          'authenticity_token' : authenticity_token,
-          'box'       : attachable_box,
-          'attachable_type' : attachable_type,
-          'attachable_id' : attachable_id,
-          'asset_id' : $(this).data('asset-id'),
-          'skip_update' : true
-        }
-      })
+          asset_box.find("input.asset-box-remove").each (index) ->
+            if "#{$(this).val()}" == '1'  # If we're going to delete it...
+              $(this).closest('.attachment').hide()
+              limit = limit + 1
+              return
 
-      if single_mode then dialog_frame.dialog("close")
+            if index >= limit
+              $(this).closest('.attachment').hide()
+            else
+              $(this).closest('.attachment').show()
+
+      if asset_box.data('limit') == 1 then dialog_frame.dialog("close")
+

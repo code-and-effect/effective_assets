@@ -1,0 +1,58 @@
+body.active_admin {
+  .asset-box-input {
+    @import "effective_assets/input_bootstrap";
+    margin-left: 20%;
+
+
+    .thumbnails { // This was added for active_admin
+      margin-left: 0px;
+      position: relative;
+      left: -20px;
+    }
+  }
+
+  @import "effective_assets/asset_box_input";
+
+  // This is for the ActiveAdmin Attach... functionality
+  .effective-assets-overlay {
+    background-color: rgba(0, 0, 0, 0.7);
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 1.0;
+    z-index: 2000;
+  }
+
+  .effective-assets-dialog {
+    position: fixed !important;
+    top: 40px !important;
+    z-index: 2001;
+
+    .ui-dialog-titlebar { display: none; }
+
+    .ui-dialog-buttonpane {
+      -moz-border-bottom-colors: none;
+      -moz-border-left-colors: none;
+      -moz-border-right-colors: none;
+      -moz-border-top-colors: none;
+      background: -moz-linear-gradient(-90deg, #EFEFEF, #DFE1E2) repeat scroll 0 0 rgba(0, 0, 0, 0);
+      border-color: #E6E6E6 #D4D4D4 #EEEEEE;
+      border-image: none;
+      border-style: solid;
+      border-width: 1px;
+      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.37);
+      color: #5E6469;
+      font-size: 1em;
+      font-weight: bold;
+      line-height: 18px;
+      margin-bottom: 0.5em;
+      padding: 5px 10px 3px;
+      text-shadow: 0 1px 0 #FFFFFF;
+
+      button { margin: 2px; }
+    }
+  }
+
+}
