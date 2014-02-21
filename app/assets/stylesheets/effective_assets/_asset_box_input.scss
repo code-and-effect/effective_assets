@@ -13,7 +13,6 @@
     .attachment {
       width: 128px;
       height: 110px;
-      margin-left: 10px;
 
       > div {
         position: relative;
@@ -76,9 +75,3 @@
   }
 }
 
-
-body.active_admin {
-  .asset-box-input {
-    margin-left: 20%;
-  }
-}

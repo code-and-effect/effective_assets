@@ -4,7 +4,7 @@ module Effective
   class AssetsController < ApplicationController
     layout false
 
-    def index
+    def index  # This is the Modal dialog
       EffectiveAssets.authorized?(self, :index, Effective::Asset.new(:user_id => current_user.try(:id)))
 
       @user_uploads = UserUploads.new(current_user)
