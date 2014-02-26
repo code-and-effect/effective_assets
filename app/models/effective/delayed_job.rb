@@ -38,6 +38,7 @@ module Effective
           puts "An error occurred while processing an asset:"
           puts e.message
           puts e.backtrace.inspect
+          raise RuntimeError
         end
       end
     end

@@ -96,8 +96,8 @@ module Effective
       self[:title].presence || file_name
     end
 
-    def url(version = nil)
-      aws_acl == 'authenticated-read' ? authenticated_url(version) : public_url(version)
+    def url(version = nil, expire_in = nil)
+      aws_acl == 'authenticated-read' ? authenticated_url(version, expire_in) : public_url(version)
     end
 
     def public_url(version = nil)
@@ -108,7 +108,7 @@ module Effective
       end
     end
 
-    def authenticated_url(version = nil, expire_in = 10.minutes)
+    def authenticated_url(version = nil, expire_in = 60.minutes)
       data.fog_authenticated_url_expiration = expire_in
       version.present? ? data.send(version).file.authenticated_url : data.file.authenticated_url
     end

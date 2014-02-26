@@ -63,7 +63,7 @@ And to your ActiveAdmin stylesheet
 ```ruby
 body.active_admin {
 }
-@import "effective_assets";
+@import "active_admin/effective_assets";
 ```
 
 If ActiveAdmin is installed, there will automatically be an 'Effective Assets' page.
