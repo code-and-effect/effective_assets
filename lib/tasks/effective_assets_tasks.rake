@@ -1,4 +1,5 @@
 # desc "Explaining what the task does"
-# task :effective_assets do
-#   # Task goes here
-# end
+task :reprocess_all_assets => :environment do
+  Effective::DelayedJob.new().reprocess_all_assets
+  Delayed::Worker.new().work_off
+end

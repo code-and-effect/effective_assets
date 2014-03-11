@@ -45,14 +45,14 @@ module Effective
     handle_asynchronously :process_asset
 
     def reprocess_all_assets
-      Effective::Asset.all.each do |asset|
+      Effective::Asset.where(:processed => true).find_each do |asset|
         begin
           puts "Processing Asset ##{asset.id}..."
           asset.data.cache_stored_file!
           asset.data.retrieve_from_cache!(asset.data.cache_name)
           asset.data.recreate_versions!
           asset.save!
-          puts "Successfully processed #{asset.inspect}"
+          puts "Successfully processed Asset ID=#{asset.id}"
         rescue => e
           puts  "ERROR: #{asset.id} -> #{e.to_s}"
         end
