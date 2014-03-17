@@ -4,9 +4,7 @@ $.fn.S3Uploader = (options) ->
 
   # support multiple elements
   if @length > 1
-    @each ->
-      $(this).S3Uploader options
-
+    @each -> $(this).S3Uploader options
     return this
 
   $uploadForm = this
@@ -52,6 +50,7 @@ $.fn.S3Uploader = (options) ->
 
       start: (e) ->
         $uploadForm.trigger("s3_uploads_start", [e])
+        disable_submit()
 
       progress: (e, data) ->
         if data.context
@@ -69,7 +68,10 @@ $.fn.S3Uploader = (options) ->
         $uploadForm.trigger("s3_upload_complete", [content])
 
         current_files.splice($.inArray(data, current_files), 1) # remove that element from the array
-        $uploadForm.trigger("s3_uploads_complete", [content]) unless current_files.length
+
+        unless current_files.length
+          $uploadForm.trigger("s3_uploads_complete", [content])
+          enable_submit()
 
       fail: (e, data) ->
         content = build_content_object $uploadForm, data.files[0], data.result
@@ -77,6 +79,7 @@ $.fn.S3Uploader = (options) ->
 
         data.context.fadeOut('slow', -> $(this).remove()) if data.context && settings.remove_failed_progress_bar # remove progress bar
         $uploadForm.trigger("s3_upload_failed", [content])
+        enable_submit()
 
       formData: (form) ->
         inputs = form.find($uploadForm).children('input')
@@ -194,6 +197,29 @@ $.fn.S3Uploader = (options) ->
             $(this).closest('.attachment').hide()
           else
             $(this).closest('.attachment').show()
+
+  disable_submit = ->
+    $uploadForm.data('effective-assets-uploading', true)
+
+    $uploadForm.closest('form').find('input[type=submit]').each ->
+      submit = $(this)
+      submit.data('effective-assets-original-label', submit.val()) if submit.data('effective-assets-original-label') == undefined
+      submit.prop('disabled', true)
+      submit.val('Uploading...')
+
+  enable_submit = ->
+    $uploadForm.data('effective-assets-uploading', false)
+
+    anyUploading = false
+    $uploadForm.closest('form').find('.asset-box-uploader').each ->
+      anyUploading = true if $(this).data('effective-assets-uploading') == true
+
+    unless anyUploading 
+      $uploadForm.closest('form').find('input[type=submit]').each ->
+        submit = $(this)
+        submit.val(submit.data('effective-assets-original-label') || 'Submit')
+        submit.prop('disabled', false)
+        submit.removeData('effective-assets-original-label')
 
   format_bitrate = (bits) ->
     if typeof bits != 'number'
