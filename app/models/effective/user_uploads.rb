@@ -4,7 +4,7 @@ module Effective
   class UserUploads < ActiveRecord::Base
     acts_as_asset_box :uploads
 
-    def initialize(user)
+    def initialize(user = nil)
       super()
       @column_types = {}
 
