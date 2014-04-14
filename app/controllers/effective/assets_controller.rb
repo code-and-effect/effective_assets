@@ -9,7 +9,15 @@ module Effective
 
       @user_uploads = UserUploads.new(current_user)
 
-      render 'assets/iframe'
+      render 'iframe_index'
+    end
+
+    def new  # This is a Modal dialog
+      EffectiveAssets.authorized?(self, :new, Effective::Asset.new(:user_id => current_user.try(:id)))
+
+      @user_uploads = UserUploads.new() # could pass current_user
+
+      render 'iframe_new'
     end
 
   end
