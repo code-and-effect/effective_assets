@@ -4,19 +4,17 @@
 %tr.attachment{:style => "#{(attachment.marked_for_destruction? || hidden) ? 'display: none;' : ''}"}
   %td.attachment-title{:title => effective_asset_title(attachment.asset)}
     = link_to attachment.asset.title, attachment.asset.url, :target => '_blank'
-  %td.attachment-type
-    = attachment.asset.content_type
   %td.attachment-size
     = number_to_human_size(attachment.asset.data_size)
   %td
     - if attachment_actions.include?('insert')
       - asset = attachment.asset
       - if asset.image? || asset.icon?
-        %a.btn.btn-primary.attachment-insert{:href => '#', 'data-asset' => effective_asset_image_tag(asset)} Insert
+        %a.btn.btn-primary.attachment-insert{:href => '#', 'data-asset-id' => asset.id, 'data-asset' => effective_asset_image_tag(asset)} Insert
       - elsif asset.video?
-        %a.btn.btn-primary.attachment-insert{:href => '#', 'data-asset' => effective_asset_video_tag(asset)} Insert
+        %a.btn.btn-primary.attachment-insert{:href => '#', 'data-asset-id' => asset.id, 'data-asset' => effective_asset_video_tag(asset)} Insert
       - else
-        %a.btn.btn-primary.attachment-insert{:href => '#', 'data-asset' => effective_asset_link_to(asset)} Insert
+        %a.btn.btn-primary.attachment-insert{:href => '#', 'data-asset-id' => asset.id, 'data-asset' => effective_asset_link_to(asset)} Insert
 
     - if attachment_actions.include?('delete')
       %a.attachment-remove{:href => '#', :title => 'Remove'}
