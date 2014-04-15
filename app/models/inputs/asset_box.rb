@@ -60,7 +60,6 @@ module AssetBox
           content_tag(:tr) do
             [
               content_tag(:th, 'Title'),
-              content_tag(:th, 'Type'),
               content_tag(:th, 'Size'),
               content_tag(:th)
             ].join().html_safe

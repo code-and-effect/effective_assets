@@ -52,7 +52,8 @@
   .uploads {
     .upload {
       border-top: solid 1px #CCC;
-      width: 400px;
+      width: 100%;
+      min-width: 400px;
       padding-top: 10px;
       margin-top: 10px;
 

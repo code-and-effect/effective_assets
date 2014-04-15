@@ -45,7 +45,7 @@ module Effective
 
     before_validation :set_content_type
     before_save :update_asset_dimensions
-    after_commit :enqueue_delayed_job
+    after_save :enqueue_delayed_job
 
     default_scope -> { order('created_at DESC') }
 
@@ -162,6 +162,8 @@ module Effective
           when '.txt' ; 'text/plain'
           when '.doc' ; 'application/msword'
           when '.docx' ; 'application/msword'
+          when '.xls' ; 'application/excel'
+          when '.xlsx' ; 'application/excel'
           else ; 'unknown'
         end
       end
