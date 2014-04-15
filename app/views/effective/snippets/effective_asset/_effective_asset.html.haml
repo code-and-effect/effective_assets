@@ -1,1 +1,6 @@
-= effective_asset.asset_id
+- asset = effective_asset.asset
+
+- if asset.image?
+  = effective_asset_image_tag(asset, nil, :class => effective_asset.html_class)
+- else
+  = effective_asset_link_to(asset, nil, :class => effective_asset.html_class)
