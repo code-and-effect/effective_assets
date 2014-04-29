@@ -92,6 +92,7 @@ module Effective
         if asset.save
           asset
          else
+          puts asset.errors.inspect
           Rails.logger.info asset.errors.inspect
           false
         end
