@@ -248,10 +248,14 @@ jQuery-File-Upload (https://github.com/blueimp/jQuery-File-Upload)
 
 ### Testing
 
-The test suite for this gem is unfortunately not yet complete.
+Testing uses the Combustion gem, for easier Rails Engine Testing.
 
-Run tests by:
+https://github.com/pat/combustion
+
+You will need a valid initializer in spec/internal/config/initializers/effective_assets.rb
+
+Run tests by
 
 ```ruby
-rake spec
+bundle exec guard
 ```

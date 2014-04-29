@@ -3,8 +3,8 @@ Gemfile.lock
 log/*.log
 pkg/
 tmp/
-spec/dummy/db/*.sqlite3
-spec/dummy/log/*.log
-spec/dummy/tmp/
-spec/dummy/.sass-cache
-spec/dummy/config/initializers/effective_assets.rb
+spec/internal/db/*.sqlite3
+spec/internal/log/*.log
+spec/internal/tmp/
+spec/internal/.sass-cache
+spec/internal/config/initializers/effective_assets.rb

@@ -24,10 +24,11 @@ module Effective
             end
           else
             puts "Non S3 Asset downloading and processing..."
+            puts "Downloading #{asset.url}"
 
             # Carrierwave must download the file, process it, then upload it and generated verions to S3
             # We only want to process if it's an image, so we don't download zips or videos
-            asset.remote_data_url = asset.url
+            asset.remote_data_url = asset.upload_file
           end
 
           asset.processed = true

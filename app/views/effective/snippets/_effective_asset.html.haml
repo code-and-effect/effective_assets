@@ -1,0 +1,8 @@
+- asset = effective_asset.asset
+
+- if asset.nil?
+  %img{:src => '#', :data => snippet_data(snippet)}
+- elsif asset.image?
+  = effective_asset_image_tag(asset, nil, {:data => snippet_data(snippet), :class => effective_asset.html_class})
+- else
+  = effective_asset_link_to(asset, nil, {:data => snippet_data(snippet), :class => effective_asset.html_class})

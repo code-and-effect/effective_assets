@@ -72,6 +72,7 @@ module Effective
         opts = {:upload_file => url, :user_id => 1, :aws_acl => EffectiveAssets.aws_acl}.merge(options)
 
         asset = Asset.new(opts)
+
         asset.save ? asset : false
       end
 
@@ -88,7 +89,12 @@ module Effective
         asset = Asset.new(opts)
         asset.data = AssetStringIO.new(filename, str)
 
-        asset.save ? asset : false
+        if asset.save
+          asset
+         else
+          Rails.logger.info asset.errors.inspect
+          false
+        end
       end
     end # End of Class methods
 
@@ -145,7 +151,7 @@ module Effective
 
     def set_content_type
       if [nil, 'null', 'unknown', 'application/octet-stream', ''].include?(content_type)
-        self.content_type = case File.extname(file_name).downcase
+        self.content_type = case File.extname(file_name).downcase.gsub(/\?.+/, '')
           when '.mp3' ; 'audio/mp3'
           when '.mp4' ; 'video/mp4'
           when '.mov' ; 'video/mov'

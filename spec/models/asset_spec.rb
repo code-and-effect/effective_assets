@@ -1,4 +1,5 @@
 require 'spec_helper'
+require 'factory_girl_rails'
 
 # Attributes
 describe Effective::Asset do
@@ -16,6 +17,8 @@ describe Effective::Asset do
     asset = Effective::Asset.create_from_url(image_url, {:title => 'a title', :description => 'a description', :tags => 'a tags', :user_id => 1})
 
     # A new asset should exist, and it should be unprocessed
+    asset.should_not eq false
+    
     asset.upload_file.should eq image_url
     asset.processed.should eq false
 
