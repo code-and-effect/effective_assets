@@ -9,8 +9,8 @@ if defined?(Effective::Snippets::Snippet)
           @asset ||= (Effective::Asset.where(:id => asset_id).first if asset_id)
         end
 
-        def snippet_inline
-          true
+        def snippet_tag
+          :span
         end
 
       end
