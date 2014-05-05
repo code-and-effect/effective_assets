@@ -70,7 +70,7 @@ module ActsAsAssetBox
           atts[k]['position'] = (position += 1) if atts[k]['_destroy'] != '1'
         end
 
-        assign_nested_attributes_for_collection_association(:attachments, atts, mass_assignment_options)
+        assign_nested_attributes_for_collection_association(:attachments, atts)
       end
     end
   end
