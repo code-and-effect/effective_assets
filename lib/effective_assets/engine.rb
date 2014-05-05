@@ -28,6 +28,10 @@ module EffectiveAssets
       eval File.read("#{config.root}/lib/generators/templates/effective_assets.rb")
     end
 
+    initializer "effective_assets.append_precompiled_assets" do |app|
+      Rails.application.config.assets.precompile += ['effective_assets.js', 'effective_assets_iframe.css']
+    end
+
     # ActiveAdmin (optional)
     # This prepends the load path so someone can override the assets.rb if they want.
     initializer 'effective_assets.active_admin' do
