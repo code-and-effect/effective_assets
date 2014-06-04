@@ -68,6 +68,77 @@ body.active_admin {
 
 If ActiveAdmin is installed, there will automatically be an 'Effective Assets' page.
 
+## Create/Configure an S3 Bucket
+
+You will need an AWS IAM user with sufficient priviledges and a properly configured S3 bucket to use with effective_assets
+
+### Log into AWS Console
+
+- Visit http://aws.amazon.com/console/
+- Click My Account from top-right and sign in with your AWS account.
+
+### Create an S3 Bucket
+
+- Click Services -> S3 from the top-left menu
+- Click Create Bucket
+  - Give the Bucket a name, and select the US Standard region
+
+### Configure CORS Permissions
+
+- From the S3 All Buckets Screen (as above)
+
+- Select the desired bucket to configure and select 'Properties'
+- Expand Permissions
+- Click 'Edit CORS Configuration' and enter the following
+
+```xml
+<CORSConfiguration>
+  <CORSRule>
+    <AllowedOrigin>*</AllowedOrigin>
+    <AllowedMethod>POST</AllowedMethod>
+    <AllowedHeader>*</AllowedHeader>
+  </CORSRule>
+</CORSConfiguration>
+```
+
+- Click Save
+
+The Bucket is now set up and ready to accept uploads, but we still need a user that has permission to access S3
+
+### Create an IAM User and record its AWS Access Keys
+
+- After logging in to your AWS console
+
+- Click Services -> IAM from the top-left
+
+- Select Users from the left-side menu
+- Click Create New Users
+- Create just one user with any name
+
+- Expand the Show User Security Credentials
+- This displays the AWS Access Key and Secret Access Key.
+- (important) These are the two values you should copy into the effective_assets.rb initializer file
+
+- Once the user is created, Click on the User and find the Permissions tab
+- Select Permissions tab
+- Click Attach User Policy
+- Scroll down and Select 'Amazon S3 Full Access'
+
+This user is now set up and ready to access the S3 Bucket previously created
+
+### Add S3 Access Keys
+
+Add the name of your S3 Bucket, Access Key and Secret Access Key to the config/effective_assets.rb initializer file.
+
+```ruby
+config.aws_bucket = 'my-bucket'
+config.aws_access_key_id = 'ABCDEFGHIJKLMNOP'
+config.aws_secret_access_key = 'xmowueroewairo74pacja1/werjow'
+```
+
+You should now be able to upload to this bucket. 
+
+
 ## Usage
 
 ### Model
