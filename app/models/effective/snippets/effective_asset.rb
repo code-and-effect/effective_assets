@@ -1,4 +1,4 @@
-if defined?(Effective::Snippets::Snippet)
+if defined?(EffectiveRegions)
   module Effective
     module Snippets
       class EffectiveAsset < Snippet
