@@ -117,7 +117,7 @@ module ActsAsAssetBox
       attachment.asset = asset
     end
 
-    attachments.sort_by!(&:position)
+    attachments.to_a.sort_by!(&:position)
 
     true
   end
