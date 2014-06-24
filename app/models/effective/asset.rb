@@ -50,6 +50,8 @@ module Effective
     default_scope -> { order('created_at DESC') }
 
     scope :images, -> { where('content_type LIKE ?', '%image%') }
+    scope :nonimages, -> { where('(content_type NOT LIKE ?)', '%image%') }
+    
     scope :videos, -> { where('content_type LIKE ?', '%video%') }
     scope :audio, -> { where('content_type LIKE ?', '%audio%') }
     scope :files, -> { where('(content_type NOT LIKE ?) AND (content_type NOT LIKE ?) AND (content_type NOT LIKE ?)', '%image%', '%video%', '%audio%') }
@@ -91,7 +93,7 @@ module Effective
 
         if asset.save
           asset
-         else
+        else
           puts asset.errors.inspect
           Rails.logger.info asset.errors.inspect
           false

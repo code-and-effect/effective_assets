@@ -59,6 +59,7 @@ module AssetBox
         content_tag(:thead) do
           content_tag(:tr) do
             [
+              content_tag(:th, 'Thumbnail'),
               content_tag(:th, 'Title'),
               content_tag(:th, 'Size'),
               content_tag(:th)

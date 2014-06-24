@@ -65,7 +65,4 @@ module EffectiveAssetsHelper
       '/assets/mime-types/file.png'
     end
   end
-
-
-
 end

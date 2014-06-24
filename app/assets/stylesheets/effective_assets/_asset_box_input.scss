@@ -9,6 +9,12 @@
 
 .asset-box-input {
 
+  tbody.attachments {
+    .attachment-image img {
+      max-height: 48px;
+    }
+  }
+
   ul.attachments {
     .attachment {
       width: 128px;

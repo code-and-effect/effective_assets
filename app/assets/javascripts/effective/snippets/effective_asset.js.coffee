@@ -1,17 +1,21 @@
 CKEDITOR.dialog.add 'effective_asset', (editor) ->
-  title: 'Effective Asset'
+  title: 'Insert File'
   minWidth: 650,
   minHeight: 500,
   contents: [
     {
       id: 'tab1',
-      label: 'Asset',
-      title: 'Asset',
+      label: 'File',
+      title: 'File',
       elements: [
+        {
+          type: 'html',
+          html: "<p>* NOTE: This screen is for non-image files only.  Please select 'Image' from the toolbar to work with images."
+        },
         {
           id: 'asset_id',
           type: 'text',
-          label: 'Asset ID',
+          label: 'File',
           setup: (widget) -> this.setValue(widget.data.asset_id)
           commit: (widget) -> widget.setData('asset_id', this.getValue()) if widget
         },
@@ -32,7 +36,7 @@ CKEDITOR.dialog.add 'effective_asset', (editor) ->
         {
           id: 'iframe-insert',
           type: 'html',
-          html: "<div><iframe class='effective_assets_iframe' style='width: 100%; height: 100%; min-height: 500px;' src='/effective/assets'></iframe></div>"
+          html: "<div><iframe class='effective_assets_iframe' style='width: 100%; height: 100%; min-height: 500px;' src='/effective/assets?only=nonimages'></iframe></div>"
           onLoad: (evt) ->
             dialog = evt.sender # This is the CKEditor.dialog
             iframe = $('#' + dialog.getContentElement('tab2', 'iframe-insert').domId).children('iframe').first()
@@ -46,11 +50,4 @@ CKEDITOR.dialog.add 'effective_asset', (editor) ->
       ] # /tab2 elements
     } # /tab2
   ] # /contents
-
-
-
-
-
-
-
 
