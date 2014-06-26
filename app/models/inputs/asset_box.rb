@@ -53,6 +53,10 @@ module AssetBox
     "<a href='#' class='asset-box-dialog' data-dialog-url='#{options[:dialog_url]}'>Attach...</a>".html_safe
   end
 
+  def filter_bar_html
+    "<input type='text' class='form-control filter-attachments' placeholder='Search'>".html_safe
+  end
+
   def attachments_html
     if options[:attachment_style] == :table
       content_tag(:table, :class => 'table') do
@@ -60,7 +64,7 @@ module AssetBox
           content_tag(:tr) do
             [
               content_tag(:th, 'Thumbnail'),
-              content_tag(:th, 'Title'),
+              content_tag(:th, 'Title'.html_safe + filter_bar_html),
               content_tag(:th, 'Size'),
               content_tag(:th)
             ].join().html_safe
@@ -117,7 +121,7 @@ module AssetBox
       :uploader => true,
       :progress_bar_partial => 'asset_box_input/progress_bar_template',
       :attachment_style => :thumbnail,  # or :table
-      :attachment_actions => [:delete],
+      :attachment_actions => [:delete], # or :insert
       :dialog => false,
       :dialog_url => '/admin/effective_assets',
       :disabled => false,

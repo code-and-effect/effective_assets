@@ -65,20 +65,20 @@ $.fn.S3Uploader = (options) ->
           update_asset_and_load_attachment(content)
 
         data.context.fadeOut('slow', -> $(this).remove()) if data.context && settings.remove_completed_progress_bar # remove progress bar
-        $uploadForm.trigger("s3_upload_complete", [content])
+        $uploadForm.trigger("s3_upload_complete", [$uploadForm, content])
 
         current_files.splice($.inArray(data, current_files), 1) # remove that element from the array
 
         unless current_files.length
-          $uploadForm.trigger("s3_uploads_complete", [content])
+          $uploadForm.trigger("s3_uploads_complete", [$uploadForm, content])
           enable_submit()
 
       fail: (e, data) ->
-        content = build_content_object $uploadForm, data.files[0], data.result
+        content = build_content_object($uploadForm, data.files[0], data.result)
         content.error_thrown = data.errorThrown
 
         data.context.fadeOut('slow', -> $(this).remove()) if data.context && settings.remove_failed_progress_bar # remove progress bar
-        $uploadForm.trigger("s3_upload_failed", [content])
+        $uploadForm.trigger("s3_upload_failed", [$uploadForm, content])
         enable_submit()
 
       formData: (form) ->
@@ -183,9 +183,12 @@ $.fn.S3Uploader = (options) ->
         box: asset_box.data('box')
       async: true
       success: (data) ->
-        asset_box.find('.attachments').prepend($(data))
-
         limit = asset_box.data('limit')
+
+        if limit == 10000 # Guard value for no limit
+          asset_box.find('.attachments').append($(data))
+        else 
+          asset_box.find('.attachments').prepend($(data))
 
         asset_box.find("input.asset-box-remove").each (index) ->
           if "#{$(this).val()}" == '1'  # If we're going to delete it...
@@ -197,6 +200,7 @@ $.fn.S3Uploader = (options) ->
             $(this).closest('.attachment').hide()
           else
             $(this).closest('.attachment').show()
+
 
   disable_submit = ->
     $uploadForm.data('effective-assets-uploading', true)

@@ -1,7 +1,3 @@
-#= require jquery-fileupload/basic
-#= require jquery-fileupload/vendor/tmpl
-#= require_tree ./effective_assets
-
 getCkEditorFuncNum = ->
   reParam = new RegExp( '(?:[\?&]|&)' + 'CKEditorFuncNum' + '=([^&]+)', 'i' )
   match = window.location.search.match(reParam)

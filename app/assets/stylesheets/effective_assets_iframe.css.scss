@@ -8,6 +8,15 @@ a.attachment-insert {
 
 body {
   font-family: Helvetica,Tahoma,Arial,sans-serif;
+  padding: 10px;
+}
+
+.form-control.filter-attachments {
+  display: inline;
+  font-weight: normal;
+  width: auto;
+  min-width: 50%;
+  margin-left: 10px;
 }
 
 @import "effective_assets/iframe_bootstrap";

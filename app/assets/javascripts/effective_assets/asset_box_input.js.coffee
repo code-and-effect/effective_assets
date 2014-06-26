@@ -99,3 +99,25 @@ $(document).on 'click', 'a.asset-box-dialog', (event) ->
 
       if asset_box.data('limit') == 1 then dialog_frame.dialog("close")
 
+
+#### FILTERING STUFF
+filter = (search, asset_box_input) ->
+  term = (search || '').toLowerCase()
+
+  asset_box_input.find('.attachments').first().find('.attachment').each (index) ->
+    attachment = $(this)
+
+    return if "#{attachment.find("input.asset-box-remove").first().val()}" == '1'
+
+    if term == '' || attachment.find('.attachment-title').text().toLowerCase().indexOf(term) > -1
+      attachment.show()
+    else
+      attachment.hide()
+
+$(document).on 'keyup', '.filter-attachments', (event) ->
+  obj = $(event.currentTarget)
+  filter(obj.val(), obj.closest('.asset-box-input'))
+
+$(document).on 's3_uploads_complete', (_, uploader) -> uploader.closest('.asset-box-input').find('.filter-attachments').val('')
+$(document).on 's3_upload_failed', (_, uploader) -> uploader.closest('.asset-box-input').find('.filter-attachments').val('')
+
