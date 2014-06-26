@@ -121,7 +121,7 @@ module AssetBox
       :uploader => true,
       :progress_bar_partial => 'asset_box_input/progress_bar_template',
       :attachment_style => :thumbnail,  # or :table
-      :attachment_actions => [:delete], # or :insert
+      :attachment_actions => [:remove], # or :insert, :delete, :remove
       :dialog => false,
       :dialog_url => '/admin/effective_assets',
       :disabled => false,

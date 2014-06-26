@@ -18,9 +18,12 @@
       - else
         %a.btn.btn-primary.attachment-insert{:href => '#', 'data-asset-id' => asset.id, 'data-asset' => effective_asset_link_to(asset)} Insert
 
-    - if attachment_actions.include?('delete')
+    - if attachment_actions.include?('remove')
       %a.attachment-remove{:href => '#', :title => 'Remove'}
         %img{:src => asset_path('effective_assets/icon_close.png'), :alt => 'Remove'}
+
+    - if attachment_actions.include?('delete')
+      = link_to 'Delete', destroy_effective_asset_path(attachment.asset), :class => 'btn btn-danger attachment-delete', :data => {:method => :delete, :confirm => "Are you sure? This cannot be undone!"}
 
     - if attachment.persisted?
       = hidden_field_tag(attachable_object_name + "[attachments_attributes][#{uid}][id]", attachment.id)

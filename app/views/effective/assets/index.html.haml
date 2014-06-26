@@ -14,4 +14,4 @@
 
   %body
     = simple_form_for @user_uploads, :url => '/' do |f|
-      = f.input :uploads, :as => :asset_box_simple_form, :label => false, :uploader => true, :attachment_style => :table, :attachment_actions => [:insert], :file_types => @file_types || :any
+      = f.input :uploads, :as => :asset_box_simple_form, :label => false, :uploader => true, :attachment_style => :table, :attachment_actions => [:insert, :delete], :file_types => @file_types || :any
