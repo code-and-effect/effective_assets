@@ -49,16 +49,16 @@ module Effective
 
     default_scope -> { order(:id) }
 
-    scope :images, -> { where('content_type LIKE ?', '%image%') }
-    scope :nonimages, -> { where('(content_type NOT LIKE ?)', '%image%') }
+    scope :images, -> { where("#{EffectiveAssets.assets_table_name}.content_type LIKE ?", '%image%') }
+    scope :nonimages, -> { where("(#{EffectiveAssets.assets_table_name}.content_type NOT LIKE ?)", '%image%') }
     
-    scope :videos, -> { where('content_type LIKE ?', '%video%') }
-    scope :audio, -> { where('content_type LIKE ?', '%audio%') }
-    scope :files, -> { where('(content_type NOT LIKE ?) AND (content_type NOT LIKE ?) AND (content_type NOT LIKE ?)', '%image%', '%video%', '%audio%') }
+    scope :videos, -> { where("#{EffectiveAssets.assets_table_name}.content_type LIKE ?", '%video%') }
+    scope :audio, -> { where("#{EffectiveAssets.assets_table_name}.content_type LIKE ?", '%audio%') }
+    scope :files, -> { where("(#{EffectiveAssets.assets_table_name}.content_type NOT LIKE ?) AND (#{EffectiveAssets.assets_table_name}.content_type NOT LIKE ?) AND (#{EffectiveAssets.assets_table_name}.content_type NOT LIKE ?)", '%image%', '%video%', '%audio%') }
 
-    scope :today, -> { where("created_at >= ?", Time.zone.today.beginning_of_day) }
-    scope :this_week, -> { where("created_at >= ?", Time.zone.today.beginning_of_week) }
-    scope :this_month, -> { where("created_at >= ?", Time.zone.today.beginning_of_month) }
+    scope :today, -> { where("#{EffectiveAssets.assets_table_name}.created_at >= ?", Time.zone.today.beginning_of_day) }
+    scope :this_week, -> { where("#{EffectiveAssets.assets_table_name}.created_at >= ?", Time.zone.today.beginning_of_week) }
+    scope :this_month, -> { where("#{EffectiveAssets.assets_table_name}.created_at >= ?", Time.zone.today.beginning_of_month) }
 
     class << self
       def s3_base_path
