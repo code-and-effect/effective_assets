@@ -51,6 +51,7 @@ module Effective
 
     scope :images, -> { where("#{EffectiveAssets.assets_table_name}.content_type LIKE ?", '%image%') }
     scope :nonimages, -> { where("(#{EffectiveAssets.assets_table_name}.content_type NOT LIKE ?)", '%image%') }
+    scope :nonplaceholder, -> { where("#{EffectiveAssets.assets_table_name}.upload_file != ?", 'placeholder') }
     
     scope :videos, -> { where("#{EffectiveAssets.assets_table_name}.content_type LIKE ?", '%video%') }
     scope :audio, -> { where("#{EffectiveAssets.assets_table_name}.content_type LIKE ?", '%audio%') }

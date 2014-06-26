@@ -1,4 +1,4 @@
-# This is basically for the EffectiveMercury Attach Asset thingy
+# This is basically for the CkEditor Pictures functionality
 
 module Effective
   class AssetsController < ApplicationController
@@ -7,7 +7,7 @@ module Effective
     def index  # This is the Modal dialog that is read by CKEDITOR
       EffectiveAssets.authorized?(self, :index, Effective::Asset.new(:user_id => current_user.try(:id)))
 
-      @assets = Effective::Asset.where(:user_id => current_user.try(:id)).where("#{EffectiveAssets.assets_table_name}.upload_file != ?", 'placeholder')
+      @assets = Effective::Asset.nonplaceholder.where(:user_id => current_user.try(:id))
 
       if params[:only] == 'images'
         @assets = @assets.merge(Effective::Asset.images)
@@ -18,6 +18,8 @@ module Effective
       end
 
       @user_uploads = UserUploads.new(@assets)
+
+      render 'iframe'
     end
 
     def destroy
