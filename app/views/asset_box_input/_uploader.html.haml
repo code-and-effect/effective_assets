@@ -21,4 +21,5 @@
         file_types: '<%= [file_types].flatten.join('|').to_s %>',
         create_asset_url: '<%= s3_uploads_url %>',
         update_asset_url: '<%= s3_uploads_url %>/:id',
+        dropZone: $("#s3_<%= uid %>").parent()
       });
