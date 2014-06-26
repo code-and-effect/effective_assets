@@ -12,7 +12,7 @@ $.fn.S3Uploader = (options) ->
   settings =
     url: ''
     remove_completed_progress_bar: true
-    remove_failed_progress_bar: false
+    remove_failed_progress_bar: true
     progress_bar_target: null
     progress_bar_template: null
     allow_multiple_files: true

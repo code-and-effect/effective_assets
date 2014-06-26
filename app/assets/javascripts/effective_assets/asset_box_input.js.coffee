@@ -119,5 +119,7 @@ $(document).on 'keyup', '.filter-attachments', (event) ->
   filter(obj.val(), obj.closest('.asset-box-input'))
 
 $(document).on 's3_uploads_complete', (_, uploader) -> uploader.closest('.asset-box-input').find('.filter-attachments').val('')
-$(document).on 's3_upload_failed', (_, uploader) -> uploader.closest('.asset-box-input').find('.filter-attachments').val('')
 
+$(document).on 's3_upload_failed', (_, uploader, content) -> 
+  uploader.closest('.asset-box-input').find('.filter-attachments').val('')
+  alert("An error occurred while uploading #{content.filename}.\n\nThe returned error message is: '#{content.error_thrown}'\n\nPlease try again.")
