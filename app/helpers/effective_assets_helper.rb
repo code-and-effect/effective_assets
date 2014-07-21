@@ -54,7 +54,7 @@ module EffectiveAssetsHelper
     elsif asset.video?
       asset_path('mime-types/video.png')
     elsif asset.content_type.include? 'msword'
-      asset_path('mime-types/word.png')
+      asset_path('mime-types/word.jpg')
     elsif asset.content_type.include? 'excel'
       asset_path('mime-types/excel.png')
     elsif asset.content_type.include? 'application/pdf'
