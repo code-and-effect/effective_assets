@@ -20,6 +20,8 @@ module EffectiveAssets
 
   mattr_accessor :authorization_method
 
+  mattr_accessor :use_active_admin
+
   def self.setup
     yield self
 

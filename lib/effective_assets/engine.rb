@@ -35,7 +35,7 @@ module EffectiveAssets
     # ActiveAdmin (optional)
     # This prepends the load path so someone can override the assets.rb if they want.
     initializer 'effective_assets.active_admin' do
-      if defined?(ActiveAdmin)
+      if defined?(ActiveAdmin) && EffectiveAssets.use_active_admin == true
         ActiveAdmin.application.load_paths.unshift Dir["#{config.root}/active_admin"]
       end
     end

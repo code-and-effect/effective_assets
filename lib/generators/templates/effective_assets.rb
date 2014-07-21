@@ -19,4 +19,7 @@ EffectiveAssets.setup do |config|
   config.aws_acl = 'public-read'
 
   config.authorization_method = Proc.new { |controller, action, resource| can?(action, resource) }
+
+  # Register Effective::Asset with ActiveAdmin if ActiveAdmin is present
+  config.use_active_admin = true
 end
