@@ -55,7 +55,8 @@ if defined?(ActiveAdmin)
 
         end
       end
-      default_actions
+
+      ActiveAdmin::VERSION.to_i >= 1 ? actions : default_actions
     end
 
     form :partial => "active_admin/effective_assets/form"
