@@ -23,7 +23,7 @@
         %img{:src => asset_path('effective_assets/icon_close.png'), :alt => 'Remove'}
 
     - if attachment_actions.include?('delete')
-      = link_to 'Delete', destroy_effective_asset_path(attachment.asset), :class => 'btn btn-danger attachment-delete', :data => {:method => :delete, :confirm => "Are you sure? This cannot be undone!"}
+      = link_to 'Delete', effective_assets.effective_asset_path(attachment.asset), :class => 'btn btn-danger attachment-delete', :data => {:method => :delete, :confirm => "Are you sure? This cannot be undone!"}
 
     - if attachment.persisted?
       = hidden_field_tag(attachable_object_name + "[attachments_attributes][#{uid}][id]", attachment.id)

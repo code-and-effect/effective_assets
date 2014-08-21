@@ -19,7 +19,7 @@
         remove_completed_progress_bar: true,
         allow_multiple_files: <%= limit > 1 %>,
         file_types: '<%= [file_types].flatten.join('|').to_s %>',
-        create_asset_url: '<%= s3_uploads_url %>',
-        update_asset_url: '<%= s3_uploads_url %>/:id',
+        create_asset_url: '<%= effective_assets.s3_uploads_url %>',
+        update_asset_url: '<%= effective_assets.s3_uploads_url %>/:id',
         dropZone: $("#s3_<%= uid %>").parent()
       });

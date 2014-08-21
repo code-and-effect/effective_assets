@@ -1,7 +1,6 @@
 module EffectiveAssets
   class Engine < ::Rails::Engine
     engine_name 'effective_assets'
-    isolate_namespace EffectiveAssets
 
     config.autoload_paths += Dir["#{config.root}/app/models/concerns"]
     config.autoload_paths += Dir["#{config.root}/app/models/inputs"]

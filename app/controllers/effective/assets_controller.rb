@@ -32,8 +32,8 @@ module Effective
         flash[:danger] = 'Unable to delete asset'
       end
 
-      redirect_to(:back) rescue redirect_to(effective_assets_path)
+      redirect_to(:back) rescue redirect_to(effective_assets.effective_assets_path)
     end
-    
+
   end
 end
