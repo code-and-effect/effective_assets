@@ -52,7 +52,7 @@ module Effective
     scope :images, -> { where("#{EffectiveAssets.assets_table_name}.content_type LIKE ?", '%image%') }
     scope :nonimages, -> { where("(#{EffectiveAssets.assets_table_name}.content_type NOT LIKE ?)", '%image%') }
     scope :nonplaceholder, -> { where("#{EffectiveAssets.assets_table_name}.upload_file != ?", 'placeholder') }
-    
+
     scope :videos, -> { where("#{EffectiveAssets.assets_table_name}.content_type LIKE ?", '%video%') }
     scope :audio, -> { where("#{EffectiveAssets.assets_table_name}.content_type LIKE ?", '%audio%') }
     scope :files, -> { where("(#{EffectiveAssets.assets_table_name}.content_type NOT LIKE ?) AND (#{EffectiveAssets.assets_table_name}.content_type NOT LIKE ?) AND (#{EffectiveAssets.assets_table_name}.content_type NOT LIKE ?)", '%image%', '%video%', '%audio%') }
@@ -149,6 +149,21 @@ module Effective
 
     def to_s
       title
+    end
+
+    def reprocess!
+      if processed
+        begin
+          Rails.logger.info "Processing Asset ##{id}..."
+          data.cache_stored_file!
+          data.retrieve_from_cache!(data.cache_name)
+          data.recreate_versions!
+          save!
+          Rails.logger.info "Successfully processed Asset ID=#{id}"
+        rescue => e
+          Rails.logger.info  "ERROR: #{id} -> #{e.to_s}"
+        end
+      end
     end
 
     protected

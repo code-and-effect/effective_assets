@@ -1,12 +1,12 @@
 # Effective Assets
 
-A full solution for managing assets (images, files, videos, etc).
+A Rails Engine full solution for managing assets (images, files, videos, etc).
 
 Attach one or more assets to any model with validations.
 
 Includes an upload direct to Amazon S3 implementation based on jQuery-File-Upload and image processing in the background with CarrierWave and DelayedJob
 
-Both Formtastic and SimpleForm inputs for displaying, organizing, and uploading assets direct to s3.
+Both Formtastic and SimpleForm inputs for displaying, organizing, and uploading assets direct to S3.
 
 Works with AWS public-read and authenticated-read for easy secured downloads.
 
@@ -19,7 +19,7 @@ Rails 3.2.x and Rails4 support
 Add to your Gemfile:
 
 ```ruby
-gem 'effective_assets'
+gem 'effective_assets', :git => 'https://github.com/code-and-effect/effective_assets'
 ```
 
 Run the bundle command to install it:
@@ -98,6 +98,10 @@ You will need an AWS IAM user with sufficient priviledges and a properly configu
     <AllowedMethod>POST</AllowedMethod>
     <AllowedHeader>*</AllowedHeader>
   </CORSRule>
+  <CORSRule>
+    <AllowedOrigin>*</AllowedOrigin>
+    <AllowedMethod>GET</AllowedMethod>
+  </CORSRule>
 </CORSConfiguration>
 ```
 
@@ -128,7 +132,7 @@ This user is now set up and ready to access the S3 Bucket previously created
 
 ### Add S3 Access Keys
 
-Add the name of your S3 Bucket, Access Key and Secret Access Key to the config/effective_assets.rb initializer file.
+Add the name of your S3 Bucket, Access Key and Secret Access Key to the config/initializers/effective_assets.rb file.
 
 ```ruby
 config.aws_bucket = 'my-bucket'
@@ -136,7 +140,7 @@ config.aws_access_key_id = 'ABCDEFGHIJKLMNOP'
 config.aws_secret_access_key = 'xmowueroewairo74pacja1/werjow'
 ```
 
-You should now be able to upload to this bucket. 
+You should now be able to upload to this bucket.
 
 
 ## Usage
@@ -173,7 +177,8 @@ Use the custom Formtastic input for uploading (direct to S3) and attaching asset
 
 ```ruby
 = f.input :pictures, :as => :asset_box, :uploader => true
-= f.input :videos, :as => :asset_box, :limit => 2, :file_types => [:jpg, :gif, :png], :attachment_style => :table
+
+= f.input :pictures, :as => :asset_box, :limit => 2, :file_types => [:jpg, :gif, :png], :attachment_style => :table
 
 = f.input :pictures, :as => :asset_box, :dialog => true, :dialog_url => '/admin/effective_assets' # Use the attach dialog
 ```
@@ -182,7 +187,8 @@ Use the custom SimpleForm input for uploading (direct to S3) and attaching asset
 
 ```ruby
 = f.input :pictures, :as => :asset_box_simple_form, :uploader => true
-= f.input :videos, :as => :asset_box_simple_form, :limit => 2, :file_types => [:jpg, :gif, :png]
+
+= f.input :pictures, :as => :asset_box_simple_form, :limit => 2, :file_types => [:jpg, :gif, :png]
 
 = f.input :pictures, :as => :asset_box_simple_form, :dialog => true, :dialog_url => '/admin/effective_assets' # Use the attach dialog
 ```
@@ -199,15 +205,15 @@ We use the jQuery-File-Upload gem for direct-to-s3 uploading.  The process is as
 
 - User sees the form and clicks Browse.  Selects 1 or more files, then clicks Start Uploading.
 - The server makes a post to the S3UploadsController#create action to initialize an asset, and get a unique ID
-- The file is uploaded directly to its 'final' resting place. "assets/:id/filename"
-- A put is then made back to the effective#s3_uploads_controller#update which updates the Asset object and sets up a task in DelayedJob to process the asset (for image resizing)
+- The file is uploaded directly to its 'final' resting place on S3 via Javascript uploader. "assets/:id/filename"
+- A put is then made back to the S3UploadsController#update which updates the Asset object and sets up a task in DelayedJob to process the asset (for image resizing)
 - An attachment is created, which joins the Asset to the parent Object (User in our example) in the appropriate position.
 - The DelayedJob task should be running and will handle any image resizing as defined by the AssetUploader
 - The asset will appear in the form, and the user may click&drag the asset around to set the position.
 
 ### Authorization
 
-All authorization checks are handled via the config.authorization_method found in the effective_assets.rb initializer.
+All authorization checks are handled via the config.authorization_method found in the config/initializers/effective_assets.rb initializer.
 
 It is intended for flow through to CanCan, but that is not required.
 
@@ -238,12 +244,12 @@ end
 The action will be one of :read, :create, :update, :destroy, :manage
 The resource will generally be the @asset, but in the case of :manage, it is Effective::Asset class.
 
-If the method or proc returns false (user is not authorized) an ActiveResource::UnauthorizedAccess exception will be raised
+If the method or proc returns false (user is not authorized) an Effective::AccessDenied exception will be raised
 
 You can rescue from this exception by adding the following to your application_controller.rb
 
 ```ruby
-rescue_from ActiveResource::UnauthorizedAccess do |exception|
+rescue_from Effective::AccessDenied do |exception|
   respond_to do |format|
     format.html { render 'static_pages/access_denied', :status => 403 }
     format.any { render :text => 'Access Denied', :status => 403 }
@@ -268,6 +274,24 @@ The installer created an uploaders/asset_uploader.rb which you can use to set up
 
 Some additional processing goes on to record final image dimensions and file sizes.
 
+If the uploader is changed, you can run this rake task to reprocess all assets
+
+```ruby
+bundle exec rake reprocess_all_assets
+```
+
+or start at a specific ID (and go up)
+
+```ruby
+bundle exec rake reprocess_all_assets[200]
+```
+
+or for an individual asset
+
+```ruby
+@asset = Effective::Asset.find(1)
+@asset.reprocess!
+```
 
 ### Helpers
 
@@ -277,6 +301,8 @@ To just get the URL of an asset
 @asset = @user.fav_icon
 @asset.url
   => "http://aws_bucket.s3.amazonaws.com/assets/1/my_favorite_icon.png
+@asset.url(:thumb)
+  => "http://aws_bucket.s3.amazonaws.com/assets/1/thumb_my_favorite_icon.png
 ```
 
 To display the asset as a link with an image (if its an image, or a mime-type appropriate icon if its not an image):
@@ -295,11 +321,6 @@ To display the asset as a link with no image
 effective_asset_link_to(asset, version = nil, options = {})
 ```
 
-### Integration
-
-The 'Insert Asset' functionality from this gem is used in effective_mercury and effective_rte
-
-
 ## License
 
 MIT License.  Copyright Code and Effect Inc. http://www.codeandeffect.com
@@ -317,7 +338,7 @@ DelayedJob (https://github.com/collectiveidea/delayed_job)
 jQuery-File-Upload (https://github.com/blueimp/jQuery-File-Upload)
 
 
-### Testing
+## Testing
 
 Testing uses the Combustion gem, for easier Rails Engine Testing.
 

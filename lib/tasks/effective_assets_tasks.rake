@@ -1,6 +1,9 @@
 # desc "Explaining what the task does"
-task :reprocess_all_assets => :environment do
-  Effective::DelayedJob.new().reprocess_all_assets
+# bundle exec rake reprocess_all_assets[34]
+task :reprocess_all_assets, [:start_at] => :environment do |t, args|
+  args.with_defaults(:start_at => 1)
+
+  Effective::DelayedJob.new().reprocess_all_assets(args.start_at)
   Delayed::Worker.new().work_off
 end
 

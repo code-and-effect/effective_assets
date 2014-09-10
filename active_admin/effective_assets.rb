@@ -43,6 +43,9 @@ if defined?(ActiveAdmin)
                 li link_to "Insert as #{title.to_s.gsub('_',' ').titleize} (#{dimensions[:width]}x#{dimensions[:height]}px)", '#', :class => 'asset-insertable', :data => { 'asset-id' => asset.id, 'asset' => effective_asset_image_tag(asset) }
               end
             end
+
+            li link_to 'Reprocess all Versions', reprocess_admin_effective_asset_path(asset)
+
           elsif asset.icon?
             li link_to 'Insert icon', '#', :class => 'asset-insertable', :data => { 'asset-id' => asset.id, 'asset' => effective_asset_image_tag(asset) }
 
@@ -52,7 +55,6 @@ if defined?(ActiveAdmin)
           else
             li link_to 'Insert link to file', '#', :class => 'asset-insertable', :data => { 'asset-id' => asset.id, 'asset' => effective_asset_link_to(asset) }
           end
-
         end
       end
 
@@ -97,6 +99,11 @@ if defined?(ActiveAdmin)
           end
         end
       end
+    end
+
+    member_action :reprocess, :method => :get do
+      asset = Effective::Asset.find(params[:id]).reprocess!
+      redirect_to admin_effective_assets_path
     end
   end
 end

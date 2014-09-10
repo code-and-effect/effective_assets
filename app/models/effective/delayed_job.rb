@@ -45,8 +45,8 @@ module Effective
     end
     handle_asynchronously :process_asset
 
-    def reprocess_all_assets
-      Effective::Asset.where(:processed => true).find_each do |asset|
+    def reprocess_all_assets(start_at = 1)
+      Effective::Asset.where(:processed => true).where("#{EffectiveAssets.assets_table_name}.id >= ?", start_at.to_i).find_each do |asset|
         begin
           puts "Processing Asset ##{asset.id}..."
           asset.data.cache_stored_file!

@@ -20,17 +20,40 @@ class AssetUploader < EffectiveAssetsUploader
   version :thumb, :if => :image? do
     process :resize_to_fit => [70, 70]
     process :record_info => :thumb
-    # process :watermark => [70, 70]
+    # process :watermark! => [70, 70]
+    # process :grayscale!
+    # process :transparent! => ['#3F7F42', '12%']
   end
 
   # If you want to do a watermark, you can use something like this
-  # def watermark(width, height)
+  # def watermark!(width, height)
   #   manipulate! do |image|
   #     logo = MiniMagick::Image.open("#{ Rails.root }/app/assets/images/watermark.png")
   #     logo.resize("#{ width }x#{ height }>")
   #     result = image.composite(logo) do |comp|
   #       comp.gravity "center"
   #     end
+  #   end
+  # end
+
+  # If you want to Grayscale images, you can use something like this
+  # def grayscale!
+  #   manipulate! do |image|
+  #     image.colorspace("Gray")
+  #     image = yield(image) if block_given?
+  #     image
+  #   end
+  # end
+
+  # If you want to make a certain color in the image transparent (assumes gif or png), you can use something like this
+  # def transparent!(color, fuzz)
+  #   manipulate! do |image|
+  #     image.transparent(color) do |cmd|
+  #       cmd.fuzz fuzz
+  #     end
+  #
+  #     image = yield(image) if block_given?
+  #     image
   #   end
   # end
 
