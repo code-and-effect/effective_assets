@@ -199,6 +199,27 @@ You may also upload secure (AWS: 'authenticated-read') assets with the same uplo
 = f.input :pictures, :as => :asset_box_simple_form, :aws_acl => 'authenticated-read'
 ```
 
+There is also a mechanism for collecting additional information from the upload form which will be set in the asset.extra field.
+This is still experimental.
+
+```ruby
+= semantic_form_for Product.new,  do |f|
+  = f.input :photos, :as => :asset_box
+  = f.semantic_fields_for :photos do |upload|
+    = upload.input :field1, :as => :string
+    = upload.input :field2, :as => :boolean
+```
+
+Here the semantic_fields_for will create some inputs with name
+
+```ruby
+product[photos][field1]
+product[photos][field2]
+```
+
+Any additional field like this will be passed to the Asset and populate the 'extra' Hash attribute
+
+
 Note: Passing :limit => 2 will have no effect on a singular asset_box, which by definition has a limit of 1.
 
 We use the jQuery-File-Upload gem for direct-to-s3 uploading.  The process is as follows:
@@ -210,6 +231,7 @@ We use the jQuery-File-Upload gem for direct-to-s3 uploading.  The process is as
 - An attachment is created, which joins the Asset to the parent Object (User in our example) in the appropriate position.
 - The DelayedJob task should be running and will handle any image resizing as defined by the AssetUploader
 - The asset will appear in the form, and the user may click&drag the asset around to set the position.
+
 
 ### Authorization
 

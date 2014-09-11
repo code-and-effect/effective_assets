@@ -7,7 +7,7 @@ $.fn.S3Uploader = (options) ->
     @each -> $(this).S3Uploader options
     return this
 
-  $uploadForm = this
+  $uploadForm = this  # the .asset-box-uploader div    .asset-box-input > [.attachments, .uploads, .asset-box-uploader]
 
   settings =
     url: ''
@@ -147,6 +147,26 @@ $.fn.S3Uploader = (options) ->
 
   s3urlDecode = (url) -> url.replace(/%2F/g, "/").replace(/\+/g, '%20')
 
+  extra_fields_for_asset = ->
+    # Any field in our form that shares our name like effective_asset[#{box}][something2] should be gotten
+    # And we return something2 => something2.value
+    box = $uploadForm.closest('.asset-box-input').data('box')
+    fields = $uploadForm.closest('form').find(":input[name*='[#{box}]']").serializeArray()
+
+    extra = {}
+
+    $.each fields, (i, field) ->
+      pieces = field.name.split('[').map (piece) -> piece.replace(']', '')
+
+      if (index_of_box = pieces.indexOf(box)) == -1
+        name = pieces.join()
+      else
+        name = pieces.slice(index_of_box+1, pieces.length).join()
+
+      extra[name] = field.value if name.length > 0
+
+    extra
+
   create_asset = (file) ->
     asset = 'false'
 
@@ -158,6 +178,7 @@ $.fn.S3Uploader = (options) ->
         title: file.name
         content_type: file.type
         data_size: file.size
+        extra: extra_fields_for_asset()
       async: false
       success: (data) -> asset = data
 
@@ -187,7 +208,7 @@ $.fn.S3Uploader = (options) ->
 
         if limit == 10000 # Guard value for no limit
           asset_box.find('.attachments').append($(data))
-        else 
+        else
           asset_box.find('.attachments').prepend($(data))
 
         asset_box.find("input.asset-box-remove").each (index) ->
@@ -218,7 +239,7 @@ $.fn.S3Uploader = (options) ->
     $uploadForm.closest('form').find('.asset-box-uploader').each ->
       anyUploading = true if $(this).data('effective-assets-uploading') == true
 
-    unless anyUploading 
+    unless anyUploading
       $uploadForm.closest('form').find('input[type=submit]').each ->
         submit = $(this)
         submit.val(submit.data('effective-assets-original-label') || 'Submit')

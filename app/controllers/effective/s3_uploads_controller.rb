@@ -10,6 +10,7 @@ module Effective
     def create
       # Here we initialize an empty placeholder Asset, so we can reserve the ID
       @asset = Effective::Asset.new(:user_id => ((current_user.try(:id) || 1) rescue 1), :upload_file => 'placeholder')
+      @asset.extra = params[:extra] if params[:extra].kind_of?(Hash)
 
       EffectiveAssets.authorized?(self, :create, @asset)
 

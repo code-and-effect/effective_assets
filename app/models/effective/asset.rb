@@ -21,8 +21,10 @@ module Effective
 
     structure do
       title           :string
+
       description     :text
       tags            :string
+      extra           :text
 
       content_type    :string, :validates => [:presence]
       upload_file     :string, :validates => [:presence]    # The full url of the file, as originally uploaded
@@ -42,6 +44,7 @@ module Effective
     end
 
     serialize :versions_info, Hash
+    serialize :extra, Hash
 
     before_validation :set_content_type
     before_save :update_asset_dimensions
@@ -104,6 +107,10 @@ module Effective
 
     def title
       self[:title].presence || file_name
+    end
+
+    def extra
+      self[:extra] || {}
     end
 
     def url(version = nil, expire_in = nil)
