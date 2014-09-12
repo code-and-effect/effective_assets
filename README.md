@@ -299,13 +299,19 @@ Some additional processing goes on to record final image dimensions and file siz
 If the uploader is changed, you can run this rake task to reprocess all assets
 
 ```ruby
-bundle exec rake reprocess_all_assets
+bundle exec rake reprocess_assets
 ```
 
 or start at a specific ID (and go up)
 
 ```ruby
-bundle exec rake reprocess_all_assets[200]
+bundle exec rake reprocess_assets[200]
+```
+
+or as a range
+
+```ruby
+bundle exec rake reprocess_assets[1, 300]
 ```
 
 or for an individual asset

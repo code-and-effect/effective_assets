@@ -4,7 +4,9 @@
 
 module Effective
   class DelayedJob
-    def process_asset(asset)
+    def process_asset(id)
+      asset = Effective::Asset.where(:id => id).first
+
       if asset.present? && !asset.processed? && asset.upload_file.present? && asset.upload_file != 'placeholder'
         begin
           puts "Processing asset ##{asset.id} from #{asset.upload_file}."
@@ -45,21 +47,10 @@ module Effective
     end
     handle_asynchronously :process_asset
 
-    def reprocess_all_assets(start_at = 1)
-      Effective::Asset.where(:processed => true).where("#{EffectiveAssets.assets_table_name}.id >= ?", start_at.to_i).find_each do |asset|
-        begin
-          puts "Processing Asset ##{asset.id}..."
-          asset.data.cache_stored_file!
-          asset.data.retrieve_from_cache!(asset.data.cache_name)
-          asset.data.recreate_versions!
-          asset.save!
-          puts "Successfully processed Asset ID=#{asset.id}"
-        rescue => e
-          puts  "ERROR: #{asset.id} -> #{e.to_s}"
-        end
-      end
+    def reprocess_asset(id)
+      Effective::Asset.find(id).reprocess!
     end
-    handle_asynchronously :reprocess_all_assets
+    handle_asynchronously :reprocess_asset
 
   end
 end

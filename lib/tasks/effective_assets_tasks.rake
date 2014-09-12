@@ -1,10 +1,35 @@
-# desc "Explaining what the task does"
-# bundle exec rake reprocess_all_assets[34]
-task :reprocess_all_assets, [:start_at] => :environment do |t, args|
-  args.with_defaults(:start_at => 1)
+# rake reprocess_assets
+#
+# To reprocess every Asset:         rake reprocess_assets
+# Or reprocess from ID=100 and up:  rake reprocess_assets[100]
+# Or reprocess from ID=100 to 200:  rake reprocess_assets[100, 200]
 
-  Effective::DelayedJob.new().reprocess_all_assets(args.start_at)
-  Delayed::Worker.new().work_off
+# desc "Reprocesses Effective::Assets and generate versions as per the current app/uploaders/asset_uploader.rb"
+task :reprocess_assets, [:start_at, :end_at] => :environment do |t, args|
+  args.with_defaults(:start_at => 1, :end_at => Effective::Asset.unscoped.maximum(:id))
+  ids = Range.new(args.start_at.to_i, args.end_at.to_i)
+
+  puts "Enqueuing reprocess asset jobs on the Delayed::Job queue..."
+
+  Effective::Asset.where(:processed => true).where(:id => ids).pluck(:id).each do |id|
+    Effective::DelayedJob.new().reprocess_asset(id)
+  end
+
+  puts ''
+  puts "Success. Reprocessing jobs for each Effective::Asset (IDs #{ids.to_s}) have been created on the Delayed::Job queue."
+  puts "If a worker process is running, the reprocessing will have already begun. Otherwise, press Y to run immediately."
+
+  puts ''
+  puts "Start reprocessing right now in this process (Y/N)?"
+
+  if STDIN.gets.chomp.upcase == 'Y'
+    puts 'Starting immediately...'
+    Delayed::Worker.new().work_off
+  else
+    puts "Exitting."
+    puts "Run 'bundle exec rake jobs:work' to begin the worker process or open rails console and run Delayed::Job.delete_all"
+  end
+
 end
 
 namespace :effective_assets do

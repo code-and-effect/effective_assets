@@ -159,17 +159,22 @@ module Effective
     end
 
     def reprocess!
-      if processed
-        begin
-          Rails.logger.info "Processing Asset ##{id}..."
-          data.cache_stored_file!
-          data.retrieve_from_cache!(data.cache_name)
-          data.recreate_versions!
-          save!
-          Rails.logger.info "Successfully processed Asset ID=#{id}"
-        rescue => e
-          Rails.logger.info  "ERROR: #{id} -> #{e.to_s}"
-        end
+      begin
+        Rails.logger.info "Reprocessing Asset ##{id}..."
+        print "Reprocessing Asset ##{id}..."
+
+        raise StandardError.new('must be processed first before reprocessed') unless processed?
+
+        data.cache_stored_file!
+        data.retrieve_from_cache!(data.cache_name)
+        data.recreate_versions!
+        save!
+
+        Rails.logger.info "Successfully reprocessed Asset ID=#{id}"
+        print "success"; puts ''
+      rescue => e
+        Rails.logger.info  "Error: #{id} -> #{e.to_s}"
+        print "error: #{e.to_s}"; puts ''
       end
     end
 
@@ -215,7 +220,7 @@ module Effective
 
     def enqueue_delayed_job
       if !self.processed && self.upload_file.present? && self.upload_file != 'placeholder'
-        Effective::DelayedJob.new.process_asset(self)
+        Effective::DelayedJob.new.process_asset(self.id)
       end
     end
 
