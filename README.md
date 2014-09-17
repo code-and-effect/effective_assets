@@ -14,7 +14,7 @@ Includes (optional but recommended) integration with ActiveAdmin
 
 Rails 3.2.x and Rails4 support
 
-## Getting Started
+# Getting Started
 
 Add to your Gemfile:
 
@@ -68,22 +68,22 @@ body.active_admin {
 
 If ActiveAdmin is installed, there will automatically be an 'Effective Assets' page.
 
-## Create/Configure an S3 Bucket
+# Create/Configure an S3 Bucket
 
 You will need an AWS IAM user with sufficient priviledges and a properly configured S3 bucket to use with effective_assets
 
-### Log into AWS Console
+## Log into AWS Console
 
 - Visit http://aws.amazon.com/console/
 - Click My Account from top-right and sign in with your AWS account.
 
-### Create an S3 Bucket
+## Create an S3 Bucket
 
 - Click Services -> S3 from the top-left menu
 - Click Create Bucket
   - Give the Bucket a name, and select the US Standard region
 
-### Configure CORS Permissions
+## Configure CORS Permissions
 
 - From the S3 All Buckets Screen (as above)
 
@@ -109,7 +109,7 @@ You will need an AWS IAM user with sufficient priviledges and a properly configu
 
 The Bucket is now set up and ready to accept uploads, but we still need a user that has permission to access S3
 
-### Create an IAM User and record its AWS Access Keys
+## Create an IAM User and record its AWS Access Keys
 
 - After logging in to your AWS console
 
@@ -130,7 +130,7 @@ The Bucket is now set up and ready to accept uploads, but we still need a user t
 
 This user is now set up and ready to access the S3 Bucket previously created
 
-### Add S3 Access Keys
+## Add S3 Access Keys
 
 Add the name of your S3 Bucket, Access Key and Secret Access Key to the config/initializers/effective_assets.rb file.
 
@@ -143,9 +143,9 @@ config.aws_secret_access_key = 'xmowueroewairo74pacja1/werjow'
 You should now be able to upload to this bucket.
 
 
-## Usage
+# Usage
 
-### Model
+## Model
 
 Use the 'acts_as_asset_box' mixin to define a set of 'boxes' all your assets fall into.  A box is just a category, which can have any name.
 
@@ -171,7 +171,7 @@ end
 
 The user in this example is only valid if exists an avatar, 2 videos, and 5..10 mp3s.
 
-### Uploading & Attaching
+## Uploading & Attaching
 
 Use the custom Formtastic input for uploading (direct to S3) and attaching assets to the 'pictures' box.
 
@@ -233,53 +233,7 @@ We use the jQuery-File-Upload gem for direct-to-s3 uploading.  The process is as
 - The asset will appear in the form, and the user may click&drag the asset around to set the position.
 
 
-### Authorization
-
-All authorization checks are handled via the config.authorization_method found in the config/initializers/effective_assets.rb initializer.
-
-It is intended for flow through to CanCan, but that is not required.
-
-The authorization method can be defined as:
-
-```ruby
-EffectiveAssets.setup do |config|
-  config.authorization_method = Proc.new { |controller, action, resource| can?(action, resource) }
-end
-```
-
-or as a method:
-
-```ruby
-EffectiveAssets.setup do |config|
-  config.authorization_method = :authorize_effective_assets
-end
-```
-
-and then in your application_controller.rb:
-
-```ruby
-def authorize_effective_assets(action, resource)
-  can?(action, resource)
-end
-```
-
-The action will be one of :read, :create, :update, :destroy, :manage
-The resource will generally be the @asset, but in the case of :manage, it is Effective::Asset class.
-
-If the method or proc returns false (user is not authorized) an Effective::AccessDenied exception will be raised
-
-You can rescue from this exception by adding the following to your application_controller.rb
-
-```ruby
-rescue_from Effective::AccessDenied do |exception|
-  respond_to do |format|
-    format.html { render 'static_pages/access_denied', :status => 403 }
-    format.any { render :text => 'Access Denied', :status => 403 }
-  end
-end
-```
-
-### Strong Parameters
+## Strong Parameters
 
 Make your controller aware of the acts_as_asset_box passed parameters:
 
@@ -289,7 +243,7 @@ def permitted_params
 end
 ```
 
-### Image Processing and Resizing
+## Image Processing and Resizing
 
 CarrierWave is used under the covers to do all the image resizing.
 The installer created an uploaders/asset_uploader.rb which you can use to set up versions.
@@ -321,7 +275,7 @@ or for an individual asset
 @asset.reprocess!
 ```
 
-### Helpers
+## Helpers
 
 To just get the URL of an asset
 
@@ -349,13 +303,64 @@ To display the asset as a link with no image
 effective_asset_link_to(asset, version = nil, options = {})
 ```
 
-## License
+# Authorization
+
+All authorization checks are handled via the config.authorization_method found in the config/initializers/ file.
+
+It is intended for flow through to CanCan or Pundit, but that is not required.
+
+This method is called by all controller actions with the appropriate action and resource
+
+Action will be one of [:index, :show, :new, :create, :edit, :update, :destroy]
+
+Resource will the appropriate Effective::Something ActiveRecord object or class
+
+The authorization method is defined in the initializer file:
+
+```ruby
+# As a Proc
+config.authorization_method = Proc.new { |controller, action, resource| can?(action, resource) }
+```
+
+```ruby
+# As a Custom Method
+config.authorization_method = :my_authorization_method
+```
+
+and then in your application_controller.rb:
+
+```ruby
+def my_authorization_method(action, resource)
+  current_user.is?(:admin) || EffectivePunditPolicy.new(current_user, resource).send('#{action}?')
+end
+```
+
+or disabled entirely:
+
+```ruby
+config.authorization_method = false
+```
+
+If the method or proc returns false (user is not authorized) an Effective::AccessDenied exception will be raised
+
+You can rescue from this exception by adding the following to your application_controller.rb:
+
+```ruby
+rescue_from Effective::AccessDenied do |exception|
+  respond_to do |format|
+    format.html { render 'static_pages/access_denied', :status => 403 }
+    format.any { render :text => 'Access Denied', :status => 403 }
+  end
+end
+```
+
+# License
 
 MIT License.  Copyright Code and Effect Inc. http://www.codeandeffect.com
 
 You are not granted rights or licenses to the trademarks of Code and Effect
 
-## Credits
+# Credits
 
 This gem heavily relies on:
 
@@ -366,7 +371,7 @@ DelayedJob (https://github.com/collectiveidea/delayed_job)
 jQuery-File-Upload (https://github.com/blueimp/jQuery-File-Upload)
 
 
-## Testing
+# Testing
 
 Testing uses the Combustion gem, for easier Rails Engine Testing.
 
