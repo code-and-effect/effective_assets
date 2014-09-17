@@ -282,9 +282,9 @@ To just get the URL of an asset
 ```ruby
 @asset = @user.fav_icon
 @asset.url
-  => "http://aws_bucket.s3.amazonaws.com/assets/1/my_favorite_icon.png
+  => "http://aws_bucket.s3.amazonaws.com/assets/1/my_favorite_icon.png"
 @asset.url(:thumb)
-  => "http://aws_bucket.s3.amazonaws.com/assets/1/thumb_my_favorite_icon.png
+  => "http://aws_bucket.s3.amazonaws.com/assets/1/thumb_my_favorite_icon.png"
 ```
 
 To display the asset as a link with an image (if its an image, or a mime-type appropriate icon if its not an image):
