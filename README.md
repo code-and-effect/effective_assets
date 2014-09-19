@@ -268,12 +268,21 @@ or as a range
 bundle exec rake reprocess_assets[1, 300]
 ```
 
-or for an individual asset
+or for an individual asset (not on the queue):
 
 ```ruby
 @asset = Effective::Asset.find(1)
 @asset.reprocess!
 ```
+
+### Destroy all Queued Jobs
+
+Remove all Delayed::Job queued process_asset() or reprocess_asset() jobs
+
+```ruby
+bundle exec rake destroy_effective_assets_jobs
+```
+
 
 ## Helpers
 

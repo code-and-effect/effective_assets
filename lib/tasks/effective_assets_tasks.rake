@@ -29,7 +29,20 @@ task :reprocess_assets, [:start_at, :end_at] => :environment do |t, args|
     puts "Exitting."
     puts "Run 'bundle exec rake jobs:work' to begin the worker process or open rails console and run Delayed::Job.delete_all"
   end
+end
 
+# desc "Deletes all effective_asset related Delayed::Job jobs"
+task :destroy_effective_assets_jobs => :environment do |t, args|
+  Delayed::Job.where('handler ILIKE ?', '%method_name: :process_asset_without_delay%').delete_all
+  Delayed::Job.where('handler ILIKE ?', '%method_name: :reprocess_asset_without_delay%').delete_all
+  puts 'Deleted all effective_asset related Delayed::Job jobs'
+end
+
+# desc "Deletes all effective_asset related Delayed::Job jobs"
+task :destroy_effective_asset_jobs => :environment do |t, args|
+  Delayed::Job.where('handler ILIKE ?', '%method_name: :process_asset_without_delay%').delete_all
+  Delayed::Job.where('handler ILIKE ?', '%method_name: :reprocess_asset_without_delay%').delete_all
+  puts 'Deleted all effective_asset related Delayed::Job jobs'
 end
 
 namespace :effective_assets do
