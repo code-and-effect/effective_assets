@@ -28,7 +28,7 @@ describe Effective::Asset do
 
     # A new asset should exist, and it should be unprocessed
     asset.should_not eq false
-    
+
     asset.upload_file.should eq image_url
     asset.processed.should eq false
 
@@ -37,7 +37,7 @@ describe Effective::Asset do
 
     job = Psych.load(Delayed::Job.first.handler)
     job.method_name.should eq :process_asset_without_delay
-    job.args.first.should eq asset
+    job.args.first.should eq asset.id
 
     # Run DelayedJob
     Delayed::Worker.new(:max_priority => nil, :min_priority => nil, :quiet => true).work_off
@@ -62,7 +62,7 @@ describe Effective::Asset do
 
     # A new asset should exist, and it should be unprocessed
     asset.should_not eq false
-    
+
     asset.upload_file.should eq "string://sprites1.png"
     asset.processed.should eq false
 
@@ -71,7 +71,7 @@ describe Effective::Asset do
 
     job = Psych.load(Delayed::Job.first.handler)
     job.method_name.should eq :process_asset_without_delay
-    job.args.first.should eq asset
+    job.args.first.should eq asset.id
 
     # Run DelayedJob
     Delayed::Worker.new(:max_priority => nil, :min_priority => nil, :quiet => true).work_off
@@ -108,7 +108,7 @@ describe Effective::Asset do
 
     job = Psych.load(Delayed::Job.first.handler)
     job.method_name.should eq :process_asset_without_delay
-    job.args.first.should eq asset
+    job.args.first.should eq asset.id
 
     # Run DelayedJob
     Delayed::Worker.new(:max_priority => nil, :min_priority => nil, :quiet => true).work_off
