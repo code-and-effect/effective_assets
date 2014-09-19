@@ -5,7 +5,11 @@
 module Effective
   class DelayedJob
     def process_asset(obj)
-      asset = Effective::Asset.where(:id => (obj.respond_to?(:id) ? obj.id : (obj.to_i rescue 0))).first
+      if obj.kind_of?(Effective::Asset)
+        asset = obj
+      else
+        asset = Effective::Asset.where(:id => (obj.to_i rescue 0)).first
+      end
 
       if asset.present? && !asset.processed? && asset.upload_file.present? && asset.upload_file != 'placeholder'
         begin
