@@ -318,8 +318,8 @@ Resource will the appropriate Effective::Something ActiveRecord object or class
 The authorization method is defined in the initializer file:
 
 ```ruby
-# As a Proc
-config.authorization_method = Proc.new { |controller, action, resource| can?(action, resource) }
+# As a Proc (with CanCan)
+config.authorization_method = Proc.new { |controller, action, resource| authorize!(action, resource) }
 ```
 
 ```ruby
