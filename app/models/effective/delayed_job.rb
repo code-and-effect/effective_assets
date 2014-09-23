@@ -37,6 +37,8 @@ module Effective
         asset.processed = true
         asset.save!
 
+        (GC.start rescue nil)
+
         puts "Successfully processed the asset."
       end
     end
@@ -44,6 +46,7 @@ module Effective
 
     def reprocess_asset(id)
       Effective::Asset.find(id).reprocess!
+      (GC.start rescue nil)
     end
     handle_asynchronously :reprocess_asset
 
