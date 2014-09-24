@@ -46,7 +46,7 @@ describe Effective::Asset do
     # We should have a totally processed Asset
     asset = Effective::Asset.find(asset.id)
     asset.processed.should eq true
-    asset.data.kind_of?(AssetUploader).should eq true
+    asset.data.kind_of?(TestAssetUploader).should eq true
     asset.title.should eq 'a title'
     asset.description.should eq 'a description'
     asset.tags.should eq 'a tags'
@@ -80,7 +80,7 @@ describe Effective::Asset do
     # We should have a totally processed Asset
     asset = Effective::Asset.find(asset.id)
     asset.processed.should eq true
-    asset.data.kind_of?(AssetUploader).should eq true
+    asset.data.kind_of?(TestAssetUploader).should eq true
     asset.title.should eq 'sprites1.png'
     asset.user_id.should eq 1
     asset.versions_info.present?.should eq true
@@ -117,7 +117,7 @@ describe Effective::Asset do
     # We should have a totally processed Asset
     asset = Effective::Asset.find(asset.id)
     asset.processed.should eq true
-    asset.data.kind_of?(AssetUploader).should eq true
+    asset.data.kind_of?(TestAssetUploader).should eq true
     asset.user_id.should eq 1
     asset.versions_info.present?.should eq true
     asset.content_type.should eq 'image/png'

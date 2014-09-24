@@ -1,4 +1,4 @@
-class AssetUploader < EffectiveAssetsUploader
+class TestAssetUploader < EffectiveAssetsUploader
   # resize_to_fit
   # Resize the image to fit within the specified dimensions while retaining the
   # original aspect ratio. The image may be shorter or narrower than specified in the smaller dimension
