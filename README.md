@@ -276,7 +276,7 @@ This one-liner downloads the original file from AWS S3, creates the image versio
 
 ```ruby
 Effective::Asset.find(123).reprocess!
-=>
+=> true
 ```
 
 This can be done in batch using a rake script (see below).
