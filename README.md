@@ -161,7 +161,23 @@ end
 
 Calling @user.avatar will return a single Effective::Asset.  Calling @user.photos will return an array of Effective::Assets
 
-To use with validations:
+Then to get the URL of an asset:
+
+```ruby
+@asset = @user.avatar
+  => an Effective::Asset
+
+@asset.url
+  => "http://aws_bucket.s3.amazonaws.com/assets/1/my_avatar.png"
+
+@asset.url(:thumb)   # See image versions (below)
+  => "http://aws_bucket.s3.amazonaws.com/assets/1/thumb_my_avatar.png"
+
+@user.photos
+  => [Effective::Asset<1>, Effective::Asset<2>] # An array of Effective::Asset objects
+```
+
+### Validations
 
 ```ruby
 class User
@@ -169,7 +185,10 @@ class User
 end
 ```
 
+true means presence, false means no validations applied.
+
 The user in this example is only valid if exists an avatar, 2 videos, and 5..10 mp3s.
+
 
 ## Uploading & Attaching
 
@@ -245,55 +264,29 @@ end
 
 ## Image Processing and Resizing
 
-CarrierWave is used under the covers to do all the image resizing.
-The installer created an uploaders/asset_uploader.rb which you can use to set up versions.
+CarrierWave and DelayedJob are used by this gem to perform image versioning.
 
-Some additional processing goes on to record final image dimensions and file sizes.
+See the installer created at uploaders/asset_uploader.rb to configure image versions.
 
-If the uploader is changed, you can run this rake task to reprocess all assets
+Use the 'process :record_info => :thumb' directive to store image version dimensions and file sizes.
 
-```ruby
-bundle exec rake reprocess_assets
-```
+When this file is changed, you must reprocess any assets to recreate all image versions
 
-or start at a specific ID (and go up)
+This one-liner downloads the original file from AWS S3, creates the image versions locally using imagemagick, then uploads each version to its final resting place back on AWS S3.
 
 ```ruby
-bundle exec rake reprocess_assets[200]
+Effective::Asset.find(123).reprocess!
+=>
 ```
 
-or as a range
-
-```ruby
-bundle exec rake reprocess_assets[1, 300]
-```
-
-or for an individual asset (not on the queue):
-
-```ruby
-@asset = Effective::Asset.find(1)
-@asset.reprocess!
-```
-
-### Destroy all Queued Jobs
-
-Remove all Delayed::Job queued process_asset() or reprocess_asset() jobs
-
-```ruby
-bundle exec rake destroy_effective_assets_jobs
-```
-
+This can be done in batch using a rake script (see below).
 
 ## Helpers
 
-To just get the URL of an asset
+You can always get the URL directly
 
 ```ruby
-@asset = @user.fav_icon
-@asset.url
-  => "http://aws_bucket.s3.amazonaws.com/assets/1/my_favorite_icon.png"
-@asset.url(:thumb)
-  => "http://aws_bucket.s3.amazonaws.com/assets/1/thumb_my_favorite_icon.png"
+current_user.avatar.url(:thumb)
 ```
 
 To display the asset as a link with an image (if its an image, or a mime-type appropriate icon if its not an image):
@@ -362,6 +355,62 @@ rescue_from Effective::AccessDenied do |exception|
   end
 end
 ```
+
+# Rake Tasks
+
+Use the following rake tasks to aid in batch processing a large number of (generally image) files.
+
+## Reprocess
+
+If the config/asset_uploader.rb is changed, run the following rake task to reprocess all assets and thereby recreate all image versions
+
+```ruby
+rake effective_assets:reprocess           # All assets
+rake effective_assets:reprocess[200]      # reprocess #200 and up
+rake effective_assets:reprocess[1,200]    # reprocess #1..#200
+```
+
+This command enqueues a reprocess! job for each Effective::Asset on the Delayed::Job queue.
+
+If a Delayed::Job worker process is already running, the reprocessing will begin immediately, otherwise start one with
+
+```ruby
+rake jobs:work
+```
+
+## Check
+
+Checks every Asset and Asset version for a working URL (200 http status code).
+
+Any non-200 http responses are logged as an error.
+
+This is a sanity-check task, that makes sure every url for every asset is going to work.
+
+This is just single-threaded one process.
+
+If you need to check a large number of urls, use multiple rake tasks and pass in ID ranges. Sorry.
+
+```ruby
+rake effective_assets:check         # check that every version of every Effective::Asset is a valid http 200 OK url
+rake effective_assets:check[200]    # check #200 and up
+rake effective_assets:check[1,200]  # check #1..#200
+rake effective:assets:check[1,200,:thumb]   # check #1..#200 only :thumb versions
+```
+
+## Clear
+
+Deletes all effective_assets related jobs on the Delayed::Job queue.
+
+```ruby
+rake effective_assets:clear
+```
+
+or to clear all jobs, even non-effective_assets related jobs, use Delayed::Job's rake task:
+
+```ruby
+rake jobs:clear
+```
+
 
 # License
 
