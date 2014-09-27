@@ -160,21 +160,23 @@ module Effective
 
     def reprocess!
       begin
-        Rails.logger.info "Reprocessing Asset ##{id}..."
-        print "Reprocessing Asset ##{id}..."
+        Rails.logger.info "Reprocessing ##{id}..."
+        print "Reprocessing ##{id}..."
 
-        raise StandardError.new('must be processed first before reprocessed') unless processed?
+        raise 'must be processed first before reprocessed' unless processed?
 
         data.cache_stored_file!
         data.retrieve_from_cache!(data.cache_name)
         data.recreate_versions!
         save!
 
-        Rails.logger.info "Successfully reprocessed Asset ID=#{id}"
+        Rails.logger.info "Successfully reprocessed ##{id}"
         print "success"; puts ''
+        true
       rescue => e
         Rails.logger.info  "Error: #{id} -> #{e.to_s}"
         print "error: #{e.to_s}"; puts ''
+        false
       end
     end
 
