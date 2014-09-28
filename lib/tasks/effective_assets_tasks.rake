@@ -44,12 +44,13 @@ namespace :effective_assets do
 
     success = 0
     error = 0
-    errors = []
+    error_ids = []
+    error_urls = []
 
     Effective::Asset.where(:id => ids).find_each do |asset|
       (GC.start rescue nil)
 
-      # This goes through all versions, and nil, the non-version
+      # This goes through all versions, and nil, the original file
       ([nil] + Array(asset.data.try(:versions).try(:keys))).each do |version|
         next unless (args.version.nil? || args.version == version.to_s)
 
@@ -63,22 +64,29 @@ namespace :effective_assets do
           end
 
           success += 1
-          print 'valid'; puts '';
+          print 'valid'
         rescue => e
           error += 1
-          message = "invalid: #{e.message}. [ERROR] #{asset.url(version) rescue ''}"
+          print "invalid: #{e.message}. [ERROR] #{asset.url(version) rescue ''}"
 
-          errors << "Effective::Asset ##{asset.id} :#{version || 'original'} " + message
-          print message; puts '';
+          error_ids << asset.id
+          error_urls << (asset.url(version) rescue '')
         end
+
+        puts ''
       end
     end
 
     puts "Done checking Effective::Assets (IDs #{ids.to_s}). #{success} asset versions successfully checked. #{error} found to be in error."
 
-    if errors.present?
-      puts "The following Effective::Asset version urls do not work:"
-      puts errors.uniq
+    if error_urls.present?
+      puts "The following Effective::Asset version URLs are invalid:"
+      error_urls.each { |str| puts str }
+      puts ''
+      puts "============="
+      puts "The easiest way to fix this is to open a console and run the following:"
+      puts "error_ids = #{error_ids.uniq.compact.inspect}"
+      puts "Effective::Asset.where(:id => error_ids).each { |asset| asset.reprocess! }"
     end
   end
 
