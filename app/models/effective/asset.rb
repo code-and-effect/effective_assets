@@ -77,9 +77,20 @@ module Effective
       def create_from_url(url, options = {})
         opts = {:upload_file => url, :user_id => 1, :aws_acl => EffectiveAssets.aws_acl}.merge(options)
 
-        asset = Asset.new(opts)
+        attempts = 3  # Try to upload this string file 3 times
+        begin
+          asset = Asset.new(opts)
 
-        asset.save ? asset : false
+          if asset.save
+            asset
+          else
+            puts asset.errors.inspect
+            Rails.logger.info asset.errors.inspect
+            false
+          end
+        rescue => e
+          (attempts -= 1) >= 0 ? (sleep 2; retry) : false
+        end
       end
 
       # This loads the raw contents of a string into a file and uploads that file to s3
@@ -92,16 +103,22 @@ module Effective
 
         opts = {:upload_file => "#{Asset.string_base_path}#{filename}", :user_id => 1, :aws_acl => EffectiveAssets.aws_acl}.merge(options)
 
-        asset = Asset.new(opts)
-        asset.data = AssetStringIO.new(filename, str)
+        attempts = 3  # Try to upload this string file 3 times
+        begin
+          asset = Asset.new(opts)
+          asset.data = AssetStringIO.new(filename, str)
 
-        if asset.save
-          asset
-        else
-          puts asset.errors.inspect
-          Rails.logger.info asset.errors.inspect
-          false
+          if asset.save
+            asset
+          else
+            puts asset.errors.inspect
+            Rails.logger.info asset.errors.inspect
+            false
+          end
+        rescue => e
+          (attempts -= 1) >= 0 ? (sleep 2; retry) : false
         end
+
       end
     end # End of Class methods
 
