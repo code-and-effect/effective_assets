@@ -83,7 +83,7 @@ module ActsAsAssetBox
     boxes = box.pluralize
 
     if box == boxes
-      attachments.select { |attachment| attachment.box == boxes }.map { |attachment| attachment.asset }
+      attachments.map { |attachment| attachment.asset if attachment.box == boxes }.compact
     else
       attachments.to_a.find { |attachment| attachment.box == boxes }.try(:asset)
     end

@@ -12,7 +12,7 @@ module Effective
       box             :string, :default => 'assets', :validates => [:presence]  # This is essentially a category
     end
 
-    default_scope -> { includes(:asset).order(:position) }
+    default_scope -> { includes(:asset).order("\"#{EffectiveAssets.attachments_table_name.to_s}\".\"position\" ASC, \"#{EffectiveAssets.attachments_table_name.to_s}\".\"asset_id\" ASC") }
 
     validates_presence_of :asset_id
 
