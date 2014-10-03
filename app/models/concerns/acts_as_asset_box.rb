@@ -98,7 +98,9 @@ module ActsAsAssetBox
     boxes = box.pluralize
     assets = assets.flatten
 
-    return false unless assets.present? && assets.all? { |obj| obj.kind_of?(Effective::Asset) }
+    unless assets.present? && assets.all? { |obj| obj.kind_of?(Effective::Asset) }
+      raise ArgumentError.new('expecting one or more Effective::Assets, or an Array of Effective::Assets')
+    end
 
     if box == boxes # If we're adding to a pluralized box, we want to add our attachment onto the end
       pos = attachments.select { |attachment| attachment.box == boxes }.last.try(:position).to_i + 1
@@ -112,7 +114,7 @@ module ActsAsAssetBox
     # Build the attachments
     assets.each_with_index do |asset, x|
       attachment = self.attachments.build(:position => (pos+x), :box => boxes)
-      
+
       attachment.attachable = self
       attachment.asset = asset
     end
@@ -124,6 +126,35 @@ module ActsAsAssetBox
 
   def add_to_asset_box!(box, *assets)
     add_to_asset_box(box, assets) && save!
+  end
+
+  # The idea here is that if you want to replace an Asset with Another one
+  # the Attachment should keep the same order, and only the asset should change
+
+  def replace_in_asset_box(box, original, overwrite)
+    box = (box.present? ? box.to_s : 'assets')
+    boxes = box.pluralize
+
+    unless original.present? && original.kind_of?(Effective::Asset)
+      raise ArgumentError.new("second parameter 'original' must be a single Effective::Asset")
+    end
+
+    unless overwrite.present? && overwrite.kind_of?(Effective::Asset)
+      raise ArgumentError.new("third parameter 'overwrite' must be a single Effective::Asset")
+    end
+
+    attachment = attachments.to_a.find { |attachment| attachment.box == boxes && attachment.asset == original }
+
+    if attachment.present?
+      attachment.asset = overwrite
+      true
+    else
+      false
+    end
+  end
+
+  def replace_in_asset_box!(box, original, overwrite)
+    replace_in_asset_box(box, original, overwrite) && save!
   end
 
 end
