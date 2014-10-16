@@ -18,15 +18,15 @@ module AssetBox
   end
 
   def header_html
-    "<div class='asset-box-input #{method.to_s.pluralize}' 
-      data-box='#{method.to_s.pluralize}' 
-      data-uploader='s3_#{@@uid}' 
-      data-limit='#{limit}' 
-      data-attachable-id='#{attachable_id}' 
-      data-attachable-type='#{attachable_type}' 
-      data-attachable-object-name='#{attachable_object_name}' 
-      data-attachment-style='#{options[:attachment_style]}' 
-      data-attachment-actions='#{options[:attachment_actions].to_json()}' 
+    "<div class='asset-box-input #{attribute_name.to_s.pluralize}'
+      data-box='#{attribute_name.to_s.pluralize}'
+      data-uploader='s3_#{@@uid}'
+      data-limit='#{limit}'
+      data-attachable-id='#{attachable_id}'
+      data-attachable-type='#{attachable_type}'
+      data-attachable-object-name='#{attachable_object_name}'
+      data-attachment-style='#{options[:attachment_style]}'
+      data-attachment-actions='#{options[:attachment_actions].to_json()}'
       data-aws-acl='#{options[:aws_acl]}'
     >".html_safe
   end
@@ -78,7 +78,7 @@ module AssetBox
 
   def build_values_html
     count = 0
-    
+
     attachments.map do |attachment|
       count += 1 unless attachment.marked_for_destruction?
 
@@ -96,7 +96,7 @@ module AssetBox
   end
 
   def attachments
-    method_name = method.to_s.pluralize
+    method_name = attribute_name.to_s.pluralize
     object.attachments.select { |attachment| attachment.box == method_name }
   end
 
@@ -113,7 +113,7 @@ module AssetBox
   end
 
   def limit
-    method.to_s == method.to_s.pluralize ? (options[:limit] || 10000) : 1
+    attribute_name.to_s == attribute_name.to_s.pluralize ? (options[:limit] || 10000) : 1
   end
 
   def options

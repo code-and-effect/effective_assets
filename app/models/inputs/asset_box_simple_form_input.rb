@@ -13,7 +13,11 @@ if defined?(SimpleForm)
     end
 
     # Redefines some of the Formtastic specific methods so this will work with simple_form with no other changes.
-    def method ; attribute_name ; end
+    # def method (*args)
+    #   method(attribute_name)
+    # end
+
+    #def method(*args) ; attribute_name ; end
     def input_wrapping(&block) ; yield ; end
     def label_html ; '' ; end
   end
