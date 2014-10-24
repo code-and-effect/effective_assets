@@ -43,26 +43,26 @@ module EffectiveAssetsHelper
   end
 
   def _effective_asset_image_url(asset, version = nil)
-    return asset_path('mime-types/file.png') if !asset.content_type.present? or asset.content_type == 'unknown'
+    return asset_url('mime-types/file.png') if !asset.content_type.present? or asset.content_type == 'unknown'
 
     if asset.icon?
       asset.url
     elsif asset.image?
       asset.url(version)
     elsif asset.audio?
-      asset_path('mime-types/mp3.png')
+      asset_url('mime-types/mp3.png')
     elsif asset.video?
-      asset_path('mime-types/video.png')
+      asset_url('mime-types/video.png')
     elsif asset.content_type.include? 'msword'
-      asset_path('mime-types/word.jpg')
+      asset_url('mime-types/word.jpg')
     elsif asset.content_type.include? 'excel'
-      asset_path('mime-types/excel.png')
+      asset_url('mime-types/excel.png')
     elsif asset.content_type.include? 'application/pdf'
-      asset_path('mime-types/pdf.png')
+      asset_url('mime-types/pdf.png')
     elsif asset.content_type.include? 'application/zip'
-      asset_path('mime-types/zip.png')
+      asset_url('mime-types/zip.png')
     else
-      asset_path('mime-types/file.png')
+      asset_url('mime-types/file.png')
     end
   end
 end
