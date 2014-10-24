@@ -282,7 +282,7 @@ Make your controller aware of the acts_as_asset_box passed parameters:
 
 ```ruby
 def permitted_params
-  params.require(:base_object).permit(:attachments_attributes => [:id, :asset_id, :attachable_type, :attachable_id, :position, :box, :_destroy])
+  params.require(:base_object).permit(EffectiveAssets.permitted_params, :email, :title, :etc)
 end
 ```
 
