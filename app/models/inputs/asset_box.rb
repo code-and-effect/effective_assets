@@ -2,11 +2,11 @@ module Inputs
   class AssetBox
     include ActionView::Helpers::TagHelper
 
-    def initialize(object, object_name, template, uid, method, opts)
+    def initialize(object, object_name, template, method, opts)
       @object = object
       @object_name = object_name
       @template = template
-      @options = initialize_options(uid, method, opts)
+      @options = initialize_options(method, opts)
     end
 
     def to_html
@@ -106,7 +106,7 @@ module Inputs
       @object.attachments.select { |attachment| attachment.box == @options[:box] }
     end
 
-    def initialize_options(uid, method, opts)
+    def initialize_options(method, opts)
       {
         :uploader => true,
         :progress_bar_partial => 'asset_box_input/progress_bar_template',
@@ -123,7 +123,7 @@ module Inputs
         options[:attachable_id] ||= (@object.try(:id) rescue nil)
         options[:attachable_type] ||= @object.class.name.titleize.gsub(" ", "_").gsub('/', '_').downcase
 
-        options[:uid] = uid
+        options[:uid] = "#{options[:attachable_type]}-#{options[:attachable_id]}-#{options[:method]}-#{Time.zone.now.to_f}".parameterize
         options[:limit] = (options[:method] == options[:box] ? (options[:limit] || 10000) : 1)
       end
     end
