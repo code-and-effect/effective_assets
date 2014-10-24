@@ -21,7 +21,7 @@ module EffectiveAssets
 
     initializer 'effective_assets.action_view' do |app|
       ActiveSupport.on_load :action_view do
-        ActionView::Helpers::FormBuilder.send(:include, Inputs::AssetBoxFormBuilder)
+        ActionView::Helpers::FormBuilder.send(:include, Inputs::AssetBoxFormInput)
       end
     end
 

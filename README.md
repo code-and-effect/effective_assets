@@ -6,7 +6,7 @@ Attach one or more assets to any model with validations.
 
 Includes an upload direct to Amazon S3 implementation based on jQuery-File-Upload and image processing in the background with CarrierWave and DelayedJob
 
-Both Formtastic and SimpleForm inputs for displaying, organizing, and uploading assets direct to S3.
+Rails FormBuilder, Formtastic and SimpleForm inputs for displaying, managing, and uploading assets direct to S3.
 
 Works with AWS public-read and authenticated-read for easy secured downloads.
 
@@ -189,37 +189,61 @@ true means presence, false means no validations applied.
 
 The user in this example is only valid if exists an avatar, 2 videos, and 5..10 mp3s.
 
+## Form Input
+
+There is a standard rails form input
+
+```ruby
+= form_for @user do |f|
+  = f.input :pictures, :as => :asset_box
+```
+
+A SimpleForm input
+
+```ruby
+= simple_form_for @user do |f|
+  = f.input :pictures, :as => :asset_box
+```
+
+and a Formtastic input
+
+```ruby
+= semantic_form_for @user do |f|
+  = f.input :pictures, :as => :asset_box
+```
+
+The `:as => :asset_box` will work interchangeably with SimpleForm or Formtastic, as long as only one of these gems is present in your application
+
+If you use both SimpleForm and Formtastic, you will need to call asset_box_input differently:
+
+```ruby
+= simple_form_for @user do |f|
+  = f.input :pictures, :as => :asset_box_simple_form
+
+= semantic_form_for @user do |f|
+  = f.input :pictures, :as => :asset_box_formtastic
+```
+
 
 ## Uploading & Attaching
 
-Use the custom Formtastic input for uploading (direct to S3) and attaching assets to the 'pictures' box.
+Use the custom  input for uploading (direct to S3) and attaching assets to the 'pictures' box.
 
 ```ruby
 = f.input :pictures, :as => :asset_box, :uploader => true
 
-= f.input :pictures, :as => :asset_box, :limit => 2, :file_types => [:jpg, :gif, :png], :attachment_style => :table
+= f.input :pictures, :as => :asset_box, :limit => 2, :file_types => [:jpg, :gif, :png]
 
 = f.input :pictures, :as => :asset_box, :dialog => true, :dialog_url => '/admin/effective_assets' # Use the attach dialog
-```
-
-Use the custom SimpleForm input for uploading (direct to S3) and attaching assets to the 'pictures' box.
-
-```ruby
-= f.input :pictures, :as => :asset_box_simple_form, :uploader => true
-
-= f.input :pictures, :as => :asset_box_simple_form, :limit => 2, :file_types => [:jpg, :gif, :png]
-
-= f.input :pictures, :as => :asset_box_simple_form, :dialog => true, :dialog_url => '/admin/effective_assets' # Use the attach dialog
 ```
 
 You may also upload secure (AWS: 'authenticated-read') assets with the same uploader
 
 ```ruby
-= f.input :pictures, :as => :asset_box_simple_form, :aws_acl => 'authenticated-read'
+= f.input :pictures, :as => :asset_box, :aws_acl => 'authenticated-read'
 ```
 
 There is also a mechanism for collecting additional information from the upload form which will be set in the asset.extra field.
-This is still experimental.
 
 ```ruby
 = semantic_form_for Product.new,  do |f|
