@@ -286,6 +286,13 @@ def permitted_params
 end
 ```
 
+The permitted parameters are:
+
+```ruby
+:attachments_attributes => [:id, :asset_id, :attachable_type, :attachable_id, :position, :box, :_destroy]
+```
+
+
 ## Image Processing and Resizing
 
 CarrierWave and DelayedJob are used by this gem to perform image versioning.

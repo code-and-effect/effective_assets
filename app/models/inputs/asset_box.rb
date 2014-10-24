@@ -14,7 +14,7 @@ module Inputs
       output += header_html
       output += attachments_html
 
-      output += insert_dialog_html if @options[:dialog]
+      output += dialog_html if @options[:dialog]
       output += uploader_html if @options[:uploader]
 
       output += footer_html
@@ -45,7 +45,7 @@ module Inputs
             content_tag(:tr) do
               [
                 content_tag(:th, 'Thumbnail'),
-                content_tag(:th, 'Title'.html_safe + filter_bar_html),
+                content_tag(:th, 'Title'.html_safe + (@options[:table_filter_bar] ? filter_bar_html : '')),
                 content_tag(:th, 'Size'),
                 content_tag(:th)
               ].join().html_safe
@@ -57,8 +57,13 @@ module Inputs
       end
     end
 
-    def insert_dialog_html
-      "<a href='#' class='asset-box-dialog' data-dialog-url='#{@options[:dialog_url]}'>Attach...</a>".html_safe
+    def dialog_html
+      render(
+        :partial => 'asset_box_input/dialog',
+        :locals => {
+          :dialog_url => @options[:dialog_url]
+        }
+      ).html_safe
     end
 
     def uploader_html
@@ -76,11 +81,7 @@ module Inputs
     end
 
     def filter_bar_html
-      if @options[:table_filter_bar]
-        "<input type='text' class='form-control filter-attachments' placeholder='Search'>".html_safe
-      else
-        ''.html_safe
-      end
+      "<input type='text' class='form-control filter-attachments' placeholder='Search Title'>".html_safe
     end
 
     def build_values_html
@@ -118,7 +119,7 @@ module Inputs
         :attachment_actions => [:remove], # or :insert, :delete, :remove
         :table_filter_bar => false,
         :dialog => false,
-        :dialog_url => '/admin/effective_assets',
+        :dialog_url => @template.effective_assets.effective_assets_path,
         :disabled => false,
         :file_types => [:any],
         :aws_acl => EffectiveAssets.aws_acl

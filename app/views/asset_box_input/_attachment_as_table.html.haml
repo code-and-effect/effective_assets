@@ -9,14 +9,14 @@
   %td.attachment-size
     = number_to_human_size(attachment.asset.data_size)
   %td
-    - if attachment_actions.include?('insert')
+    - if attachment_actions.include?('insert') || attachment_actions.include?('attach')
       - asset = attachment.asset
       - if asset.image? || asset.icon?
-        %a.btn.btn-primary.attachment-insert{:href => '#', 'data-asset-id' => asset.id, 'data-asset' => effective_asset_image_tag(asset)} Insert
+        %a.btn.btn-primary.attachment-insert{:href => '#', 'data-asset-id' => asset.id, 'data-asset' => effective_asset_image_tag(asset)} Attach
       - elsif asset.video?
-        %a.btn.btn-primary.attachment-insert{:href => '#', 'data-asset-id' => asset.id, 'data-asset' => effective_asset_video_tag(asset)} Insert
+        %a.btn.btn-primary.attachment-insert{:href => '#', 'data-asset-id' => asset.id, 'data-asset' => effective_asset_video_tag(asset)} Attach
       - else
-        %a.btn.btn-primary.attachment-insert{:href => '#', 'data-asset-id' => asset.id, 'data-asset' => effective_asset_link_to(asset)} Insert
+        %a.btn.btn-primary.attachment-insert{:href => '#', 'data-asset-id' => asset.id, 'data-asset' => effective_asset_link_to(asset)} Attach
 
     - if attachment_actions.include?('remove')
       %a.attachment-remove{:href => '#', :title => 'Remove'}

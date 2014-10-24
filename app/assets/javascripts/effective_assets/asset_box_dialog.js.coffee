@@ -1,32 +1,17 @@
-# This is ActiveAdmin's Attach... functionality
-$(document).on 'click', 'a.asset-box-dialog', (event) ->
+$(document).on 'click', '.asset-box-dialog', (event) ->
   event.preventDefault()
 
-  obj = $(event.target)
+  obj = $(event.currentTarget)
   asset_box = obj.closest('.asset-box-input')
+  modal = obj.siblings('.asset-box-modal')
 
-  dialog_frame = $(
-    "<div title='Insert Asset'>" +
-      "<iframe id='effective_assets_iframe' src='#{obj.data('dialog-url')}' width='100%' height='100%' marginWidth='0' marginHeight='0' frameBorder='0' scrolling='auto' title='Insert Asset'></iframe>" +
-    "</div>"
-  )
+  return false unless modal
 
-  dialog_frame.dialog({
-    modal: true,
-    closeOnEscape: true,
-    height: $(window).height() * 0.90,
-    width: "90%",
-    resizable: false,
-    appendTo: asset_box,
-    close: (event, ui) -> $(this).remove(),
-    buttons: { Close: -> $(this).dialog("close") }
-  })
+  iframe = modal.find('iframe')
+  iframe.attr('height', $(window).height() * 0.75)
 
-  $(".ui-widget-overlay").addClass('effective-assets-overlay')
-  $(".ui-dialog").addClass('effective-assets-dialog').css('left', ($(window).height() - $(window).height()*0.90) + 'px')
-
-  $('#effective_assets_iframe', dialog_frame).on 'load', ->
-    $(this).contents().find('a.asset-insertable').on 'click', (event) ->
+  unless asset_box.data('dialog-initialized')
+    iframe.contents().on 'click', '.attachment-insert', (event) ->
       event.preventDefault()
 
       $.ajax
@@ -58,4 +43,7 @@ $(document).on 'click', 'a.asset-box-dialog', (event) ->
             else
               $(this).closest('.attachment').show()
 
-      if asset_box.data('limit') == 1 then dialog_frame.dialog("close")
+      if asset_box.data('limit') == 1 then modal.modal('hide')
+
+  asset_box.data('dialog-initialized', true)
+  modal.modal()
