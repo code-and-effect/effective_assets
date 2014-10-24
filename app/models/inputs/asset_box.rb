@@ -1,6 +1,6 @@
 module Inputs
   class AssetBox
-    include ActionView::Helpers::TagHelper
+    delegate :content_tag, :render, :to => :@template
 
     def initialize(object, object_name, template, method, opts)
       @object = object
@@ -53,7 +53,7 @@ module Inputs
           end + content_tag(:tbody, build_values_html, :class => 'attachments')
         end
       else
-        content_tag(:ul, build_values_html, :class => 'attachments thumbnails')
+        content_tag(:div, build_values_html, :class => 'row attachments thumbnails')
       end
     end
 
@@ -62,7 +62,7 @@ module Inputs
     end
 
     def uploader_html
-      @template.render(
+      render(
         :partial => 'asset_box_input/uploader',
         :locals => {
           :uid => @options[:uid],
@@ -76,7 +76,11 @@ module Inputs
     end
 
     def filter_bar_html
-      "<input type='text' class='form-control filter-attachments' placeholder='Search'>".html_safe
+      if @options[:table_filter_bar]
+        "<input type='text' class='form-control filter-attachments' placeholder='Search'>".html_safe
+      else
+        ''.html_safe
+      end
     end
 
     def build_values_html
@@ -85,7 +89,7 @@ module Inputs
       attachments.map do |attachment|
         count += 1 unless attachment.marked_for_destruction?
 
-        @template.render(
+        render(
           :partial => "asset_box_input/#{@options[:attachment_style] == :table ? 'attachment_as_table' : 'attachment_as_thumbnail'}",
           :locals => {
             :attachment => attachment,
@@ -110,8 +114,9 @@ module Inputs
       {
         :uploader => true,
         :progress_bar_partial => 'asset_box_input/progress_bar_template',
-        :attachment_style => :thumbnail,  # or :table
+        :attachment_style => :thumbnail,  # or :table, or :table_with_filter
         :attachment_actions => [:remove], # or :insert, :delete, :remove
+        :table_filter_bar => false,
         :dialog => false,
         :dialog_url => '/admin/effective_assets',
         :disabled => false,
