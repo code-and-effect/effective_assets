@@ -1,10 +1,8 @@
 applySortable = ->
   $(".asset-box-input .attachments").sortable
     items: '> .attachment'
-    containment: 'parent'
+    placeholder: 'col-sm-3'
     cursor: 'move'
-    forcePlaceholderSize: true
-    forceHelperSize: true
 
 $ -> applySortable()
 $(document).on 'page:change', -> applySortable()
