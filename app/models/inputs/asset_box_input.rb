@@ -1,13 +1,8 @@
-# With formtastic, just use
-#
-# = f.input :pictures, :as => :asset_box
-# = f.input :fav_icon, :as => :asset_box, :limit => 4, :file_types => [:jpg, :gif, :png]
-# = f.input :logo, :as => :asset_box, :uploader => false, :dialog => true
-# = f.input :logo, :as => :asset_box, :uploader => true
+class AssetBoxInput < SimpleForm::Inputs::FileInput
+  def input(wrapper_options)
+    @@uid = (@@uid ||= 0) + 1 # We just need a unique number to pass along, incase we have multiple Uploaders per form
 
-if defined?(Formtastic)
-  class AssetBoxInput
-    include ::Formtastic::Inputs::Base
-    include AssetBox
+    Inputs::AssetBox.new(object, object_name, template, @@uid, attribute_name, options).to_html
   end
+
 end
