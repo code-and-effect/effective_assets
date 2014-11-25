@@ -52,6 +52,8 @@ module Inputs
             end
           end + content_tag(:tbody, build_values_html, :class => 'attachments')
         end
+      elsif @options[:attachment_style] == :list
+        content_tag(:ul, build_values_html, :class => 'attachments')
       else
         content_tag(:div, build_values_html, :class => 'row attachments thumbnails')
       end
@@ -90,8 +92,22 @@ module Inputs
       attachments.map do |attachment|
         count += 1 unless attachment.marked_for_destruction?
 
+        attachment_partial =
+        case @options[:attachment_style]
+        when :table
+          'attachment_as_table'
+        when :list
+          'attachment_as_list'
+        when :thumbnail
+          'attachment_as_thumbnail'
+        when nil
+          'attachment_as_thumbnail'
+        else
+          raise "unknown AssetBox attachment_style: #{@options[:attachment_style]}. Valid options are :thumbnail, :list and :table"
+        end
+
         render(
-          :partial => "asset_box_input/#{@options[:attachment_style] == :table ? 'attachment_as_table' : 'attachment_as_thumbnail'}",
+          :partial => "asset_box_input/#{attachment_partial}",
           :locals => {
             :attachment => attachment,
             :attachment_actions => @options[:attachment_actions].map(&:to_s),
@@ -115,7 +131,7 @@ module Inputs
       {
         :uploader => true,
         :progress_bar_partial => 'asset_box_input/progress_bar_template',
-        :attachment_style => :thumbnail,  # or :table, or :table_with_filter
+        :attachment_style => :thumbnail,  # :thumbnail, :table, or :list
         :attachment_actions => [:remove], # or :insert, :delete, :remove
         :table_filter_bar => false,
         :dialog => false,

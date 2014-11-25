@@ -44,9 +44,17 @@ module Effective
         attachable_object_name = params[:attachable_object_name].to_s
         attachment_actions = params[:attachment_actions]
 
-        partial = (params[:attachment_style].to_s == 'table' ? 'attachment_as_table' : 'attachment_as_thumbnail')
+        attachment_partial =
+        case params[:attachment_style].to_s
+        when 'table'
+          'attachment_as_table'
+        when 'list'
+          'attachment_as_list'
+        else # :thumbnail, nil, or anything
+          'attachment_as_thumbnail'
+        end
 
-        render :partial => "asset_box_input/#{partial}", :locals => {:attachment => attachment, :attachable_object_name => attachable_object_name, :attachment_actions => attachment_actions}, :status => 200, :content_type => 'text/html'
+        render :partial => "asset_box_input/#{attachment_partial}", :locals => {:attachment => attachment, :attachable_object_name => attachable_object_name, :attachment_actions => attachment_actions}, :status => 200, :content_type => 'text/html'
       else
         render :text => '', :status => 200
       end

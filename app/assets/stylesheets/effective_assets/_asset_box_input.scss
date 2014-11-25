@@ -11,14 +11,37 @@
   width: 100%;
   height: 100%;
 
+  // asset_box_input/attachment_as_table
   tbody.attachments {
     .attachment-image img {
       max-height: 48px;
     }
   }
 
+  // asset_box_input/attachment_as_list
+  ul.attachments {
+    .attachment {
+      position: relative;
+
+      .attachment-title {
+        overflow: hidden;
+        word-break: keep-all;
+        text-align: left;
+      }
+
+      .attachment-remove {
+        position: absolute;
+        top: 0px;
+        right: 7px;
+      }
+    }
+  }
+
+  // asset_box_input/attachment_as_thumbnail
   div.attachments {
     .attachment {
+      position: relative;
+
       .attachment-title {
         overflow: hidden;
         word-break: keep-all;
