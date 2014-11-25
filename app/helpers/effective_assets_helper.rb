@@ -14,7 +14,8 @@ module EffectiveAssetsHelper
     end
 
     opts = opts.merge({:alt => asset.description || asset.title || asset.file_name}).merge(options)
-    image_tag(_effective_asset_image_url(asset, version), opts).gsub('"', "'").html_safe # we need all ' quotes or it breaks Insert as functionality
+
+    content_tag(:img, nil, opts.merge(:src => _effective_asset_image_url(asset, version))).gsub('"', "'").html_safe
   end
 
   def effective_asset_link_to(asset, version = nil, options = {})
@@ -43,26 +44,28 @@ module EffectiveAssetsHelper
   end
 
   def _effective_asset_image_url(asset, version = nil)
-    return asset_url('mime-types/file.png') if !asset.content_type.present? or asset.content_type == 'unknown'
+    # asset_url and image_url will work in Rails4
+
+    return image_path('mime-types/file.png') if !asset.content_type.present? or asset.content_type == 'unknown'
 
     if asset.icon?
       asset.url
     elsif asset.image?
       asset.url(version)
     elsif asset.audio?
-      asset_url('mime-types/mp3.png')
+      image_path('mime-types/mp3.png')
     elsif asset.video?
-      asset_url('mime-types/video.png')
+      image_path('mime-types/video.png')
     elsif asset.content_type.include? 'msword'
-      asset_url('mime-types/word.jpg')
+      image_path('mime-types/word.jpg')
     elsif asset.content_type.include? 'excel'
-      asset_url('mime-types/excel.png')
+      image_path('mime-types/excel.png')
     elsif asset.content_type.include? 'application/pdf'
-      asset_url('mime-types/pdf.png')
+      image_path('mime-types/pdf.png')
     elsif asset.content_type.include? 'application/zip'
-      asset_url('mime-types/zip.png')
+      image_path('mime-types/zip.png')
     else
-      asset_url('mime-types/file.png')
+      image_path('mime-types/file.png')
     end
   end
 end
