@@ -195,7 +195,7 @@ There is a standard rails form input
 
 ```ruby
 = form_for @user do |f|
-  = f.input :pictures, :as => :asset_box
+  = f.asset_box_input :pictures
 ```
 
 A SimpleForm input
