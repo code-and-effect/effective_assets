@@ -93,13 +93,13 @@ module ActsAsAssetBox
     assets(:asset)
   end
 
-  def add_to_asset_box(box, *assets)
+  def add_to_asset_box(box, *items)
     box = (box.present? ? box.to_s : 'assets')
     boxes = box.pluralize
-    assets = assets.flatten
+    items = [items].flatten.compact
 
-    unless assets.present? && assets.all? { |obj| obj.kind_of?(Effective::Asset) }
-      raise ArgumentError.new('expecting one or more Effective::Assets, or an Array of Effective::Assets')
+    if items.present? && items.any? { |obj| !obj.kind_of?(Effective::Asset) }
+      raise ArgumentError.new('add_to_asset_box expects one or more Effective::Assets, or an Array of Effective::Assets')
     end
 
     if box == boxes # If we're adding to a pluralized box, we want to add our attachment onto the end
@@ -108,15 +108,15 @@ module ActsAsAssetBox
       pos = attachments.to_a.find { |attachment| attachment.box == boxes }.try(:position).to_i
 
       # Push all the attachments forward
-      attachments.each { |att| att.position = (att.position + assets.length) if att.box == boxes }
+      attachments.each { |att| att.position = (att.position + items.length) if att.box == boxes }
     end
 
     # Build the attachments
-    assets.each_with_index do |asset, x|
+    items.each_with_index do |item, x|
       attachment = self.attachments.build(:position => (pos+x), :box => boxes)
 
       attachment.attachable = self
-      attachment.asset = asset
+      attachment.asset = item
     end
 
     attachments.to_a.sort_by!(&:position)
@@ -124,8 +124,8 @@ module ActsAsAssetBox
     true
   end
 
-  def add_to_asset_box!(box, *assets)
-    add_to_asset_box(box, assets) && save!
+  def add_to_asset_box!(box, *items)
+    add_to_asset_box(box, items) && save!
   end
 
   # The idea here is that if you want to replace an Asset with Another one

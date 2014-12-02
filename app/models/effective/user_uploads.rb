@@ -4,11 +4,11 @@ module Effective
   class UserUploads < ActiveRecord::Base
     acts_as_asset_box :uploads
 
-    def initialize(assets = nil)
+    def initialize(items = nil)
       super()
       @column_types = {}
 
-      add_to_asset_box(:uploads, Array(assets))
+      add_to_asset_box(:uploads, items)
     end
 
     def self.columns
