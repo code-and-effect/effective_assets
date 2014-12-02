@@ -51,18 +51,18 @@ module Effective
     after_save :enqueue_delayed_job
 
     default_scope -> { order(:id) }
-
-    scope :images, -> { where("#{EffectiveAssets.assets_table_name}.content_type LIKE ?", '%image%') }
-    scope :nonimages, -> { where("(#{EffectiveAssets.assets_table_name}.content_type NOT LIKE ?)", '%image%') }
     scope :nonplaceholder, -> { where("#{EffectiveAssets.assets_table_name}.upload_file != ?", 'placeholder') }
 
-    scope :videos, -> { where("#{EffectiveAssets.assets_table_name}.content_type LIKE ?", '%video%') }
-    scope :audio, -> { where("#{EffectiveAssets.assets_table_name}.content_type LIKE ?", '%audio%') }
-    scope :files, -> { where("(#{EffectiveAssets.assets_table_name}.content_type NOT LIKE ?) AND (#{EffectiveAssets.assets_table_name}.content_type NOT LIKE ?) AND (#{EffectiveAssets.assets_table_name}.content_type NOT LIKE ?)", '%image%', '%video%', '%audio%') }
+    scope :images, -> { nonplaceholder().where("#{EffectiveAssets.assets_table_name}.content_type LIKE ?", '%image%') }
+    scope :nonimages, -> { nonplaceholder().where("(#{EffectiveAssets.assets_table_name}.content_type NOT LIKE ?)", '%image%') }
 
-    scope :today, -> { where("#{EffectiveAssets.assets_table_name}.created_at >= ?", Time.zone.today.beginning_of_day) }
-    scope :this_week, -> { where("#{EffectiveAssets.assets_table_name}.created_at >= ?", Time.zone.today.beginning_of_week) }
-    scope :this_month, -> { where("#{EffectiveAssets.assets_table_name}.created_at >= ?", Time.zone.today.beginning_of_month) }
+    scope :videos, -> { nonplaceholder().where("#{EffectiveAssets.assets_table_name}.content_type LIKE ?", '%video%') }
+    scope :audio, -> { nonplaceholder().where("#{EffectiveAssets.assets_table_name}.content_type LIKE ?", '%audio%') }
+    scope :files, -> { nonplaceholder().where("(#{EffectiveAssets.assets_table_name}.content_type NOT LIKE ?) AND (#{EffectiveAssets.assets_table_name}.content_type NOT LIKE ?) AND (#{EffectiveAssets.assets_table_name}.content_type NOT LIKE ?)", '%image%', '%video%', '%audio%') }
+
+    scope :today, -> { nonplaceholder().where("#{EffectiveAssets.assets_table_name}.created_at >= ?", Time.zone.today.beginning_of_day) }
+    scope :this_week, -> { nonplaceholder().where("#{EffectiveAssets.assets_table_name}.created_at >= ?", Time.zone.today.beginning_of_week) }
+    scope :this_month, -> { nonplaceholder().where("#{EffectiveAssets.assets_table_name}.created_at >= ?", Time.zone.today.beginning_of_month) }
 
     class << self
       def s3_base_path
