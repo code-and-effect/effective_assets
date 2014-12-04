@@ -1,25 +1,27 @@
 # Effective Assets
 
+Upload images and files directly to AWS S3 with a custom form input, then seamlessly organize and attach them to any ActiveRecord object.
+
 A Rails Engine full solution for managing assets (images, files, videos, etc).
 
 Attach one or more assets to any model with validations.
 
-Includes an upload direct to Amazon S3 implementation based on jQuery-File-Upload and image processing in the background with CarrierWave and DelayedJob
+Upload direct to Amazon S3 implementation based on jQuery-File-Upload and image processing on a background process with CarrierWave and DelayedJob
 
 Rails FormBuilder, Formtastic and SimpleForm inputs for displaying, managing, and uploading assets direct to S3.
 
 Works with AWS public-read and authenticated-read for easy secured downloads.
 
-Includes (optional but recommended) integration with ActiveAdmin
+Includes integration with ActiveAdmin
 
 Rails 3.2.x and Rails4 support
 
-# Getting Started
+## Getting Started
 
 Add to your Gemfile:
 
 ```ruby
-gem 'effective_assets', :git => 'https://github.com/code-and-effect/effective_assets'
+gem 'effective_assets'
 ```
 
 Run the bundle command to install it:
@@ -36,7 +38,7 @@ rails generate effective_assets:install
 
 The generator will install an initializer which describes all configuration options and creates two database migrations, one for EffectiveAssets the other for DelayedJob.
 
-If you want to tweak the table name (to use something other than the default 'assets' and 'attachments'), manually adjust both the configuration file and the migration now.
+If you want to tweak the table name (to use something other than the default `assets` and `attachments`), manually adjust both the configuration file and the migration now.
 
 Then migrate the database:
 
@@ -44,13 +46,13 @@ Then migrate the database:
 rake db:migrate
 ```
 
-If you intend to use the form helper method to display and upload assets, require the javascript in your application.js
+If you intend to use the form helper method to display and upload assets, require the javascript in your application.js:
 
 ```ruby
 //= require effective_assets
 ```
 
-If you intend to use ActiveAdmin (optional, but highly recommended)
+If you intend to use ActiveAdmin (optional):
 
 Add to your ActiveAdmin.js file:
 
@@ -68,22 +70,22 @@ body.active_admin {
 
 If ActiveAdmin is installed, there will automatically be an 'Effective Assets' page.
 
-# Create/Configure an S3 Bucket
+## Create/Configure an S3 Bucket
 
 You will need an AWS IAM user with sufficient priviledges and a properly configured S3 bucket to use with effective_assets
 
-## Log into AWS Console
+### Log into AWS Console
 
 - Visit http://aws.amazon.com/console/
 - Click My Account from top-right and sign in with your AWS account.
 
-## Create an S3 Bucket
+### Create an S3 Bucket
 
 - Click Services -> S3 from the top-left menu
 - Click Create Bucket
   - Give the Bucket a name, and select the US Standard region
 
-## Configure CORS Permissions
+### Configure CORS Permissions
 
 - From the S3 All Buckets Screen (as above)
 
@@ -109,7 +111,7 @@ You will need an AWS IAM user with sufficient priviledges and a properly configu
 
 The Bucket is now set up and ready to accept uploads, but we still need a user that has permission to access S3
 
-## Create an IAM User and record its AWS Access Keys
+### Create an IAM User and record its AWS Access Keys
 
 - After logging in to your AWS console
 
@@ -130,7 +132,7 @@ The Bucket is now set up and ready to accept uploads, but we still need a user t
 
 This user is now set up and ready to access the S3 Bucket previously created
 
-## Add S3 Access Keys
+### Add S3 Access Keys
 
 Add the name of your S3 Bucket, Access Key and Secret Access Key to the config/initializers/effective_assets.rb file.
 
@@ -143,15 +145,15 @@ config.aws_secret_access_key = 'xmowueroewairo74pacja1/werjow'
 You should now be able to upload to this bucket.
 
 
-# Usage
+## Usage
 
-## Model
+### Model
 
-Use the 'acts_as_asset_box' mixin to define a set of 'boxes' all your assets fall into.  A box is just a category, which can have any name.
+Use the `acts_as_asset_box` mixin to define a set of 'boxes' all your assets are grouped into.  A box is just a category, which can have any name.
 
-If the box is declared as a singular, 'photo', then it will be a singular asset.  When defined as a plural, 'photos', it will be a set of photos.
+If the box is declared using a singular word, such as `:photo` it will be set up as a `has_one` asset.  When defined as a plural, such as `:photos` it implies a `has_many` assets.
 
-The following will create 4 separate sets of assets:
+The following will create 4 separate boxes of assets:
 
 ```ruby
 class User
@@ -159,21 +161,21 @@ class User
 end
 ```
 
-Calling @user.avatar will return a single Effective::Asset.  Calling @user.photos will return an array of Effective::Assets
+Calling `user.avatar` will return a single `Effective::Asset`.  Calling `user.photos` will return an array of `Effective::Assets`.
 
 Then to get the URL of an asset:
 
 ```ruby
-@asset = @user.avatar
+asset = user.avatar
   => an Effective::Asset
 
-@asset.url
+asset.url
   => "http://aws_bucket.s3.amazonaws.com/assets/1/my_avatar.png"
 
-@asset.url(:thumb)   # See image versions (below)
+asset.url(:thumb)   # See image versions (below)
   => "http://aws_bucket.s3.amazonaws.com/assets/1/thumb_my_avatar.png"
 
-@user.photos
+user.photos
   => [Effective::Asset<1>, Effective::Asset<2>] # An array of Effective::Asset objects
 ```
 
@@ -189,30 +191,30 @@ true means presence, false means no validations applied.
 
 The user in this example is only valid if exists an avatar, 2 videos, and 5..10 mp3s.
 
-## Form Input
+### Form Input
 
-There is a standard rails form input
+There is a standard rails form input:
 
 ```ruby
 = form_for @user do |f|
   = f.asset_box_input :pictures
 ```
 
-A SimpleForm input
+A SimpleForm input:
 
 ```ruby
 = simple_form_for @user do |f|
   = f.input :pictures, :as => :asset_box
 ```
 
-and a Formtastic input
+and a Formtastic input:
 
 ```ruby
 = semantic_form_for @user do |f|
   = f.input :pictures, :as => :asset_box
 ```
 
-The `:as => :asset_box` will work interchangeably with SimpleForm or Formtastic, as long as only one of these gems is present in your application
+The `:as => :asset_box` will work interchangeably with SimpleForm or Formtastic, as long as only one of these gems is present in your application.
 
 If you use both SimpleForm and Formtastic, you will need to call asset_box_input differently:
 
@@ -225,9 +227,9 @@ If you use both SimpleForm and Formtastic, you will need to call asset_box_input
 ```
 
 
-## Uploading & Attaching
+### Uploading & Attaching
 
-Use the custom  input for uploading (direct to S3) and attaching assets to the 'pictures' box.
+Use the custom form input for uploading (direct to S3) and attaching assets to the `pictures` box.
 
 ```ruby
 = f.input :pictures, :as => :asset_box, :uploader => true
@@ -243,14 +245,14 @@ You may also upload secure (AWS: 'authenticated-read') assets with the same uplo
 = f.input :pictures, :as => :asset_box, :aws_acl => 'authenticated-read'
 ```
 
-There is also a mechanism for collecting additional information from the upload form which will be set in the asset.extra field.
+There is also a mechanism for collecting additional information from the upload form which will be set in the `asset.extra` field.
 
 ```ruby
-= semantic_form_for Product.new,  do |f|
+= semantic_form_for Product.new do |f|
   = f.input :photos, :as => :asset_box
-  = f.semantic_fields_for :photos do |upload|
-    = upload.input :field1, :as => :string
-    = upload.input :field2, :as => :boolean
+  = f.semantic_fields_for :photos do |pf|
+    = pf.input :field1, :as => :string
+    = pf.input :field2, :as => :boolean
 ```
 
 Here the semantic_fields_for will create some inputs with name
@@ -260,8 +262,7 @@ product[photos][field1]
 product[photos][field2]
 ```
 
-Any additional field like this will be passed to the Asset and populate the 'extra' Hash attribute
-
+Any additional field like this will be passed to the Asset and populate the `extra` Hash attribute
 
 Note: Passing :limit => 2 will have no effect on a singular asset_box, which by definition has a limit of 1.
 
@@ -269,20 +270,20 @@ We use the jQuery-File-Upload gem for direct-to-s3 uploading.  The process is as
 
 - User sees the form and clicks Browse.  Selects 1 or more files, then clicks Start Uploading.
 - The server makes a post to the S3UploadsController#create action to initialize an asset, and get a unique ID
-- The file is uploaded directly to its 'final' resting place on S3 via Javascript uploader. "assets/:id/filename"
-- A put is then made back to the S3UploadsController#update which updates the Asset object and sets up a task in DelayedJob to process the asset (for image resizing)
-- An attachment is created, which joins the Asset to the parent Object (User in our example) in the appropriate position.
-- The DelayedJob task should be running and will handle any image resizing as defined by the AssetUploader
+- The file is uploaded directly to its 'final' resting place on S3 via Javascript uploader at `assets/:id/:filename`
+- A PUT is then made back to the S3UploadsController#update which updates the `Effective::Asset` object and sets up a task in `DelayedJob` to process the asset (for image resizing)
+- An `Effective::Attachment` is created, which joins the `Effective::Asset` to the parent Object (`User` in our example) in the appropriate position.
+- The `DelayedJob` task should be running and will handle any image resizing as defined by the `AssetUploader`.
 - The asset will appear in the form, and the user may click&drag the asset around to set the position.
 
 
-## Strong Parameters
+### Strong Parameters
 
 Make your controller aware of the acts_as_asset_box passed parameters:
 
 ```ruby
 def permitted_params
-  params.require(:base_object).permit(EffectiveAssets.permitted_params, :email, :title, :etc)
+  params.require(:base_object).permit(EffectiveAssets.permitted_params)
 end
 ```
 
@@ -293,15 +294,17 @@ The permitted parameters are:
 ```
 
 
-## Image Processing and Resizing
+### Image Processing and Resizing
 
 CarrierWave and DelayedJob are used by this gem to perform image versioning.
 
-See the installer created at uploaders/asset_uploader.rb to configure image versions.
+This will be moved over to the new ActiveJob API in future versions of this gem, but right now DelayedJob is the only supported background worker.
 
-Use the 'process :record_info => :thumb' directive to store image version dimensions and file sizes.
+See the installer created at `app/uploaders/asset_uploader.rb` to configure image versions.
 
-When this file is changed, you must reprocess any assets to recreate all image versions
+Use the `process :record_info => :thumb` directive to store image version dimensions and file sizes.
+
+When this uploader file is changed, you must reprocess any existing `Effective::Asset` objects to recreate all image versions.
 
 This one-liner downloads the original file from AWS S3, creates the image versions locally using imagemagick, then uploads each version to its final resting place back on AWS S3.
 
@@ -310,9 +313,9 @@ Effective::Asset.find(123).reprocess!
 => true
 ```
 
-This can be done in batch using a rake script (see below).
+This can be done in batch using the built in rake script (see below).
 
-## Helpers
+### Helpers
 
 You can always get the URL directly
 
@@ -329,14 +332,14 @@ To display the asset as a link with an image (if its an image, or a mime-type ap
 effective_asset_image_tag(asset, version = nil, options = {})
 ```
 
-To display the asset as a link with no image
+To display the asset as a link with no image:
 
 ```ruby
 # Options are passed through to rails link_to helper
 effective_asset_link_to(asset, version = nil, options = {})
 ```
 
-# Authorization
+## Authorization
 
 All authorization checks are handled via the config.authorization_method found in the config/initializers/ file.
 
@@ -387,13 +390,22 @@ rescue_from Effective::AccessDenied do |exception|
 end
 ```
 
-# Rake Tasks
+### Permissions
+
+To allow user uploads, using Cancan:
+
+```ruby
+can [:create, :update, :destroy], Effective::Asset, :user_id => user.id
+```
+
+
+## Rake Tasks
 
 Use the following rake tasks to aid in batch processing a large number of (generally image) files.
 
-## Reprocess
+### Reprocess
 
-If the config/asset_uploader.rb is changed, run the following rake task to reprocess all assets and thereby recreate all image versions
+If the `app/uploaders/asset_uploader.rb` file is changed, run the following rake task to reprocess all `Effective::Asset` objects and thereby recreate all image versions
 
 ```ruby
 rake effective_assets:reprocess           # All assets
@@ -401,21 +413,21 @@ rake effective_assets:reprocess[200]      # reprocess #200 and up
 rake effective_assets:reprocess[1,200]    # reprocess #1..#200
 ```
 
-This command enqueues a reprocess! job for each Effective::Asset on the Delayed::Job queue.
+This command enqueues a `.reprocess!` job for each `Effective::Asset` on the `DelayedJob` queue.
 
-If a Delayed::Job worker process is already running, the reprocessing will begin immediately, otherwise start one with
+If a `DelayedJob` worker process is already running, the reprocessing will begin immediately, otherwise start one with
 
 ```ruby
 rake jobs:work
 ```
 
-## Check
+### Check
 
-Checks every Asset and Asset version for a working URL (200 http status code).
+Checks every `Effective::Asset` and all its versions for a working URL (200 http status code).
 
 Any non-200 http responses are logged as an error.
 
-This is a sanity-check task, that makes sure every url for every asset is going to work.
+This is a sanity-check task, that makes sure every url for every asset and version is going to work.
 
 This is just single-threaded one process.
 
@@ -428,28 +440,29 @@ rake effective_assets:check[1,200]  # check #1..#200
 rake effective:assets:check[1,200,:thumb]   # check #1..#200 only :thumb versions
 ```
 
-## Clear
+### Clear
 
-Deletes all effective_assets related jobs on the Delayed::Job queue.
+Deletes all effective_assets related jobs on the DelayedJob queue.
 
 ```ruby
 rake effective_assets:clear
 ```
 
-or to clear all jobs, even non-effective_assets related jobs, use Delayed::Job's rake task:
+or to clear all jobs, even non-effective_assets related jobs, use DelayedJob's rake task:
 
 ```ruby
 rake jobs:clear
 ```
 
 
-# License
+## License
 
 MIT License.  Copyright Code and Effect Inc. http://www.codeandeffect.com
 
 You are not granted rights or licenses to the trademarks of Code and Effect
 
-# Credits
+
+## Credits
 
 This gem heavily relies on:
 
@@ -460,7 +473,7 @@ DelayedJob (https://github.com/collectiveidea/delayed_job)
 jQuery-File-Upload (https://github.com/blueimp/jQuery-File-Upload)
 
 
-# Testing
+## Testing
 
 Testing uses the Combustion gem, for easier Rails Engine Testing.
 
@@ -473,3 +486,13 @@ Run tests by
 ```ruby
 bundle exec guard
 ```
+
+## Contributing
+
+1. Fork it
+2. Create your feature branch (`git checkout -b my-new-feature`)
+3. Commit your changes (`git commit -am 'Add some feature'`)
+4. Push to the branch (`git push origin my-new-feature`)
+5. Bonus points for test coverage
+6. Create new Pull Request
+
