@@ -10,8 +10,8 @@ Gem::Specification.new do |s|
   s.authors     = ["Code and Effect"]
   s.email       = ["info@codeandeffect.com"]
   s.homepage    = "https://github.com/code-and-effect/effective_assets"
-  s.summary     = "Effectively manage assets (images, files, videos, etc) in your application."
-  s.description = "A full solution for managing assets (images, files, videos, etc). Attach one or more assets to any model with validations. Includes an upload direct to Amazon S3 implementation based on s3_swf_upload and image processing in the background with CarrierWave and DelayedJob Formtastic input for displaying, organizing, and uploading assets direct to s3. Includes (optional but recommended) integration with ActiveAdmin"
+  s.summary     = "Upload images and files directly to AWS S3 with a custom form input then seamlessly organize and attach them to any ActiveRecord object."
+  s.description = "Upload images and files directly to AWS S3 with a custom form input then seamlessly organize and attach them to any ActiveRecord object."
 
   s.files = Dir["{app,config,db,lib}/**/*"] + ["MIT-LICENSE", "Rakefile", "README.md"]
   s.test_files = Dir["spec/**/*"]
