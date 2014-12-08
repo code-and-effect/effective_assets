@@ -12,11 +12,12 @@ Gem::Specification.new do |s|
   s.homepage    = "https://github.com/code-and-effect/effective_assets"
   s.summary     = "Upload images and files directly to AWS S3 with a custom form input then seamlessly organize and attach them to any ActiveRecord object."
   s.description = "Upload images and files directly to AWS S3 with a custom form input then seamlessly organize and attach them to any ActiveRecord object."
+  s.licenses    = ['MIT']
 
   s.files = Dir["{app,config,db,lib}/**/*"] + ["MIT-LICENSE", "Rakefile", "README.md"]
   s.test_files = Dir["spec/**/*"]
 
-  s.add_dependency "rails"
+  s.add_dependency "rails", [">= 3.2.0"]
   s.add_dependency "carrierwave"
   s.add_dependency "coffee-rails"
   s.add_dependency "delayed_job_active_record"
@@ -27,15 +28,4 @@ Gem::Specification.new do |s|
   s.add_dependency "migrant"
   s.add_dependency "mini_magick"
   s.add_dependency "jquery-fileupload-rails"
-
-
-  s.add_development_dependency 'combustion', '~> 0.5.1'
-  s.add_development_dependency "factory_girl_rails"
-  s.add_development_dependency "rspec-rails"
-  s.add_development_dependency "shoulda-matchers"
-  s.add_development_dependency "sqlite3"
-
-  s.add_development_dependency "guard"
-  s.add_development_dependency "guard-rspec"
-  s.add_development_dependency "guard-livereload"
 end
