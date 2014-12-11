@@ -5,4 +5,4 @@
 - elsif asset.image?
   = effective_asset_image_tag(asset, nil, :class => effective_asset.html_class)
 - else
-  = effective_asset_link_to(asset, nil, :class => effective_asset.html_class)
+  = effective_asset_link_to(asset, nil, :class => effective_asset.html_class, :title => effective_asset.link_title.presence)

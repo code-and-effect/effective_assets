@@ -25,6 +25,13 @@ CKEDITOR.dialog.add 'effective_asset', (editor) ->
           label: 'HTML Class',
           setup: (widget) -> this.setValue(widget.data.html_class)
           commit: (widget) -> widget.setData('html_class', this.getValue()) if widget
+        },
+        {
+          id: 'link_title',
+          type: 'text',
+          label: 'Title',
+          setup: (widget) -> this.setValue(widget.data.link_title)
+          commit: (widget) -> widget.setData('link_title', this.getValue()) if widget
         }
       ] # /tab1 elements
     }, # /tab1
