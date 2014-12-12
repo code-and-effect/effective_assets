@@ -8,3 +8,4 @@ spec/internal/log/*.log
 spec/internal/tmp/
 spec/internal/.sass-cache
 spec/internal/config/initializers/effective_assets.rb
+.idea
