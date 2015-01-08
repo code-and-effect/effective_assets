@@ -125,8 +125,7 @@ The Bucket is now set up and ready to accept uploads, but we still need a user t
 - This displays the AWS Access Key and Secret Access Key.
 - (important) These are the two values you should copy into the effective_assets.rb initializer file
 
-- Once the user is created, Click on the User and find the Permissions tab
-- Select Permissions tab
+- Once the user is created, Click on the User Properties area
 - Click Attach User Policy
 - Scroll down and Select 'Amazon S3 Full Access'
 
