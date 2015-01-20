@@ -25,6 +25,7 @@ Gem::Specification.new do |s|
   s.add_dependency "jquery-rails" # For the jquery_ujs
   s.add_dependency 'unf'
   s.add_dependency "haml"
+  s.add_dependency "sass-rails"
   s.add_dependency "migrant"
   s.add_dependency "mini_magick"
   s.add_dependency "jquery-fileupload-rails"
