@@ -52,6 +52,12 @@ If you intend to use the form helper method to display and upload assets, requir
 //= require effective_assets
 ```
 
+and the stylesheet in your application.css:
+
+```ruby
+*= require effective_assets
+```
+
 If you intend to use ActiveAdmin (optional):
 
 Add to your ActiveAdmin.js file:
