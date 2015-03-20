@@ -16,6 +16,10 @@
     .attachment-image img {
       max-height: 48px;
     }
+
+    tr {
+      td { vertical-align: middle; }
+    }
   }
 
   // asset_box_input/attachment_as_list
