@@ -49,6 +49,7 @@ CKEDITOR.dialog.add 'effective_asset', (editor) ->
             this.setValue(widget.data.asset_id)
             $('#' + this.getDialog().getContentElement('asset', 'asset_id').getElement().getId()).hide()
           commit: (widget) -> widget.setData('asset_id', this.getValue()) if widget
+          validate: CKEDITOR.dialog.validate.notEmpty('please select a file')
         },
         {
           id: 'link_title',
@@ -64,7 +65,13 @@ CKEDITOR.dialog.add 'effective_asset', (editor) ->
           setup: (widget) -> this.setValue(widget.data.html_class)
           commit: (widget) -> widget.setData('html_class', this.getValue()) if widget
         },
-
+        {
+          id: 'private_url',
+          type: 'checkbox',
+          label: 'Link to a private URL that will expire 60 minutes after any page visit',
+          setup: (widget) -> this.setValue(widget.data.private_url)
+          commit: (widget) -> widget.setData('private_url', this.getValue()) if widget
+        }
       ] # /asset elements
     } # /asset tab
   ] # /contents

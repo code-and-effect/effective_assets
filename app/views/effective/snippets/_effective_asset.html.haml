@@ -1,4 +1,5 @@
 - asset = effective_asset.asset
+- asset.aws_acl = 'authenticated-read' if effective_asset.is_private?
 
 - if asset.nil?
   %img{:src => '#'}
