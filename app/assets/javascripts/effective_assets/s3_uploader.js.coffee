@@ -209,8 +209,9 @@ $.fn.S3Uploader = (options) ->
       async: true
       success: (data) ->
         limit = asset_box.data('limit')
+        direction = asset_box.data('attachment-add-to')  # bottom or top.  bottom is default append behaviour
 
-        if limit == 10000 # Guard value for no limit
+        if limit == 10000 && direction != 'top' # Guard value for no limit.  There is no limit
           asset_box.find('.attachments').append($(data))
         else
           asset_box.find('.attachments').prepend($(data))
