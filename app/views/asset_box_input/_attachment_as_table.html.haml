@@ -20,12 +20,11 @@
 
     - if attachment_actions.include?('remove')
       %a.attachment-remove{:href => '#', :title => 'Remove'}
-        %img{:src => asset_path('effective_assets/icon_close.png'), :alt => 'Remove'}
+        %i.glyphicon.glyphicon-remove
 
     - if attachment_actions.include?('delete')
       = link_to effective_assets.effective_asset_path(attachment.asset), :class => 'btn btn-danger attachment-delete', :data => {:method => :delete, :confirm => "Are you sure you want to delete this file? This cannot be undone!"} do
-        %img{:src => asset_path('effective_assets/icon_close.png'), :alt => 'Delete'}
-
+        %i.glyphicon.glyphicon-trash
 
     - if attachment.persisted?
       = hidden_field_tag(attachable_object_name + "[attachments_attributes][#{uid}][id]", attachment.id)

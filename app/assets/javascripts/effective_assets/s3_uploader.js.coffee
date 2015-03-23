@@ -39,8 +39,8 @@ $.fn.S3Uploader = (options) ->
             alert("Unable to add #{file.name}.\n\nOnly #{settings.file_types.replace(/\|/g, ', ')} files allowed.")
             return false
 
-        if file.name.length > 150
-          alert("Unable to add #{file.name}.\n\nFile name too long.  File name must be 150 or fewer characters long.")
+        if file.name.length > 180
+          alert("Unable to add #{file.name}.\n\nFile name too long.  File name must be 180 or fewer characters long.")
           return false
 
         # We're all good. Let's go ahead and add this
