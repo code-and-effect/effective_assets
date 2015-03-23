@@ -7,14 +7,61 @@
           border-radius: $radius;
 }
 
+.asset-box-input.dragin {
+  > .drop-files {
+    border: 4px dashed #5cb85c;
+
+    > p { color: #5cb85c; }
+  }
+}
+
 .asset-box-input {
   width: 100%;
   height: 100%;
+
+  .fileinput-button {
+    overflow: hidden;
+    position: relative;
+
+    input {
+      cursor: pointer;
+      direction: ltr;
+      opacity: 0;
+      margin: 0;
+      position: absolute;
+      right: 0;
+      top: 0;
+      height: 100%;
+    }
+  }
+
+  // Display uploader bordered area
+  .drop-files {
+    border: 4px dashed #cfcfcf;
+    padding: 4px;
+    margin-bottom: 8px;
+
+    > p {
+      text-align: center;
+      color: #cfcfcf;
+      font-size: 16px;
+    }
+  }
+
+  .filter-attachments {
+    display: inline;
+    font-weight: normal;
+  }
 
   // asset_box_input/attachment_as_table
   tbody.attachments {
     .attachment-image img {
       max-height: 48px;
+    }
+
+    .attachment-title {
+      overflow: auto;
+      text-overflow: ellipsis;
     }
 
     tr {

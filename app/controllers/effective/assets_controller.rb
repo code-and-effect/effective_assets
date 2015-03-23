@@ -16,7 +16,7 @@ module Effective
         @aws_acl = 'public-read' # The CKEditor Insert Image functionality needs a public-read image here
       elsif params[:only] == 'nonimages'
         @assets = @assets.nonimages
-        @file_types = [:pdf, :zip, :doc, :docx, :xls, :xlsx, :txt, :avi, :m4v, :m2v, :mov, :mp3, :mp4]
+        @file_types = [:pdf, :zip, :doc, :docx, :xls, :xlsx, :txt, :csv, :avi, :m4v, :m2v, :mov, :mp3, :mp4, :eml]
       end
 
       @user_uploads = UserUploads.new(@assets)
