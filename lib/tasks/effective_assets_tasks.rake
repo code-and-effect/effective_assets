@@ -96,3 +96,4 @@ namespace :effective_assets do
     Delayed::Job.where('handler ILIKE ?', '%method_name: :reprocess_asset_without_delay%').delete_all
     puts 'Deleted all effective_asset related Delayed::Job jobs'
   end
+end
