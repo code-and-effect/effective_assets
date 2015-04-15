@@ -27,11 +27,11 @@ EffectiveAssets.setup do |config|
   # config.authorization_method = false
   config.authorization_method = Proc.new { |controller, action, resource| true } # All users can see every screen
 
-
   # This is your S3 bucket information
   config.aws_bucket = ''
   config.aws_access_key_id = ''
   config.aws_secret_access_key = ''
+  config.aws_region = 'us-east-1'
 
   config.aws_path = 'assets/'
 
@@ -39,7 +39,6 @@ EffectiveAssets.setup do |config|
   # Unless you override the value by passing :aws_acl => '' to the asset_box_input, Asset.create_from_url, or Asset.create_from_string
   # Valid settings are public-read, authenticated-read
   config.aws_acl = 'public-read'
-
 
   # Register Effective::Asset with ActiveAdmin if ActiveAdmin is present
   config.use_active_admin = true

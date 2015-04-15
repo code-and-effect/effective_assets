@@ -14,6 +14,7 @@ module EffectiveAssets
   mattr_accessor :aws_bucket
   mattr_accessor :aws_access_key_id
   mattr_accessor :aws_secret_access_key
+  mattr_accessor :aws_region
 
   mattr_accessor :aws_path  # This directory is where we upload files to
   mattr_accessor :aws_acl
@@ -47,7 +48,8 @@ module EffectiveAssets
         config.fog_credentials = {
           :provider               => 'AWS',
           :aws_access_key_id      => EffectiveAssets.aws_access_key_id,
-          :aws_secret_access_key  => EffectiveAssets.aws_secret_access_key
+          :aws_secret_access_key  => EffectiveAssets.aws_secret_access_key,
+          :aws_region             => EffectiveAssets.aws_region.presence || 'us-east-1'
         }
         config.fog_directory  = EffectiveAssets.aws_bucket
         config.fog_public     = EffectiveAssets.aws_acl.to_s.include?('public')
