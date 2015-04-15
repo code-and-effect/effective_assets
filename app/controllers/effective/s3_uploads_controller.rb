@@ -14,10 +14,11 @@ module Effective
 
       EffectiveAssets.authorized?(self, :create, @asset)
 
-      if @asset.save
+      begin
+        @asset.save!
         render(:text => {:id => @asset.id, :s3_key => asset_s3_key(@asset)}.to_json, :status => 200)
-      else
-        render(:text => '', :status => 400)
+      rescue => e
+        render(:text => e.message, :status => 500)
       end
     end
 
