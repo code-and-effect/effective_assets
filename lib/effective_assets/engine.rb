@@ -25,6 +25,11 @@ module EffectiveAssets
       end
     end
 
+    # Set up our default configuration options.
+    initializer "effective_assets.defaults", :before => :load_config_initializers do |app|
+      eval File.read("#{config.root}/lib/generators/templates/effective_assets.rb")
+    end
+
     initializer "effective_assets.append_precompiled_assets" do |app|
       Rails.application.config.assets.precompile += ['effective_assets.js', 'effective_assets_iframe.js', 'effective_assets_iframe.css', 'spinner.gif']
     end
