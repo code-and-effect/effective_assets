@@ -84,7 +84,8 @@ module Inputs
           :file_types => @options[:file_types],
           :progress_bar_partial => @options[:progress_bar_partial],
           :drop_files => @options[:uploader_drop_files],
-          :aws_acl => @options[:aws_acl]
+          :aws_acl => @options[:aws_acl],
+          :btn_label => @options[:btn_label]
         }
       ).html_safe
     end
@@ -147,7 +148,8 @@ module Inputs
         :dialog_url => @template.effective_assets.effective_assets_path,
         :disabled => false,
         :file_types => [:any],
-        :aws_acl => EffectiveAssets.aws_acl
+        :aws_acl => EffectiveAssets.aws_acl,
+        :btn_label => "Upload files..."
       }.merge(opts).tap do |options|
         options[:method] = method.to_s
         options[:box] = method.to_s.pluralize
