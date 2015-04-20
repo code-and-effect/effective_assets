@@ -84,6 +84,7 @@ module Inputs
           :file_types => @options[:file_types],
           :progress_bar_partial => @options[:progress_bar_partial],
           :drop_files => @options[:uploader_drop_files],
+          :drop_files_help_text => @options[:drop_files_help_text],
           :aws_acl => @options[:aws_acl],
           :btn_label => @options[:btn_label]
         }
@@ -139,6 +140,7 @@ module Inputs
       {
         :uploader => true, # :top, :bottom, true or false
         :uploader_drop_files => false,
+        :drop_files_help_text => 'Drop files here',
         :progress_bar_partial => 'asset_box_input/progress_bar_template',
         :attachment_style => :thumbnail,  # :thumbnail, :table, or :list
         :attachment_add_to => :bottom, # :bottom or :top (of attachments div)
