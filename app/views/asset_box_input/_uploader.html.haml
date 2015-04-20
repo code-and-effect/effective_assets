@@ -7,7 +7,7 @@
 
   %span.btn.btn-success.fileinput-button
     %i.glyphicon.glyphicon-upload
-    %span Upload files...
+    %span= btn_label
     - if limit > 1
       %input{:type => 'file', :name => 'file', :multiple => 'multiple', :disabled => disabled}
     - else
