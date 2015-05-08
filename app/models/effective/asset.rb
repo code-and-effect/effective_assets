@@ -21,9 +21,6 @@ module Effective
 
     structure do
       title           :string
-
-      description     :text
-      tags            :string
       extra           :text
 
       content_type    :string, :validates => [:presence]

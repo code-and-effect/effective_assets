@@ -13,14 +13,14 @@ module EffectiveAssetsHelper
       opts = {}
     end
 
-    opts = opts.merge({:alt => asset.description || asset.title || asset.file_name}).merge(options)
+    opts = opts.merge({:alt => asset.title || asset.file_name}).merge(options)
 
     content_tag(:img, nil, opts.merge(:src => _effective_asset_image_url(asset, version))).gsub('"', "'").html_safe
   end
 
   def effective_asset_link_to(asset, version = nil, options = {})
     options_title = options.delete(:title)
-    link_title = options_title || asset.title || asset.file_name || asset.description || "Asset ##{asset.id}"
+    link_title = options_title || asset.title || asset.file_name || "Asset ##{asset.id}"
 
     if asset.image?
       link_to(link_title, _effective_asset_image_url(asset, version), options).gsub('"', "'").html_safe # we need all ' quotes or it breaks Insert as functionality
@@ -36,8 +36,6 @@ module EffectiveAssetsHelper
   def effective_asset_title(asset)
     [
       asset.title,
-      asset.description,
-      asset.tags,
       "Size: #{number_to_human_size(asset.data_size)}",
       "Content Type: #{asset.content_type}"
     ].compact.join("\n")

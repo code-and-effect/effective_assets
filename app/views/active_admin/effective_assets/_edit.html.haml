@@ -9,8 +9,6 @@
         - if defined? User
           = asset.try(:user)
     = f.input :title, :hint => "Give this asset a title"
-    = f.input :description, :as => :string, :hint => "Give this asset a description"
-    = f.input :tags, :hint => "Used for searching and filtering.  Separate multiple tags with a comma (i.e. blue,car,ford)"
     = f.input :content_type, :hint => "The computer detected type of file.  Be careful when changing this value as you may break things."
     %li
       %label.label Files

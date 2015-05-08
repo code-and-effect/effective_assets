@@ -2,8 +2,6 @@ class CreateEffectiveAssets < ActiveRecord::Migration
   def self.up
     create_table <%= @assets_table_name %> do |t|
       t.string  :title
-      t.text    :description
-      t.string  :tags
       t.text    :extra
 
       t.integer :user_id

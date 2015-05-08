@@ -2,8 +2,6 @@ ActiveRecord::Schema.define do
 
   create_table "assets", :force => true do |t|
     t.string   "title"
-    t.text     "description"
-    t.string   "tags"
     t.integer  "user_id"
     t.string   "content_type"
     t.string   "upload_file"

@@ -24,7 +24,7 @@ describe Effective::Asset do
   end
 
   it 'should be creatable from URL' do
-    asset = Effective::Asset.create_from_url(image_url, {:title => 'a title', :description => 'a description', :tags => 'a tags', :user_id => 1})
+    asset = Effective::Asset.create_from_url(image_url, {:title => 'a title', :user_id => 1})
 
     # A new asset should exist, and it should be unprocessed
     asset.should_not eq false
@@ -48,8 +48,6 @@ describe Effective::Asset do
     asset.processed.should eq true
     asset.data.kind_of?(TestAssetUploader).should eq true
     asset.title.should eq 'a title'
-    asset.description.should eq 'a description'
-    asset.tags.should eq 'a tags'
     asset.user_id.should eq 1
     asset.versions_info.present?.should eq true
     asset.content_type.should eq 'image/png'

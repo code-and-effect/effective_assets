@@ -3,8 +3,6 @@ if defined?(ActiveAdmin)
     menu :label => "Assets", :if => proc { EffectiveAssets.authorized?(controller, :manage, Effective::Asset.new()) rescue false }
 
     filter :title
-    filter :tags
-    filter :description
     filter :content_type
     filter :created_at
 
@@ -22,7 +20,6 @@ if defined?(ActiveAdmin)
 
       column 'Title' do |asset|
         strong asset.title
-        asset.tags.split(',').map { |tag| status_tag tag } if asset.tags.present?
       end
 
       column 'Insert' do |asset|
@@ -66,8 +63,6 @@ if defined?(ActiveAdmin)
     show :title => :title do
       attributes_table do
         row :title
-        row :description
-        row :tags
         row :content_type
         row :created_at
         row :thumb do
