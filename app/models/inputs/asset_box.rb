@@ -151,7 +151,7 @@ module Inputs
         :disabled => false,
         :file_types => [:any],
         :aws_acl => EffectiveAssets.aws_acl,
-        :btn_label => "Upload files..."
+        :btn_label => "Upload..."
       }.merge(opts).tap do |options|
         options[:method] = method.to_s
         options[:box] = method.to_s.pluralize
