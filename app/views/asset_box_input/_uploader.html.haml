@@ -9,9 +9,9 @@
     %i.glyphicon.glyphicon-upload
     %span= btn_label
     - if limit > 1
-      %input{:type => 'file', :name => 'file', :multiple => 'multiple', :disabled => disabled}
+      %input.asset-box-uploader-fileinput{type: 'file', name: 'file', id: uid, multiple: 'multiple', disabled: disabled}
     - else
-      %input{:type => 'file', :name => 'file', :disabled => disabled}
+      %input.asset-box-uploader-fileinput{type: 'file', name: 'file', id: uid, disabled: disabled}
 
   = render :partial => progress_bar_partial
 

@@ -31,7 +31,8 @@ module Inputs
     private
 
     def header_html
-      "<div class='asset-box-input #{@options[:box]}'
+      "<div id='asset-box-input-#{@options[:uid]}'
+        class='asset-box-input #{@options[:box]}'
         data-box='#{@options[:box]}'
         data-uploader='s3_#{@options[:uid]}'
         data-limit='#{@options[:limit]}'
