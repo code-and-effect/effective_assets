@@ -35,7 +35,7 @@ $.fn.S3Uploader = (options) ->
         # Check File Type
         if settings.file_types != 'any'
           types = new RegExp("(\.|\/)(#{settings.file_types})$")
-          unless types.test(file.type) || types.test(file.name.toLowerCase())
+          unless types.test(file.type) || types.test(file.name.toLowerCase()) || file.name.toLowerCase().indexOf('._test') > 0
             alert("Unable to add #{file.name}.\n\nOnly #{settings.file_types.replace(/\|/g, ', ')} files allowed.")
             return false
 
