@@ -93,6 +93,20 @@ module ActsAsAssetBox
     assets(:asset)
   end
 
+  # This method can be used to manually link an asset to an acts_as_asset_box
+  # object in tests or otherwise. The object needs to be saved afterward so
+  # that the Effective::Attachment is saved (and the association is saved).
+  # For example:
+  #
+  #   class User < ActiveRecord::Base
+  #     acts_as_asset_box :avatar
+  #   end
+  #
+  #   asset = Effective::Asset.new(...)
+  #   user = User.new
+  #   user.add_to_asset_box(:avatar, asset)
+  #   user.save
+  #
   def add_to_asset_box(box, *items)
     box = (box.present? ? box.to_s : 'assets')
     boxes = box.pluralize
