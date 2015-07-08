@@ -45,7 +45,7 @@ module ActsAsAssetBox
       boxes = boxes.first
 
       boxes.each do |box, validation|
-        self.send(:define_method, box) { assets(box) }
+        self.send(:define_method, box) { effective_assets(box) }
 
         if validation == true
           validates box, :asset_box_presence => true
@@ -55,7 +55,7 @@ module ActsAsAssetBox
       end
     else
       boxes.each do |key|
-        self.send(:define_method, key) { assets(key) }
+        self.send(:define_method, key) { effective_assets(key) }
       end
     end
 
@@ -78,7 +78,7 @@ module ActsAsAssetBox
   module ClassMethods
   end
 
-  def assets(box = nil)
+  def effective_assets(box = nil)
     box = (box.present? ? box.to_s : 'assets')
     boxes = box.pluralize
 
@@ -87,10 +87,6 @@ module ActsAsAssetBox
     else
       attachments.to_a.find { |attachment| attachment.box == boxes }.try(:asset)
     end
-  end
-
-  def asset
-    assets(:asset)
   end
 
   # This method can be used to manually link an asset to an acts_as_asset_box
