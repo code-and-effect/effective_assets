@@ -30,6 +30,23 @@ $.fn.S3Uploader = (options) ->
       url: settings.url
 
       add: (e, data) ->
+        # Ensure correct $uploadForm is being used
+        $uploadForms = $('.asset-box-uploader')
+        return false if $uploadForms.index($uploadForm) == -1
+
+        # Make sure the user isn't over the upload limit
+        $asset_box = $uploadForm.closest('.asset-box-input')
+        limit = $asset_box.data('limit')
+        if typeof limit == 'number'
+          count = parseInt($asset_box.attr('data-attachment-count'), 10)
+          if count >= limit
+            alert("Unable to add file(s).  You have exceeded the limit of #{limit} uploads.") unless $asset_box.data('over-limit-alerted')
+            $asset_box.data('over-limit-alerted', true)
+            return false
+          else
+            $asset_box.attr('data-attachment-count', count + 1)
+
+        # Add the file to the upload
         file = data.files[0]
 
         # Check File Type
@@ -263,10 +280,16 @@ $.fn.S3Uploader = (options) ->
     else
       bits.toFixed(2) + ' bit/s'
 
+  resetOverLimitAlert = (event) ->
+    $assetBox = $(event.target).closest('.asset-box-input')
+    $assetBox.data('over-limit-alerted', false)
+
   #public methods
   @initialize = ->
     # Save key for IE9 Fix
     $uploadForm.data("key", $uploadForm.find("input[name='key']").val())
+    $uploadForm.data("fileCount", 0)
+    $(document).on 'drop', '.asset-box-uploader', resetOverLimitAlert
     setUploadForm()
     this
 
