@@ -42,6 +42,8 @@ module Inputs
         data-attachment-style='#{@options[:attachment_style]}'
         data-attachment-add-to='#{@options[:attachment_add_to]}'
         data-attachment-actions='#{@options[:attachment_actions].to_json()}'
+        data-attachment-count='#{attachments.length}'
+        data-over-limit-alerted='false'
         data-aws-acl='#{@options[:aws_acl]}'
       >".html_safe
     end
