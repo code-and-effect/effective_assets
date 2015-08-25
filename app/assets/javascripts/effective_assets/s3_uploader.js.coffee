@@ -37,7 +37,7 @@ $.fn.S3Uploader = (options) ->
         # Make sure the user isn't over the upload limit
         $asset_box = $uploadForm.closest('.asset-box-input')
         limit = $asset_box.data('limit')
-        if typeof limit == 'number'
+        if typeof limit == 'number' && limit > 1
           count = parseInt($asset_box.attr('data-attachment-count'), 10)
           if count >= limit
             alert("Unable to add file(s).  You have exceeded the limit of #{limit} uploads.") unless $asset_box.data('over-limit-alerted')
@@ -290,6 +290,7 @@ $.fn.S3Uploader = (options) ->
     $uploadForm.data("key", $uploadForm.find("input[name='key']").val())
     $uploadForm.data("fileCount", 0)
     $(document).on 'drop', '.asset-box-uploader', resetOverLimitAlert
+    $(document).on 'click', '.asset-box-uploader .asset-box-uploader-fileinput', resetOverLimitAlert
     setUploadForm()
     this
 
