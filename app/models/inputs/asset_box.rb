@@ -50,21 +50,31 @@ module Inputs
 
     def attachments_html
       if @options[:attachment_style] == :table
-        content_tag(:table, :class => 'table') do
-          content_tag(:thead) do
-            content_tag(:tr) do
-              [
-                content_tag(:th, ''),
-                content_tag(:th, ''),
-                content_tag(:th, (@options[:table_filter_bar] ? filter_bar_html : ''), :colspan => 2)
-              ].join().html_safe
-            end
-          end + content_tag(:tbody, build_values_html, :class => 'attachments')
-        end
+        attachments_table_html
       elsif @options[:attachment_style] == :list
         content_tag(:ul, build_values_html, :class => 'attachments')
       else
         content_tag(:div, build_values_html, :class => 'row attachments thumbnails')
+      end
+    end
+
+    def attachments_table_html
+      content_tag(:table, :class => 'table') do
+        head = attachments_table_head_html if @options[:table_filter_bar]
+        body = content_tag(:tbody, build_values_html, :class => 'attachments')
+        head ? head + body : body
+      end
+    end
+
+    def attachments_table_head_html
+      content_tag(:thead) do
+        content_tag(:tr) do
+          [
+            content_tag(:th, ''),
+            content_tag(:th, ''),
+            content_tag(:th, filter_bar_html, :colspan => 2)
+          ].join().html_safe
+        end
       end
     end
 
