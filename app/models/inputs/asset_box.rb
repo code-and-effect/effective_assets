@@ -133,6 +133,7 @@ module Inputs
           :locals => {
             :attachment => attachment,
             :attachment_actions => @options[:attachment_actions].map(&:to_s),
+            :attachment_links => @options[:attachment_links],
             :hidden => (count > @options[:limit]),
             :disabled => @options[:disabled],
             :attachable_object_name => @object_name,
@@ -156,6 +157,7 @@ module Inputs
         :drop_files_help_text => 'Drop files here',
         :progress_bar_partial => 'asset_box_input/progress_bar_template',
         :attachment_style => :thumbnail,  # :thumbnail, :table, or :list
+        :attachment_links => true,
         :attachment_add_to => :bottom, # :bottom or :top (of attachments div)
         :attachment_actions => [:remove], # or :insert, :delete, :remove
         :table_filter_bar => false,

@@ -5,7 +5,10 @@
   %td.attachment-image
     = effective_asset_image_tag(attachment.asset)
   %td.attachment-title{:title => effective_asset_title(attachment.asset)}
-    = link_to attachment.asset.title, attachment.asset.url, :target => '_blank'
+    - if attachment_links
+      = link_to attachment.asset.title, attachment.asset.url, :target => '_blank'
+    - else
+      = attachment.asset.title
   %td.attachment-size
     = number_to_human_size(attachment.asset.data_size)
   %td

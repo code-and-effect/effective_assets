@@ -3,7 +3,10 @@
 
 %li.attachment
   .attachment-title.caption
-    = link_to attachment.asset.title, attachment.asset.url, :target => '_blank'
+    - if attachment_links
+      = link_to attachment.asset.title, attachment.asset.url, :target => '_blank'
+    - else
+      = attachment.asset.title
 
   - if attachment_actions.include?('remove')
     %a.attachment-remove{:href => '#'}

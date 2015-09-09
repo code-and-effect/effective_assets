@@ -44,6 +44,7 @@ module Effective
         attachment.position = 0
         attachable_object_name = params[:attachable_object_name].to_s
         attachment_actions = params[:attachment_actions]
+        attachment_links = params[:attachment_links]
 
         attachment_partial =
         case params[:attachment_style].to_s
@@ -55,7 +56,7 @@ module Effective
           'attachment_as_thumbnail'
         end
 
-        render :partial => "asset_box_input/#{attachment_partial}", :locals => {:attachment => attachment, :attachable_object_name => attachable_object_name, :attachment_actions => attachment_actions}, :status => 200, :content_type => 'text/html'
+        render :partial => "asset_box_input/#{attachment_partial}", :locals => {:attachment => attachment, :attachable_object_name => attachable_object_name, :attachment_actions => attachment_actions, attachment_links: attachment_links}, :status => 200, :content_type => 'text/html'
       else
         render :text => '', :status => 200
       end
