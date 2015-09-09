@@ -44,7 +44,7 @@ module Effective
         attachment.position = 0
         attachable_object_name = params[:attachable_object_name].to_s
         attachment_actions = params[:attachment_actions]
-        attachment_links = params[:attachment_links]
+        attachment_links = ![false, 0, '0', 'f', 'F', 'false', 'FALSE', 'off', 'OFF'].include?(params[:attachment_links])
 
         attachment_partial =
         case params[:attachment_style].to_s
