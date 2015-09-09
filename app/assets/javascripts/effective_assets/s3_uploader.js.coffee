@@ -221,6 +221,7 @@ $.fn.S3Uploader = (options) ->
         attachable_object_name: asset_box.data('attachable-object-name')
         attachment_style: asset_box.data('attachment-style')
         attachment_actions: asset_box.data('attachment-actions')
+        attachment_links: asset_box.data('attachment-links')
         aws_acl: asset_box.data('aws-acl')
         box: asset_box.data('box')
       async: true
