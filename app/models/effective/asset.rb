@@ -172,19 +172,17 @@ module Effective
       title
     end
 
-    def reprocess!
+    def process!
       begin
-        Rails.logger.info "Reprocessing ##{id}..."
-        print "Reprocessing ##{id}..."
-
-        raise 'must be processed first before reprocessed' unless processed?
+        Rails.logger.info "Processing ##{id}..."
+        print "Processing ##{id}..."
 
         data.cache_stored_file!
         data.retrieve_from_cache!(data.cache_name)
         data.recreate_versions!
         save!
 
-        Rails.logger.info "Successfully reprocessed ##{id}"
+        Rails.logger.info "Successfully processed ##{id}"
         print "success"; puts ''
         true
       rescue => e
@@ -193,6 +191,7 @@ module Effective
         false
       end
     end
+    alias_method :reprocess!, :process!
 
     protected
 
