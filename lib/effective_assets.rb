@@ -51,9 +51,10 @@ module EffectiveAssets
           :aws_secret_access_key  => EffectiveAssets.aws_secret_access_key,
           :region                 => EffectiveAssets.aws_region.presence || 'us-east-1'
         }
+
         config.fog_directory  = EffectiveAssets.aws_bucket
         config.fog_public     = EffectiveAssets.aws_acl.to_s.include?('public')
-        config.fog_attributes = {'Cache-Control'=>'max-age=315576000'}
+        config.fog_attributes = {'Cache-Control'=>'max-age=315576000', 'Expires' => 1.year.from_now.httpdate}
         config.cache_dir      = "#{Rails.root}/tmp/uploads" # For heroku
       end
 
