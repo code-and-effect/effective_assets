@@ -1,5 +1,5 @@
 require "effective_assets/engine"
-require 'carrierwave'
+require 'carrierwave-aws'
 require 'delayed_job_active_record'
 require 'migrant'     # Required for rspec to run properly
 require 'jquery-fileupload-rails'
@@ -45,17 +45,22 @@ module EffectiveAssets
   def self.configure_carrierwave
     if (@carrierwave_configured != true) && EffectiveAssets.uploader.present? && EffectiveAssets.aws_bucket.present?
       CarrierWave.configure do |config|
-        config.fog_credentials = {
-          :provider               => 'AWS',
-          :aws_access_key_id      => EffectiveAssets.aws_access_key_id,
-          :aws_secret_access_key  => EffectiveAssets.aws_secret_access_key,
-          :region                 => EffectiveAssets.aws_region.presence || 'us-east-1'
+        config.storage        = :aws
+        config.aws_bucket     = EffectiveAssets.aws_bucket
+        config.aws_acl        = EffectiveAssets.aws_acl.presence || 'public-read'
+        config.cache_dir      = "#{Rails.root}/tmp/uploads" # For heroku
+
+        config.aws_credentials = {
+          :access_key_id      => EffectiveAssets.aws_access_key_id,
+          :secret_access_key  => EffectiveAssets.aws_secret_access_key,
+          :region             => EffectiveAssets.aws_region.presence || 'us-east-1'
         }
 
-        config.fog_directory  = EffectiveAssets.aws_bucket
-        config.fog_public     = EffectiveAssets.aws_acl.to_s.include?('public')
-        config.fog_attributes = {'Cache-Control'=>'max-age=315576000', 'Expires' => 1.year.from_now.httpdate}
-        config.cache_dir      = "#{Rails.root}/tmp/uploads" # For heroku
+        config.aws_attributes = {
+          :cache_control => 'max-age=315576000',
+          :expires => 1.year.from_now.httpdate
+        }
+
       end
 
       @carrierwave_configured = true

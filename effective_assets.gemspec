@@ -18,10 +18,9 @@ Gem::Specification.new do |s|
   s.test_files = Dir["spec/**/*"]
 
   s.add_dependency "rails", [">= 3.2.0"]
-  s.add_dependency "carrierwave"
+  s.add_dependency "carrierwave-aws"
   s.add_dependency "coffee-rails"
   s.add_dependency "delayed_job_active_record"
-  s.add_dependency "fog", ">= 1.20.0"
   s.add_dependency "jquery-rails" # For the jquery_ujs
   s.add_dependency 'unf'
   s.add_dependency "haml"

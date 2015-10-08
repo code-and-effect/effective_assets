@@ -140,7 +140,7 @@ module Effective
     end
 
     def authenticated_url(version = nil, expire_in = 60.minutes)
-      data.fog_authenticated_url_expiration = expire_in
+      data.aws_authenticated_url_expiration = expire_in
       version.present? ? data.send(version).file.authenticated_url : data.file.authenticated_url
     end
 
