@@ -14,7 +14,7 @@ Gem::Specification.new do |s|
   s.description = "Upload images and files directly to AWS S3 with a custom form input then seamlessly organize and attach them to any ActiveRecord object."
   s.licenses    = ['MIT']
 
-  s.files = Dir["{app,config,db,lib}/**/*"] + ["MIT-LICENSE", "Rakefile", "README.md"]
+  s.files = Dir["{app,config,db,lib,active_admin}/**/*"] + ["MIT-LICENSE", "Rakefile", "README.md"]
   s.test_files = Dir["spec/**/*"]
 
   s.add_dependency "rails", [">= 3.2.0"]
@@ -22,7 +22,6 @@ Gem::Specification.new do |s|
   s.add_dependency "coffee-rails"
   s.add_dependency "delayed_job_active_record"
   s.add_dependency "jquery-rails" # For the jquery_ujs
-  s.add_dependency 'unf'
   s.add_dependency "haml"
   s.add_dependency "sass-rails"
   s.add_dependency "migrant"
