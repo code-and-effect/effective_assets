@@ -89,7 +89,7 @@ You will need an AWS IAM user with sufficient priviledges and a properly configu
 
 - Click Services -> S3 from the top-left menu
 - Click Create Bucket
-  - Give the Bucket a name, and select the US Standard region
+- Give the Bucket a name, and select the US Standard region
 
 ### Configure CORS Permissions
 
@@ -125,6 +125,7 @@ The Bucket is now set up and ready to accept uploads, but we still need a user t
 
 - Select Users from the left-side menu
 - Click Create New Users
+
 - Create just one user with any name
 
 - Expand the Show User Security Credentials
