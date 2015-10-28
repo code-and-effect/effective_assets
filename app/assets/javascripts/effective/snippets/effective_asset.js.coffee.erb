@@ -20,8 +20,20 @@ CKEDITOR.dialog.add 'effective_asset', (editor) ->
 
               $(this).contents().on 'click', 'a.attachment-insert', (event) ->
                 event.preventDefault()
-                dialog.setValueOf('asset', 'asset_id', $(event.currentTarget).data('asset-id'))
-                dialog.setValueOf('asset', 'link_title', $($(event.currentTarget).data('asset')).text())
+                linkTitle = $($(event.currentTarget).data('asset')).text()
+
+                currentAssetId = dialog.getValueOf('asset', 'asset_id')
+                newAssetId = $(event.currentTarget).data('asset-id')
+                # if changing or initializing the attachment
+                if currentAssetId != newAssetId
+                  dialog.setValueOf('asset', 'asset_id', newAssetId)
+                  # if initializing the attachment
+                  if currentAssetId == ''
+                    # try to set the link title based on a given link title
+                    givenLinkTitle = dialog.getContentElement('asset', 'link_title').getValue()
+                    linkTitle = givenLinkTitle if givenLinkTitle.length > 0
+
+                dialog.setValueOf('asset', 'link_title', linkTitle)
                 dialog.commitContent()
                 dialog.click('ok')
         }
