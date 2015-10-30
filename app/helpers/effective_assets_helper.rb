@@ -57,7 +57,7 @@ module EffectiveAssetsHelper
     elsif asset.content_type.include? 'msword'
       image_path('mime-types/word.jpg')
     elsif asset.content_type.include? 'excel'
-      image_path('mime-types/excel.png')
+      image_path('mime-types/excel.jpg')
     elsif asset.content_type.include? 'application/pdf'
       image_path('mime-types/pdf.png')
     elsif asset.content_type.include? 'application/zip'
