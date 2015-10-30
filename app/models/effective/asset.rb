@@ -133,7 +133,8 @@ module Effective
 
     def public_url(version = nil)
       if data.present?
-        version.present? ? data.send(version).file.url : data.file.url
+        url = (version.present? ? data.send(version).file.try(:url) : data.file.try(:url))
+        url || '#'
       else
        "#{Asset.s3_base_path.chomp('/')}/#{EffectiveAssets.aws_path.chomp('/')}/#{id.to_i}/#{file_name}"
       end
@@ -141,7 +142,8 @@ module Effective
 
     def authenticated_url(version = nil, expire_in = 60.minutes)
       data.aws_authenticated_url_expiration = expire_in
-      version.present? ? data.send(version).file.authenticated_url : data.file.authenticated_url
+      url = (version.present? ? data.send(version).file.try(:authenticated_url) : data.file.try(:authenticated_url))
+      url || '#'
     end
 
     def file_name
