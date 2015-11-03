@@ -484,26 +484,11 @@ DelayedJob (https://github.com/collectiveidea/delayed_job)
 jQuery-File-Upload (https://github.com/blueimp/jQuery-File-Upload)
 
 
-## Testing
-
-Testing uses the Combustion gem, for easier Rails Engine Testing.
-
-https://github.com/pat/combustion
-
-You will need a valid initializer in spec/internal/config/initializers/effective_assets.rb
-
-Run tests by
-
-```ruby
-bundle exec guard
-```
-
 ## Contributing
 
 1. Fork it
 2. Create your feature branch (`git checkout -b my-new-feature`)
 3. Commit your changes (`git commit -am 'Add some feature'`)
 4. Push to the branch (`git push origin my-new-feature`)
-5. Bonus points for test coverage
-6. Create new Pull Request
+5. Create new Pull Request
 
