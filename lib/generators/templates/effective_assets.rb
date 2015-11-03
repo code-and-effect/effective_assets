@@ -4,7 +4,7 @@ EffectiveAssets.setup do |config|
   config.assets_table_name = :assets
   config.attachments_table_name = :attachments
 
-  config.uploader = AssetUploader   # Must extend from EffectiveAssetsUploader
+  config.uploader = TestAssetUploader   # Must extend from EffectiveAssetsUploader
 
   # Authorization Method
   #
