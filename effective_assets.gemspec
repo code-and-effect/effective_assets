@@ -21,7 +21,6 @@ Gem::Specification.new do |s|
   s.add_dependency "coffee-rails"
   s.add_dependency "delayed_job_active_record"
   s.add_dependency "jquery-rails" # For the jquery_ujs
-  s.add_dependency "haml"
   s.add_dependency "haml-rails"
   s.add_dependency "sass-rails"
   s.add_dependency "migrant"

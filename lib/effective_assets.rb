@@ -1,9 +1,9 @@
-require "effective_assets/engine"
 require 'carrierwave-aws'
 require 'delayed_job_active_record'
 require 'migrant'     # Required for rspec to run properly
 require 'jquery-fileupload-rails'
 require 'haml-rails'
+require 'effective_assets/engine'
 
 module EffectiveAssets
   # The following are all valid config keys
