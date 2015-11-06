@@ -85,7 +85,7 @@ module ActsAsAssetBox
     if box == boxes
       attachments.map { |attachment| attachment.asset if attachment.box == boxes }.compact
     else
-      attachments.to_a.find { |attachment| attachment.box == boxes }.try(:asset)
+      attachments.sort_by(&:position).find { |attachment| attachment.box == boxes }.try(:asset)
     end
   end
 
