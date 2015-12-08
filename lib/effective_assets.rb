@@ -4,6 +4,7 @@ require 'migrant'     # Required for rspec to run properly
 require 'jquery-fileupload-rails'
 require 'haml-rails'
 require 'effective_assets/engine'
+require 'effective_assets/version'
 
 module EffectiveAssets
   # The following are all valid config keys
