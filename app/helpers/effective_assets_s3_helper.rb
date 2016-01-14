@@ -57,10 +57,12 @@ module EffectiveAssetsS3Helper
     end
 
     def signature
+      Rails.logger.info 'WARNING: effective_assets config.aws_secret_access_key is blank. Please provide a value in config/initializers/effective_assets.rb' if @options[:aws_secret_access_key].blank?
+
       Base64.encode64(
         OpenSSL::HMAC.digest(
           OpenSSL::Digest::SHA1.new(),
-          @options[:aws_secret_access_key], policy
+          @options[:aws_secret_access_key].to_s, policy
         )
       ).gsub("\n", "")
     end
