@@ -32,7 +32,7 @@ if defined?(ActiveAdmin)
             end
 
             unless asset.processed?
-              li image_tag('/assets/effective_assets/spinner.gif', :alt => 'Generating additional image sizes...')
+              li image_tag('effective_assets/spinner.gif', :alt => 'Generating additional image sizes...')
               li 'Generating additional sizes...'
               li "Please #{link_to 'Refresh', '#', :title => 'Refresh this page', :onclick => 'window.location.reload();'} in a moment.".html_safe
             else

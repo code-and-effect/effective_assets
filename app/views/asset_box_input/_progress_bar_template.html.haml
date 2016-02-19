@@ -3,6 +3,6 @@
     = "{%=o.name%}"
     .progress
       %span
-        %img{:src => asset_path('effective_assets/spinner.gif'), :class => 'spinner'}
+        = image_tag('effective_assets/spinner.gif', :class => 'spinner')
         Uploading...
       .bar{:style => 'width: 0%'}

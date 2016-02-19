@@ -31,7 +31,7 @@ module EffectiveAssets
     end
 
     initializer "effective_assets.append_precompiled_assets" do |app|
-      Rails.application.config.assets.precompile += ['effective_assets.js', 'effective_assets_iframe.js', 'effective_assets_iframe.css', 'spinner.gif']
+      Rails.application.config.assets.precompile += ['effective_assets.js', 'effective_assets_iframe.js', 'effective_assets_iframe.css', 'effective_assets/icon_close.png', 'effective_assets/spinner.gif']
     end
 
     # ActiveAdmin (optional)
