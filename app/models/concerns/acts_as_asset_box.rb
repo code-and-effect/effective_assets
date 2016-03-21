@@ -41,8 +41,11 @@ module ActsAsAssetBox
 
     # Setup validations
     boxes = @acts_as_asset_box_opts.try(:flatten) || []
+
     if boxes.first.kind_of?(Hash) # We were passed some validation requirements
       boxes = boxes.first
+
+      self.send(:define_method, :asset_boxes) { boxes }
 
       boxes.each do |box, validation|
         self.send(:define_method, box) { effective_assets(box) }
@@ -54,6 +57,8 @@ module ActsAsAssetBox
         end
       end
     else
+      self.send(:define_method, :asset_boxes) { boxes }
+
       boxes.each do |key|
         self.send(:define_method, key) { effective_assets(key) }
       end
