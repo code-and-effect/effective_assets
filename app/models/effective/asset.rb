@@ -133,7 +133,7 @@ module Effective
 
     def public_url(version = nil)
       if data.present?
-        url = (version.present? ? data.send(version).file.try(:url) : data.file.try(:url))
+        url = (version.present? ? data.send(version).file.try(:public_url) : data.file.try(:public_url))
         url || '#'
       else
        "#{Asset.s3_base_path.chomp('/')}/#{EffectiveAssets.aws_path.chomp('/')}/#{id.to_i}/#{file_name}"
