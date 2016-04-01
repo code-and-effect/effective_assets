@@ -42,7 +42,7 @@ module Effective
 
     validates :content_type, presence: true
     validates :upload_file, presence: true
-    validates :aws_acl, presence: true, inclusion: { in: [AWS_PUBLIC, AWS_PRIVATE] }
+    validates :aws_acl, presence: true, inclusion: { in: [EffectiveAssets::AWS_PUBLIC, EffectiveAssets::AWS_PRIVATE] }
     validates :height, numericality: { allow_nil: true }
     validates :width, numericality: { allow_nil: true }
 
