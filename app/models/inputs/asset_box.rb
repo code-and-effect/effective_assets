@@ -110,12 +110,7 @@ module Inputs
     end
 
     def build_values_html
-      count = 0
-
-      attachments.map do |attachment|
-        count += 1 unless attachment.marked_for_destruction?
-
-        attachment_partial =
+      attachment_partial =
         case @options[:attachment_style]
         when :table
           'attachment_as_table'
@@ -129,18 +124,18 @@ module Inputs
           raise "unknown AssetBox attachment_style: #{@options[:attachment_style]}. Valid options are :thumbnail, :list and :table"
         end
 
-        render(
-          :partial => "asset_box_input/#{attachment_partial}",
-          :locals => {
-            :attachment => attachment,
-            :attachment_actions => @options[:attachment_actions].map(&:to_s),
-            :attachment_links => @options[:attachment_links],
-            :hidden => (count > @options[:limit]),
-            :disabled => @options[:disabled],
-            :attachable_object_name => @object_name,
-          }
-        )
-      end.join.html_safe
+      render(
+        :partial => "asset_box_input/#{attachment_partial}",
+        :collection => attachments.reject { |attachment| attachment.marked_for_destruction? },
+        :as => :attachment,
+        :locals => {
+          :attachment_actions => @options[:attachment_actions].map { |action| action.to_s },
+          :attachment_links => @options[:attachment_links],
+          :limit => @options[:limit],
+          :disabled => @options[:disabled],
+          :attachable_object_name => @object_name
+        }
+      )
     end
 
     def footer_html
