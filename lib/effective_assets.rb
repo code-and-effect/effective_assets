@@ -8,6 +8,7 @@ require 'effective_assets/version'
 module EffectiveAssets
   AWS_PUBLIC = 'public-read'
   AWS_PRIVATE = 'authenticated-read'
+  IFRAME_UPLOADS = 'effective_iframe_uploads'
 
   # The following are all valid config keys
   mattr_accessor :assets_table_name

@@ -4,10 +4,12 @@ module Effective
   class AssetsController < ApplicationController
     layout false
 
-    def index  # This is the Modal dialog that is read by CKEDITOR
+    # iframe
+    def index  # This is the IFRAME modal dialog that is read by CKEDITOR
       EffectiveAssets.authorized?(self, :index, Effective::Asset.new(:user_id => current_user.try(:id)))
 
-      @assets =  Effective::Asset.where(:user_id => current_user.try(:id))
+      effective_iframe_uploads = Effective::Attachment.where(box: EffectiveAssets::IFRAME_UPLOADS).pluck(:asset_id)
+      @assets =  Effective::Asset.where(id: effective_iframe_uploads)
 
       if params[:only] == 'images'
         @assets = @assets.images
@@ -17,7 +19,7 @@ module Effective
         @file_types = [:pdf, :zip, :doc, :docx, :xls, :xlsx, :txt, :csv, :avi, :m4v, :m2v, :mov, :mp3, :mp4, :eml]
       end
 
-      @user_uploads = UserUploads.new(@assets)
+      @user_uploads = IframeUploads.new(@assets)
 
       render :file => 'effective/assets/iframe'
     end

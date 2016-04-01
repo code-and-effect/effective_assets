@@ -34,6 +34,11 @@ module Effective
         end
       end
 
+      # Kind of a hacky way of saving IFRAME uploads without joining them to anything
+      if params[:attachable_object_name] == EffectiveAssets::IFRAME_UPLOADS
+        Effective::Attachment.new(asset: @asset, box: EffectiveAssets::IFRAME_UPLOADS, position: 0).save!
+      end
+
       # If the attachment information is present, then our input needs some attachment HTML
       if params.key?(:attachable_object_name)
         attachment = Effective::Attachment.new
@@ -44,7 +49,7 @@ module Effective
         attachment.position = 0
         attachable_object_name = params[:attachable_object_name].to_s
         attachment_actions = params[:attachment_actions]
-        attachment_links = ![false, 0, '0', 'f', 'F', 'false', 'FALSE', 'off', 'OFF'].include?(params[:attachment_links])
+        attachment_links = !['0', 'f', 'false', 'off'].include?(params[:attachment_links].to_s.downcase)
 
         attachment_partial =
         case params[:attachment_style].to_s

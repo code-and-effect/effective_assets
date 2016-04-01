@@ -1,7 +1,7 @@
 # This is a class used for the IFrame views
 
 module Effective
-  class UserUploads < ActiveRecord::Base
+  class IframeUploads < ActiveRecord::Base
     acts_as_asset_box :uploads
 
     def initialize(items = nil)

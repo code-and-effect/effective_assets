@@ -70,11 +70,7 @@ module Inputs
     def attachments_table_head_html
       content_tag(:thead) do
         content_tag(:tr) do
-          [
-            content_tag(:th, ''),
-            content_tag(:th, ''),
-            content_tag(:th, filter_bar_html, :colspan => 2)
-          ].join().html_safe
+          content_tag(:th, filter_bar_html, :colspan => 4)
         end
       end
     end
@@ -106,7 +102,7 @@ module Inputs
     end
 
     def filter_bar_html
-      "<input type='text' class='form-control filter-attachments' placeholder='Search Title'>".html_safe
+      "<input type='text' class='form-control filter-attachments' placeholder='Filter by title'>".html_safe
     end
 
     def build_values_html
