@@ -19,26 +19,32 @@ module Effective
 
     has_many :attachments, :dependent => :delete_all
 
-    structure do
-      title           :string
-      extra           :text
+    # structure do
+    #   title           :string
+    #   extra           :text
 
-      content_type    :string, :validates => [:presence]
-      upload_file     :string, :validates => [:presence]    # The full url of the file, as originally uploaded
+    #   content_type    :string
+    #   upload_file     :string    # The full url of the file, as originally uploaded
 
-      processed       :boolean, :default => false
-      aws_acl         :string, :default => 'public-read', :validates => [:presence, :inclusion => {:in => ['public-read', 'authenticated-read']}]
+    #   processed       :boolean, :default => false
+    #   aws_acl         :string, :default => 'public-read'
 
-      data            :string
+    #   data            :string
 
-      data_size       :integer
-      height          :integer, :validates => [:numericality => { :allow_nil => true }]
-      width           :integer, :validates => [:numericality => { :allow_nil => true }]
+    #   data_size       :integer
+    #   height          :integer
+    #   width           :integer
 
-      versions_info   :text   # We store a hash of {:thumb => 34567, :medium => 3343434} data sizes
+    #   versions_info   :text   # We store a hash of {:thumb => 34567, :medium => 3343434} data sizes
 
-      timestamps
-    end
+    #   timestamps
+    # end
+
+    validates :content_type, presence: true
+    validates :upload_file, presence: true
+    validates :aws_acl, presence: true, inclusion: { in: [AWS_PUBLIC, AWS_PRIVATE] }
+    validates :height, numericality: { allow_nil: true }
+    validates :width, numericality: { allow_nil: true }
 
     serialize :versions_info, Hash
     serialize :extra, Hash
@@ -128,7 +134,7 @@ module Effective
     end
 
     def url(version = nil, expire_in = nil)
-      aws_acl == 'authenticated-read' ? authenticated_url(version, expire_in) : public_url(version)
+      aws_acl == EffectiveAssets::AWS_PRIVATE ? authenticated_url(version, expire_in) : public_url(version)
     end
 
     def public_url(version = nil)

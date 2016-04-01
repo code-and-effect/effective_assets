@@ -1,12 +1,14 @@
 require 'carrierwave-aws'
 require 'delayed_job_active_record'
-require 'migrant'     # Required for rspec to run properly
 require 'jquery-fileupload-rails'
 require 'haml-rails'
 require 'effective_assets/engine'
 require 'effective_assets/version'
 
 module EffectiveAssets
+  AWS_PUBLIC = 'public-read'
+  AWS_PRIVATE = 'authenticated-read'
+
   # The following are all valid config keys
   mattr_accessor :assets_table_name
   mattr_accessor :attachments_table_name
@@ -49,7 +51,7 @@ module EffectiveAssets
       CarrierWave.configure do |config|
         config.storage        = :aws
         config.aws_bucket     = EffectiveAssets.aws_bucket
-        config.aws_acl        = EffectiveAssets.aws_acl.presence || 'public-read'
+        config.aws_acl        = EffectiveAssets.aws_acl.presence || EffectiveAssets::AWS_PUBLIC
         config.cache_dir      = "#{Rails.root}/tmp/uploads" # For heroku
 
         config.aws_credentials = {
