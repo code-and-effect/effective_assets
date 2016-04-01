@@ -1,5 +1,7 @@
 - uid = (attachment.persisted? ? attachment.id : Time.now.to_f.to_s.split('.')[1] + Random.rand(10000).to_s)
-- hidden ||= false
+- limit ||= 99999999
+- attachment_counter ||= 0
+- hidden ||= (attachment_counter >= limit)
 
 .col-sm-3.attachment
   .thumbnail{:style => "#{(attachment.marked_for_destruction? || hidden) ? 'display: none;' : ''}", :title => effective_asset_title(attachment.asset)}
@@ -7,7 +9,7 @@
 
     .attachment-title.caption
       - if attachment_links
-        = link_to attachment.asset.title, attachment.asset.url, :target => '_blank'
+        = link_to attachment.asset.title, attachment.asset.public_url, :target => '_blank'
       - else
         = attachment.asset.title
 
