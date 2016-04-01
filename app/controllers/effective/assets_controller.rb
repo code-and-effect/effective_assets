@@ -8,12 +8,10 @@ module Effective
       EffectiveAssets.authorized?(self, :index, Effective::Asset.new(:user_id => current_user.try(:id)))
 
       @assets =  Effective::Asset.where(:user_id => current_user.try(:id))
-      @aws_acl = EffectiveAssets.aws_acl.presence || 'public-read'
 
       if params[:only] == 'images'
         @assets = @assets.images
         @file_types = [:jpg, :gif, :png, :bmp, :ico]
-        @aws_acl = 'public-read' # The CKEditor Insert Image functionality needs a public-read image here
       elsif params[:only] == 'nonimages'
         @assets = @assets.nonimages
         @file_types = [:pdf, :zip, :doc, :docx, :xls, :xlsx, :txt, :csv, :avi, :m4v, :m2v, :mov, :mp3, :mp4, :eml]

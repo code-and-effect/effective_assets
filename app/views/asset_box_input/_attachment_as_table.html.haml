@@ -17,11 +17,11 @@
     - if attachment_actions.include?('insert') || attachment_actions.include?('attach')
       - asset = attachment.asset
       - if asset.image? || asset.icon?
-        %a.btn.btn-primary.attachment-insert{:href => '#', 'data-asset-id' => asset.id, 'data-asset' => effective_asset_image_tag(asset)} Attach
+        %a.btn.btn-primary.attachment-insert{:href => '#', 'data-asset-id' => asset.id, 'data-asset' => effective_asset_image_tag(asset, nil, public: true)} Attach
       - elsif asset.video?
-        %a.btn.btn-primary.attachment-insert{:href => '#', 'data-asset-id' => asset.id, 'data-asset' => effective_asset_video_tag(asset)} Attach
+        %a.btn.btn-primary.attachment-insert{:href => '#', 'data-asset-id' => asset.id, 'data-asset' => effective_asset_video_tag(asset, nil, public: true)} Attach
       - else
-        %a.btn.btn-primary.attachment-insert{:href => '#', 'data-asset-id' => asset.id, 'data-asset' => effective_asset_link_to(asset)} Attach
+        %a.btn.btn-primary.attachment-insert{:href => '#', 'data-asset-id' => asset.id, 'data-asset' => effective_asset_link_to(asset, nil, public: true)} Attach
 
     - if attachment_actions.include?('remove')
       %a.attachment-remove{:href => '#', :title => 'Remove'}

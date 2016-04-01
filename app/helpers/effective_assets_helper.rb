@@ -13,20 +13,23 @@ module EffectiveAssetsHelper
       opts = {}
     end
 
+    public_url = options.delete(:public) || options.delete(:public_url)
+
     opts = opts.merge({:alt => asset.title || asset.file_name}).merge(options)
 
-    content_tag(:img, nil, opts.merge(:src => _effective_asset_image_url(asset, version))).gsub('"', "'").html_safe
+    content_tag(:img, nil, opts.merge(:src => _effective_asset_image_url(asset, version, public_url))).gsub('"', "'").html_safe
   end
 
   def effective_asset_link_to(asset, version = nil, options = {})
     options_title = options.delete(:title)
+    public_url = options.delete(:public) || options.delete(:public_url)
     link_title = options_title || asset.title || asset.file_name || "Asset ##{asset.id}"
 
     if asset.image?
-      link_to(link_title, _effective_asset_image_url(asset, version), options).gsub('"', "'").html_safe # we need all ' quotes or it breaks Insert as functionality
+      link_to(link_title, _effective_asset_image_url(asset, version, public_url), options)
     else
-      link_to(link_title, asset.url, options).gsub('"', "'").html_safe # we need all ' quotes or it breaks Insert as functionality
-    end
+      link_to(link_title, (public_url ? asset.public_url : asset.url), options)
+    end.gsub('"', "'").html_safe # we need all ' quotes or it breaks Insert as functionality
   end
 
   def effective_asset_video_tag(asset)
@@ -41,15 +44,15 @@ module EffectiveAssetsHelper
     ].compact.join("\n")
   end
 
-  def _effective_asset_image_url(asset, version = nil)
+  def _effective_asset_image_url(asset, version = nil, public_url = nil)
     # asset_url and image_url will work in Rails4
 
     return image_path('mime-types/file.png') if !asset.content_type.present? or asset.content_type == 'unknown'
 
     if asset.icon?
-      asset.url
+      (public_url ? asset.public_url : asset.url)
     elsif asset.image?
-      asset.url(version)
+      (public_url ? asset.public_url(version) : asset.url(version))
     elsif asset.audio?
       image_path('mime-types/mp3.png')
     elsif asset.video?
