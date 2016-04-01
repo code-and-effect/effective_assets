@@ -16,7 +16,7 @@ if defined?(EffectiveRegions)
         end
 
         def is_private?
-          private_url == true || (asset.try(:aws_acl) == 'authenticated-read')
+          private_url == true || (asset.try(:aws_acl) == EffectiveAssets::AWS_PRIVATE)
         end
 
       end

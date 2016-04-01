@@ -1,4 +1,3 @@
-#require 'uri'
 # Call with DelayedJob.new.process_asset_images(...)
 # Run jobs locally with "rake jobs:work"
 

@@ -12,7 +12,7 @@ class EffectiveAssetsUploader < CarrierWave::Uploader::Base
   end
 
   def aws_public
-    model.aws_acl == 'public-read' rescue true
+    model.aws_acl == EffectiveAssets::AWS_PUBLIC rescue true
   end
 
   def aws_authenticated_url_expiration
