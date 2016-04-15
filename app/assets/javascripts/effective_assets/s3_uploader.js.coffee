@@ -288,10 +288,18 @@ $.fn.S3Uploader = (options) ->
   #public methods
   @initialize = ->
     # Save key for IE9 Fix
-    $uploadForm.data("key", $uploadForm.find("input[name='key']").val())
-    $uploadForm.data("fileCount", 0)
-    $(document).on 'drop', '.asset-box-uploader', resetOverLimitAlert
-    $(document).on 'click', '.asset-box-uploader .asset-box-uploader-fileinput', resetOverLimitAlert
+    $uploadForm.data('key', $uploadForm.find("input[name='key']").val())
+    $uploadForm.data('fileCount', 0)
+
+    $(document).on 'drop', '#' + $uploadForm.attr('id'), (event) ->
+      resetOverLimitAlert(event)
+      event.stopPropagation()
+      true
+
+    $(document).on 'click', "##{$uploadForm.attr('id')} .asset-box-uploader-fileinput", (event) ->
+      resetOverLimitAlert(event)
+      event.stopPropagation()
+
     setUploadForm()
     this
 
