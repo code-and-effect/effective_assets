@@ -57,4 +57,20 @@ class AssetUploader < EffectiveAssetsUploader
   #   end
   # end
 
+  # Auto Orient
+  # def auto_orient
+  #   manipulate! do |image|
+  #     image.auto_orient
+  #     image
+  #   end
+  # end
+
+  # Rotate counter clockwise
+  # def rotate_ccw
+  #   manipulate! do |image|
+  #     image.rotate(-90)
+  #     image
+  #   end
+  # end
+
 end
