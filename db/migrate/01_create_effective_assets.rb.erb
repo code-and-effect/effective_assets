@@ -7,7 +7,7 @@ class CreateEffectiveAssets < ActiveRecord::Migration
       t.integer :user_id
 
       t.string  :content_type
-      t.string  :upload_file
+      t.text    :upload_file
       t.string  :data
       t.boolean :processed, :default => false
       t.string  :aws_acl, :default => 'public-read'
