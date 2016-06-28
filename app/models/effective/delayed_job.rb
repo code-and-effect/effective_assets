@@ -13,6 +13,11 @@ module Effective
       if asset.present? && !asset.processed? && asset.upload_file.present? && asset.upload_file != 'placeholder'
         puts "Processing asset ##{asset.id} from #{asset.upload_file}."
 
+        if asset.data.respond_to?(:aws_acl)
+          asset.data.aws_acl = asset.aws_acl
+          asset.data.versions.each { |_, data| data.aws_acl = asset.aws_acl }
+        end
+
         if asset.upload_file.include?(Effective::Asset.string_base_path)
           puts "String-based Asset processing and uploading..."
 
