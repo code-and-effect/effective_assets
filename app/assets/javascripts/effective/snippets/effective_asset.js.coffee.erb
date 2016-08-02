@@ -46,7 +46,7 @@ CKEDITOR.dialog.add 'effective_asset', (editor) ->
       elements: [
         {
           type: 'html',
-          html: "<p>* NOTE: This screen is for non-image files only.  Please select 'Image' from the toolbar to work with images.",
+          html: "<p>* NOTE: This screen is for non-image files only. Please select 'Image' from the toolbar to work with images.",
           setup: (widget) ->
             if widget.data['asset_id']
               this.getDialog().selectPage('asset')
@@ -67,7 +67,7 @@ CKEDITOR.dialog.add 'effective_asset', (editor) ->
           id: 'link_title',
           type: 'text',
           label: 'Title',
-          setup: (widget) -> this.setValue(widget.data.link_title)
+          setup: (widget) -> this.setValue(widget.data.link_title || widget.editor.getSelection().getSelectedText())
           commit: (widget) -> widget.setData('link_title', this.getValue()) if widget
         },
         {
