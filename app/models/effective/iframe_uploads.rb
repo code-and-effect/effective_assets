@@ -15,5 +15,13 @@ module Effective
       @columns ||= []
     end
 
+    def self.column_defaults
+      {}
+    end
+
+    def self.has_attribute?(*args)
+      false
+    end
+
   end
 end

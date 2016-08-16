@@ -1,7 +1,12 @@
 module Effective
   class S3UploadsController < ApplicationController
     skip_authorization_check if defined?(CanCan)
-    skip_before_filter :verify_authenticity_token
+
+    if respond_to?(:skip_before_action)
+      skip_before_action(:verify_authenticity_token)
+    else
+      skip_before_filter(:verify_authenticity_token)
+    end
 
     # When we create an Asset, we're effectively reserving the ID
     # But the Asset itself isn't really there or uploaded yet.
@@ -16,9 +21,9 @@ module Effective
 
       begin
         @asset.save!
-        render(:text => {:id => @asset.id, :s3_key => asset_s3_key(@asset)}.to_json, :status => 200)
+        render(:body => {:id => @asset.id, :s3_key => asset_s3_key(@asset)}.to_json, :status => 200)
       rescue => e
-        render(:text => e.message, :status => 500)
+        render(:body => e.message, :status => 500)
       end
     end
 
@@ -29,7 +34,7 @@ module Effective
 
       unless params[:skip_update]  # This is useful for the acts_as_asset_box Attach action
         if update_placeholder_asset(@asset, params) == false
-          render :text => '', :status => :unprocessable_entity
+          render :body => '', :status => :unprocessable_entity
           return
         end
       end
@@ -63,7 +68,7 @@ module Effective
 
         render :partial => "asset_box_input/#{attachment_partial}", :locals => {:attachment => attachment, :attachable_object_name => attachable_object_name, :attachment_actions => attachment_actions, attachment_links: attachment_links}, :status => 200, :content_type => 'text/html'
       else
-        render :text => '', :status => 200
+        render :body => '', :status => 200
       end
     end
 

@@ -9,7 +9,7 @@ module Effective
       EffectiveAssets.authorized?(self, :index, Effective::Asset.new(:user_id => current_user.try(:id)))
 
       effective_iframe_uploads = Effective::Attachment.where(box: EffectiveAssets::IFRAME_UPLOADS).pluck(:asset_id)
-      @assets =  Effective::Asset.where(id: effective_iframe_uploads)
+      @assets = Effective::Asset.where(id: effective_iframe_uploads)
 
       if params[:only] == 'images'
         @assets = @assets.images

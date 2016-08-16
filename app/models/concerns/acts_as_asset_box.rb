@@ -34,8 +34,8 @@ module ActsAsAssetBox
   end
 
   included do
-    has_many :attachments, :as => :attachable, :class_name => "Effective::Attachment", :dependent => :delete_all
-    has_many :assets, :through => :attachments, :class_name => "Effective::Asset"
+    has_many :attachments, :as => :attachable, :class_name => 'Effective::Attachment', :dependent => :delete_all
+    has_many :assets, :through => :attachments, :class_name => 'Effective::Asset'
 
     accepts_nested_attributes_for :attachments, :reject_if => :all_blank, :allow_destroy => true
 
@@ -90,7 +90,7 @@ module ActsAsAssetBox
     if box == boxes
       attachments.map { |attachment| attachment.asset if attachment.box == boxes }.compact
     else
-      attachments.sort_by(&:position).find { |attachment| attachment.box == boxes }.try(:asset)
+      attachments.sort_by { |attachment| attachment.position }.find { |attachment| attachment.box == boxes }.try(:asset)
     end
   end
 
@@ -134,7 +134,7 @@ module ActsAsAssetBox
       attachment.asset = item
     end
 
-    attachments.to_a.sort_by!(&:position)
+    attachments.to_a.sort_by! { |attachment| attachment.position }
 
     true
   end
