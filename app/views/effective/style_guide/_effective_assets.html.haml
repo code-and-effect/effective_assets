@@ -1,0 +1,24 @@
+= simple_form_for Effective::StyleGuide.new(), :url => '/' do |f|
+  = f.input :files,
+    :as => :asset_box,
+    :hint => 'default display (same as attachment_style: :thumbnail)'
+
+  = f.input :files,
+    :as => :asset_box,
+    :attachment_style => :table,
+    :hint => 'display as table (attachment_style: :table)'
+
+  = f.input :files,
+    :as => :asset_box,
+    :attachment_style => :list,
+    :hint => 'display as list (attachment_style: :list)'
+
+  = f.input :files,
+    :as => :asset_box,
+    :dialog => true,
+    :hint => 'with attachment dialog (dialog: true)'
+
+  = f.input :files,
+    :as => :asset_box,
+    :uploader_drop_files => true,
+    :hint => 'with drop zone (uploader_drop_files: true)'
