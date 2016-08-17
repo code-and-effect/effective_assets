@@ -6,3 +6,4 @@ applySortable = ->
 
 $ -> applySortable()
 $(document).on 'page:change', -> applySortable()
+$(document).on 'turbolinks:load', -> applySortable()
