@@ -82,6 +82,8 @@ module Effective
       asset.aws_acl = opts[:aws_acl]
       asset[:data] = opts[:title]
 
+      asset.processed = true unless asset.image?
+
       # If our S3 Uploader has any issue uploading/saving the asset, destroy the placeholder empty one
       asset.save ? true : (asset.try(:destroy) and false)
     end
