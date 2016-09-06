@@ -26,6 +26,8 @@
 module ActsAsAssetBox
   extend ActiveSupport::Concern
 
+  VALIDATION_KEYS = [:presence, :length, :inclusion, :private, :public]
+
   module ActiveRecord
     def acts_as_asset_box(*options)
       @acts_as_asset_box_opts = options || []
@@ -50,10 +52,40 @@ module ActsAsAssetBox
       boxes.each do |box, validation|
         self.send(:define_method, box) { effective_assets(box) }
 
-        if validation == true
+        # So we want to support 2 kinds of syntax here
+        # Syntax 1:
+        # acts_as_asset_box files: true     # Presence
+        # acts_as_asset_box files: false    # Nothing
+        # acts_as_asset_box files: 2        # Exactly 2 files
+        # acts_as_asset_box files: 5..10    # 5 to 10 photos
+        # acts_as_asset_box files: :private # AWS ACL private
+        # acts_as_asset_box files: :public  # AWS ACL private
+        #
+        # Syntax 2:
+        # acts_as_asset_box files: [presence: true, length: 5..2, private: true], another: :private
+
+        if validation == true || validation == :presence
           validates box, :asset_box_presence => true
         elsif validation.kind_of?(Integer) or validation.kind_of?(Range)
           validates box, :asset_box_length => validation
+        elsif validation == :private || validation == :public
+          # Do nothing
+        else
+          validations = Array(validation).first
+
+          if validations.kind_of?(Hash) != true
+            raise 'invalid parameters passed to acts_as_asset_box. Example Usage: acts_as_asset_box photos: [presence: true, length: 1..3, private: true]'
+          elsif (validations.keys - VALIDATION_KEYS).present?
+            raise "invalid key #{validations.keys - VALIDATION_KEYS} passed to acts_as_asset_box. Valid keys are: #{VALIDATION_KEYS}"
+          end
+
+          if validations[:presence]
+            validates box, :asset_box_presence => true
+          end
+
+          if validations[:length] || validations[:inclusion]
+            validates box, :asset_box_length => (validations[:length] || validations[:inclusion])
+          end
         end
       end
     else

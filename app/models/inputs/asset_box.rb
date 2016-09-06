@@ -157,13 +157,34 @@ module Inputs
         :dialog_url => @template.effective_assets.effective_assets_path,
         :disabled => false,
         :file_types => [:any],
-        :aws_acl => EffectiveAssets.aws_acl,
         :btn_label => "Upload..."
       }.merge(opts).tap do |options|
         options[:method] = method.to_s
         options[:box] = method.to_s.pluralize
         options[:attachable_id] ||= (@object.try(:id) rescue nil)
         options[:attachable_type] ||= @object.class.name.titleize.gsub(" ", "_").gsub('/', '_').downcase
+
+        # The logic for the AWS ACL is such that:
+        # 1.) If the :private or :aws_acl keys are set on the asset_box input, use those values
+        # 2.) If the :private or :public keys are set on the acts_as_asset_box declaration, use those values
+        # 3.) Fall back to default EffectiveAssets.aws_acl as per config file
+
+        uploader_private = (opts[:private] == true || opts[:public] == false || opts[:aws_acl] == EffectiveAssets::AWS_PRIVATE)
+        uploader_public = (opts[:private] == false || opts[:public] == true || opts[:aws_acl] == EffectiveAssets::AWS_PUBLIC)
+        object_private = ((@object.asset_boxes[method] == :private || @object.asset_boxes[method].first[:private] == true || @object.asset_boxes[method].first[:public] == false) rescue false)
+        object_public = ((@object.asset_boxes[method] == :public || @object.asset_boxes[method].first[:public] == true || @object.asset_boxes[method].first[:private] == false) rescue false)
+
+        if uploader_private
+          options[:aws_acl] = EffectiveAssets::AWS_PRIVATE
+        elsif uploader_public
+          options[:aws_acl] = EffectiveAssets::AWS_PUBLIC
+        elsif object_private
+          options[:aws_acl] = EffectiveAssets::AWS_PRIVATE
+        elsif object_public
+          options[:aws_acl] = EffectiveAssets::AWS_PUBLIC
+        else
+          options[:aws_acl] = EffectiveAssets.aws_acl
+        end
 
         options[:uid] = "#{options[:attachable_type]}-#{options[:attachable_id]}-#{options[:method]}-#{Time.zone.now.to_f}".parameterize
         options[:limit] = (options[:method] == options[:box] ? (options[:limit] || 10000) : 1)

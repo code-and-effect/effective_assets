@@ -193,6 +193,8 @@ user.photos
 
 ### Validations
 
+You can validate the presence and length of the assets with a simple syntax:
+
 ```ruby
 class User
   acts_as_asset_box :avatar => true, :photos => false, :videos => 2, :mp3s => 5..10
@@ -201,7 +203,17 @@ end
 
 true means presence, false means no validations applied.
 
+or a more involved syntax:
+
+```ruby
+class User
+  acts_as_asset_box avatar: [presence: true], photos: false, videos: [length: 2], mp3s: [length: 5..10]
+end
+```
+
 The user in this example is only valid if exists an avatar, 2 videos, and 5..10 mp3s.
+
+Procs are not supported.
 
 ### Form Input
 
@@ -251,10 +263,10 @@ Use the custom form input for uploading (direct to S3) and attaching assets to t
 = f.input :pictures, :as => :asset_box, :dialog => true, :dialog_url => '/admin/effective_assets' # Use the attach dialog
 ```
 
-You may also upload secure (AWS: 'authenticated-read') assets with the same uploader
+You may also upload secure (AWS: 'authenticated-read') assets with the same uploader:
 
 ```ruby
-= f.input :pictures, :as => :asset_box, :aws_acl => 'authenticated-read'
+= f.input :pictures, :as => :asset_box, :private => true
 ```
 
 There is also a mechanism for collecting additional information from the upload form which will be set in the `asset.extra` field.
@@ -304,6 +316,41 @@ The permitted parameters are:
 ```ruby
 :attachments_attributes => [:id, :asset_id, :attachable_type, :attachable_id, :position, :box, :_destroy]
 ```
+
+### Amazon S3 Public / Private
+
+When an asset is uploaded, it is created with an `aws_acl` of either `public-read` or `authenticated-read`.
+
+When in `authenticated-read` mode, calling `@asset.url` will return a URL that is valid for just 60 minutes.
+
+This privacy level can be configured in the following 3 ways:
+
+1. The app wide default is set in `config/initializers/effective_assets.rb`.  All Effective::Asset objects will be created with this ACL unless specified below.
+
+2. When you call `acts_as_asset_box` on a model, the `:private` or `:public` keys will define the behavior for just this asset box.
+
+```ruby
+acts_as_asset_box :avatar => :private
+acts_as_asset_box :avatar => :public
+```
+
+or, with validations:
+
+```ruby
+acts_as_asset_box :avatar => [presence: true, private: true]
+acts_as_asset_box :avatar => [presence: true, public: true]
+```
+
+All assets uploaded into this box will be created with this ACL unless overridden below.
+
+3. Set the ACL on the form upload field
+
+```ruby
+= f.input :avatar, :as => :asset_box, :private => true
+= f.input :avatar, :as => :asset_box, :public => true
+```
+
+Has final say over the privacy setting when uploaded from this form.
 
 
 ### Image Processing and Resizing
