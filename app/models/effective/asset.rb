@@ -181,6 +181,11 @@ module Effective
     end
 
     def process!
+      if data.respond_to?(:aws_acl) && aws_acl.present?
+        data.aws_acl = self.aws_acl
+        data.versions.each { |_, data| data.aws_acl = self.aws_acl }
+      end
+
       data.cache_stored_file!
       data.retrieve_from_cache!(data.cache_name)
       data.recreate_versions!
@@ -231,7 +236,7 @@ module Effective
     end
 
     def enqueue_delayed_job
-      if processed? == false && upload_file.present? && upload_file != 'placeholder'
+      if !processed? && upload_file.present? && upload_file != 'placeholder'
         Effective::DelayedJob.new.process_asset(id)
       end
     end
