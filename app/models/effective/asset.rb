@@ -181,23 +181,12 @@ module Effective
     end
 
     def process!
-      begin
-        Rails.logger.info "Processing ##{id}..."
-        print "Processing ##{id}..."
+      data.cache_stored_file!
+      data.retrieve_from_cache!(data.cache_name)
+      data.recreate_versions!
 
-        data.cache_stored_file!
-        data.retrieve_from_cache!(data.cache_name)
-        data.recreate_versions!
-        save!
-
-        Rails.logger.info "Successfully processed ##{id}"
-        print "success"; puts ''
-        true
-      rescue => e
-        Rails.logger.info  "Error: #{id} -> #{e.to_s}"
-        print "error: #{e.to_s}"; puts ''
-        false
-      end
+      self.processed = true
+      save!
     end
     alias_method :reprocess!, :process!
 
@@ -242,11 +231,10 @@ module Effective
     end
 
     def enqueue_delayed_job
-      if !self.processed && self.upload_file.present? && self.upload_file != 'placeholder'
-        Effective::DelayedJob.new.process_asset(self.id)
+      if processed? == false && upload_file.present? && upload_file != 'placeholder'
+        Effective::DelayedJob.new.process_asset(id)
       end
     end
-
   end
 
   class AssetStringIO < StringIO

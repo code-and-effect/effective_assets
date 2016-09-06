@@ -49,7 +49,19 @@ module Effective
     handle_asynchronously :process_asset
 
     def reprocess_asset(id)
-      Effective::Asset.find(id).reprocess!
+      Rails.logger.info "Processing ##{id}..."
+      print "Processing ##{id}..."
+
+      begin
+        Effective::Asset.find(id).reprocess!
+
+        Rails.logger.info "Successfully processed ##{id}"
+        print "success"; puts ''
+      rescue => e
+        Rails.logger.info  "Error: #{id} -> #{e.to_s}"
+        print "error: #{e.to_s}"; puts ''
+      end
+
       (GC.start rescue nil)
     end
     handle_asynchronously :reprocess_asset

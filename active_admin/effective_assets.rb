@@ -97,7 +97,13 @@ if defined?(ActiveAdmin)
     end
 
     member_action :reprocess, :method => :get do
-      asset = Effective::Asset.find(params[:id]).reprocess!
+      begin
+        Effective::Asset.find(params[:id]).reprocess!
+        flash[:success] = "Successfully reprocessed asset"
+      rescue => e
+        flash[:danger] = "Unable to process asset: #{e.message}"
+      end
+
       redirect_to admin_effective_assets_path
     end
   end
