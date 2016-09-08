@@ -8,7 +8,7 @@
     = effective_asset_image_tag(attachment.asset)
   %td.attachment-title{:title => effective_asset_title(attachment.asset)}
     - if attachment_links
-      = link_to attachment.asset.title, attachment.asset.public_url, :target => '_blank'
+      = link_to attachment.asset.title, attachment.asset.url, :target => '_blank'
     - else
       = attachment.asset.title
   %td.attachment-size
