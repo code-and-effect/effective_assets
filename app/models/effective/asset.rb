@@ -2,7 +2,7 @@ module Effective
   class Asset < ActiveRecord::Base
     self.table_name = EffectiveAssets.assets_table_name.to_s
 
-    mount_uploader :data, (EffectiveAssets.uploader.kind_of?(String) ? : EffectiveAssets.uploader.constantize : EffectiveAssets.uploader)
+    mount_uploader :data, (EffectiveAssets.uploader.kind_of?(String) ? EffectiveAssets.uploader.constantize : EffectiveAssets.uploader)
 
     belongs_to :user if defined?(User)
     # This is the user that uploaded the asset.
