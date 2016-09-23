@@ -91,6 +91,7 @@ module Inputs
           :uid => @options[:uid],
           :limit => @options[:limit],
           :disabled => @options[:disabled],
+          :required => (@options[:required] == true && attachments.length == 0),
           :file_types => @options[:file_types],
           :progress_bar_partial => @options[:progress_bar_partial],
           :drop_files => @options[:uploader_drop_files],

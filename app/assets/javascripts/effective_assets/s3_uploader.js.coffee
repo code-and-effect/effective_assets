@@ -34,6 +34,8 @@ $.fn.S3Uploader = (options) ->
         $uploadForms = $('.asset-box-uploader')
         return false if $uploadForms.index($uploadForm) == -1
 
+        $uploadForms.find("input[type='file']").removeAttr('required')
+
         # Make sure the user isn't over the upload limit
         $asset_box = $uploadForm.closest('.asset-box-input')
         limit = $asset_box.data('limit')
