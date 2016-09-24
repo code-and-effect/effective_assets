@@ -295,7 +295,6 @@ $.fn.S3Uploader = (options) ->
 
     $(document).on 'drop', '#' + $uploadForm.attr('id'), (event) ->
       resetOverLimitAlert(event)
-      event.stopPropagation()
       true
 
     $(document).on 'click', "##{$uploadForm.attr('id')} .asset-box-uploader-fileinput", (event) ->
