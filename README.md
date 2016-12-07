@@ -457,6 +457,12 @@ To allow user uploads, using Cancan:
 can [:create, :update, :destroy], Effective::Asset, :user_id => user.id
 ```
 
+To allow a user to see the admin / active_admin area:
+
+```ruby
+can :admin, :effective_assets
+```
+
 
 ## Rake Tasks
 
@@ -516,8 +522,6 @@ rake jobs:clear
 ## License
 
 MIT License.  Copyright [Code and Effect Inc.](http://www.codeandeffect.com/)
-
-Code and Effect is the product arm of [AgileStyle](http://www.agilestyle.com/), an Edmonton-based shop that specializes in building custom web applications with Ruby on Rails.
 
 
 ## Credits

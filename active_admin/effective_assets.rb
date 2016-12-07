@@ -1,6 +1,9 @@
 if defined?(ActiveAdmin)
   ActiveAdmin.register Effective::Asset do
-    menu :label => "Assets", :if => proc { EffectiveAssets.authorized?(controller, :manage, Effective::Asset.new()) rescue false }
+    menu :label => "Assets", :if => proc {
+      (EffectiveAssets.authorized?(controller, :manage, Effective::Asset.new()) rescue false) &&
+      (EffectiveAssets.authorized?(controller, :admin, :effective_assets) rescue false)
+    }
 
     filter :title
     filter :content_type
