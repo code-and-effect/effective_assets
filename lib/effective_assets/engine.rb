@@ -27,7 +27,7 @@ module EffectiveAssets
 
     # Set up our default configuration options.
     initializer "effective_assets.defaults", :before => :load_config_initializers do |app|
-      eval File.read("#{config.root}/lib/generators/templates/effective_assets.rb")
+      eval File.read("#{config.root}/config/effective_assets.rb")
     end
 
     initializer "effective_assets.append_precompiled_assets" do |app|

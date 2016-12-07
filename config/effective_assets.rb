@@ -1,5 +1,3 @@
-# EffectiveAssets Rails Engine
-
 EffectiveAssets.setup do |config|
   config.assets_table_name = :assets
   config.attachments_table_name = :attachments
