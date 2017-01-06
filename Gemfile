@@ -1,6 +1,6 @@
-source "http://rubygems.org"
+source 'http://rubygems.org'
 
 gemspec
 
-gem "jquery-fileupload-rails"
+gem 'jquery-fileupload-rails'
 

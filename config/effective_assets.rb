@@ -26,9 +26,9 @@ EffectiveAssets.setup do |config|
   config.authorization_method = Proc.new { |controller, action, resource| authorize!(action, resource) } # CanCanCan
 
   # This is your S3 bucket information
-  config.aws_bucket = ''
-  config.aws_access_key_id = ''
-  config.aws_secret_access_key = ''
+  config.aws_bucket = ''              # ENV.fetch('AWS_S3_BUCKET')
+  config.aws_access_key_id = ''       # ENV.fetch('AWS_ACCESS_KEY_ID')
+  config.aws_secret_access_key = ''   # ENV.fetch('AWS_SECRET_ACCESS_KEY')
   config.aws_region = 'us-east-1'
 
   config.aws_path = 'assets/'
