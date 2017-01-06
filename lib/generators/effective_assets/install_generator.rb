@@ -29,9 +29,6 @@ module EffectiveAssets
         migration_template ('../' * 3) + 'db/migrate/01_create_effective_assets.rb.erb', 'db/migrate/create_effective_assets.rb'
       end
 
-      def install_delayed_jobs
-        run 'rails generate delayed_job:active_record'
-      end
     end
   end
 end

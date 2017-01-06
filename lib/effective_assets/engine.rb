@@ -2,7 +2,7 @@ module EffectiveAssets
   class Engine < ::Rails::Engine
     engine_name 'effective_assets'
 
-    config.autoload_paths += Dir["#{config.root}/app/models/**/"]
+    config.autoload_paths += Dir["#{config.root}/app/models/**/", "#{config.root}/app/jobs/**/"]
 
     # Include Helpers to base application
     initializer 'effective_assets.action_controller' do |app|

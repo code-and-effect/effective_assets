@@ -51,7 +51,7 @@ module Effective
 
     before_validation :set_content_type
     before_save :update_asset_dimensions
-    after_save :enqueue_delayed_job
+    after_commit :queue_async_job
 
     default_scope -> { order(:id) }
     scope :nonplaceholder, -> { where("#{EffectiveAssets.assets_table_name}.upload_file != ?", 'placeholder') }
@@ -78,7 +78,7 @@ module Effective
 
       # Just call me with Asset.create_from_url('http://somewhere.com/somthing.jpg')
       def create_from_url(url, options = {})
-        opts = {:upload_file => url, :user_id => 1, :aws_acl => EffectiveAssets.aws_acl}.merge(options)
+        opts = { upload_file: url, user_id: 1, aws_acl: EffectiveAssets.aws_acl }.merge(options)
 
         attempts = 3  # Try to upload this string file 3 times
         begin
@@ -104,7 +104,7 @@ module Effective
 
         filename = URI.escape(filename).gsub(/%\d\d|[^a-zA-Z0-9.-]/, '_')  # Replace anything not A-Z, a-z, 0-9, . -
 
-        opts = {:upload_file => "#{Asset.string_base_path}#{filename}", :user_id => 1, :aws_acl => EffectiveAssets.aws_acl}.merge(options)
+        opts = { upload_file: "#{Asset.string_base_path}#{filename}", user_id: 1, aws_acl: EffectiveAssets.aws_acl }.merge(options)
 
         attempts = 3  # Try to upload this string file 3 times
         begin
@@ -157,11 +157,11 @@ module Effective
     end
 
     def video?
-      content_type.include? 'video'
+      content_type.include? 'video/'
     end
 
     def image?
-      content_type.include? 'image'
+      content_type.include? 'image/'
     end
 
     def icon?
@@ -169,7 +169,7 @@ module Effective
     end
 
     def audio?
-      content_type.include? 'audio'
+      content_type.include? 'audio/'
     end
 
     def versions_info
@@ -180,15 +180,41 @@ module Effective
       title
     end
 
+    def placeholder?
+      upload_file.blank? || upload_file == 'placeholder'.freeze
+    end
+
+    # This method is called asynchronously by the Effective::ProcessAssetJob
     def process!
+      # Make sure carrierwave-aws sets the correct permissions
       if data.respond_to?(:aws_acl) && aws_acl.present?
-        data.aws_acl = self.aws_acl
-        data.versions.each { |_, data| data.aws_acl = self.aws_acl }
+        data.aws_acl = aws_acl
+        data.versions.each { |_, data| data.aws_acl = aws_acl }
       end
 
-      data.cache_stored_file!
-      data.retrieve_from_cache!(data.cache_name)
-      data.recreate_versions!
+      if placeholder?
+        puts 'Placeholder Asset processing not required (this is a soft error)'
+        # Do nothing
+      elsif image? == false
+        puts 'Non-image Asset processing not required'
+        # Do Nothing
+      elsif upload_file.include?(Effective::Asset.string_base_path)
+        puts 'String-based Asset processing and uploading'
+
+        data.cache_stored_file!
+        data.retrieve_from_cache!(data.cache_name)
+        data.recreate_versions!
+      elsif upload_file.include?(Effective::Asset.s3_base_path)
+        # Carrierwave must download the file, process it, then upload the generated versions to S3
+        puts 'S3 Uploaded Asset downloading and processing'
+
+        self.remote_data_url = url
+      else
+        puts 'Non S3 Asset downloading and processing'
+        puts 'Downloading #{asset.url}'
+
+        self.remote_data_url = upload_file
+      end
 
       self.processed = true
       save!
@@ -235,10 +261,8 @@ module Effective
       true
     end
 
-    def enqueue_delayed_job
-      if !processed? && upload_file.present? && upload_file != 'placeholder'
-        Effective::DelayedJob.new.process_asset(id)
-      end
+    def queue_async_job
+      Effective::ProcessAssetJob.perform_async(id) unless (processed? || placeholder?)
     end
   end
 

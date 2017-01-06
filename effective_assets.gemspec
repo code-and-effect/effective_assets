@@ -19,10 +19,10 @@ Gem::Specification.new do |s|
   s.add_dependency 'rails', ['>= 3.2.0']
   s.add_dependency 'carrierwave-aws'
   s.add_dependency 'coffee-rails'
-  s.add_dependency 'delayed_job_active_record'
   s.add_dependency 'jquery-rails' # For the jquery_ujs
   s.add_dependency 'haml-rails'
   s.add_dependency 'sass-rails'
+  s.add_dependency 'sucker_punch'
   s.add_dependency 'mini_magick'
   s.add_dependency 'jquery-fileupload-rails'
 end
