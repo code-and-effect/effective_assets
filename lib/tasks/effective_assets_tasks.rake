@@ -2,31 +2,34 @@ require 'open-uri'
 
 namespace :effective_assets do
 
-  # rake reprocess_assets
+  # rake effective_assets:reprocess
   #
   # To reprocess every Asset:         rake reprocess_assets
   # Or reprocess from ID=100 and up:  rake reprocess_assets[100]
   # Or reprocess from ID=100 to 200:  rake reprocess_assets[100,200]
 
-  # desc "Reprocesses Effective::Assets and generate versions as per the current app/uploaders/asset_uploader.rb"
+  desc "Reprocesses Effective::Assets and re-generates versions as per the current app/uploaders/asset_uploader.rb"
   task :reprocess, [:start_at, :end_at] => :environment do |t, args|
     args.with_defaults(:start_at => 1, :end_at => Effective::Asset.unscoped.maximum(:id))
     ids = Range.new(args.start_at.to_i, args.end_at.to_i)
 
-    puts "Enqueuing reprocess asset jobs on the Delayed::Job queue..."
+    puts 'Reprocessing assets...'
 
-    Effective::Asset.where(:processed => true).where(:id => ids).pluck(:id).each do |id|
-      Effective::DelayedJob.new().reprocess_asset(id)
+    Effective::Asset.where(processed: true).where(id: ids).find_each do |asset|
+      begin
+        asset.reprocess!
+        puts "Successfully reprocessed ##{asset.id}"
+      rescue => e
+        puts "Error reprocessing ##{asset.id}: #{e.message}"
+      end
     end
 
-    puts "Success. Reprocessing jobs for each Effective::Asset (IDs #{ids.to_s}) have been created on the Delayed::Job queue."
-    puts "If a worker process is running, the reprocessing will have already begun."
-    puts "If not, run 'rake jobs:work' to begin the worker process now."
+    puts 'Done'
   end
 
   # This is going to pull all the versions and check every url manually
 
-  # rake check_assets
+  # rake rake effective_assets:check
   #
   # Checks the actual HTTP response code of the URL for each asset version
   #
@@ -90,10 +93,4 @@ namespace :effective_assets do
     end
   end
 
-  desc "Deletes all effective_asset related Delayed::Job jobs"
-  task :clear => :environment do |t, args|
-    Delayed::Job.where('handler ILIKE ?', '%method_name: :process_asset_without_delay%').delete_all
-    Delayed::Job.where('handler ILIKE ?', '%method_name: :reprocess_asset_without_delay%').delete_all
-    puts 'Deleted all effective_asset related Delayed::Job jobs'
-  end
 end

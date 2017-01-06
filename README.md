@@ -355,9 +355,11 @@ Has final say over the privacy setting when uploaded from this form.
 
 ### Image Processing and Resizing
 
-CarrierWave and DelayedJob are used by this gem to perform image versioning.
+CarrierWave is used by this gem to perform image versioning.
 
-This will be moved over to the new ActiveJob API in future versions of this gem, but right now DelayedJob is the only supported background worker.
+All image processing is run asynchronously.
+
+If there is a valid ActiveJob queue_adapter configured, it will be used.  Otherwise we rely on the sucker_punch gem.
 
 See the installer created at `app/uploaders/asset_uploader.rb` to configure image versions.
 
@@ -505,20 +507,6 @@ rake effective_assets:check[1,200]  # check #1..#200
 rake effective:assets:check[1,200,:thumb]   # check #1..#200 only :thumb versions
 ```
 
-### Clear
-
-Deletes all effective_assets related jobs on the DelayedJob queue.
-
-```ruby
-rake effective_assets:clear
-```
-
-or to clear all jobs, even non-effective_assets related jobs, use DelayedJob's rake task:
-
-```ruby
-rake jobs:clear
-```
-
 ## License
 
 MIT License.  Copyright [Code and Effect Inc.](http://www.codeandeffect.com/)
@@ -526,11 +514,11 @@ MIT License.  Copyright [Code and Effect Inc.](http://www.codeandeffect.com/)
 
 ## Credits
 
-This gem heavily relies on:
+This gem relies on:
 
 CarrierWave (https://github.com/carrierwaveuploader/carrierwave)
 
-DelayedJob (https://github.com/collectiveidea/delayed_job)
+sucker_punch (https://github.com/brandonhilkert/sucker_punch)
 
 jQuery-File-Upload (https://github.com/blueimp/jQuery-File-Upload)
 

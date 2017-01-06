@@ -184,7 +184,7 @@ module Effective
       upload_file.blank? || upload_file == 'placeholder'.freeze
     end
 
-    # This method is called asynchronously by the Effective::ProcessAssetJob
+    # This method is called asynchronously by an after_commit filter
     def process!
       # Make sure carrierwave-aws sets the correct permissions
       if data.respond_to?(:aws_acl) && aws_acl.present?
@@ -262,7 +262,13 @@ module Effective
     end
 
     def queue_async_job
-      Effective::ProcessAssetJob.perform_async(id) unless (processed? || placeholder?)
+      return if processed? || placeholder?
+
+      if [:inline, :async, nil].include?((Rails.application.config.active_job[:queue_adapter] rescue nil))
+        Effective::ProcessWithSuckerPunchJob.perform_async(id)
+      else
+        Effective::ProcessWithActiveJob.perform_later(id)
+      end
     end
   end
 

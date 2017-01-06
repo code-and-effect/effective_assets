@@ -1,12 +1,12 @@
 require 'sucker_punch'
 
 module Effective
-  class ProcessAssetJob
+  class ProcessWithSuckerPunchJob
     include ::SuckerPunch::Job
 
-    def perform(obj)
+    def perform(id)
       ActiveRecord::Base.connection_pool.with_connection do
-        asset = obj.kind_of?(Effective::Asset) ? obj : Effective::Asset.where(id: (obj.to_i rescue 0)).first
+        asset = id.kind_of?(Effective::Asset) ? id : Effective::Asset.where(id: (id.to_i rescue 0)).first
         asset.process! if asset
       end
     end
