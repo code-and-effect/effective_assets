@@ -10,6 +10,17 @@ module EffectiveAssetsS3Helper
     Effective::Asset.s3_base_path.chomp('/') + '/'
   end
 
+  def s3_uploader_input_js_options(options = {})
+    {
+      url: s3_uploader_url,
+      remove_completed_progress_bar: true,
+      allow_multiple_files: (options[:limit].to_i > 1),
+      file_types: Array(options[:file_types]).flatten.join('|').to_s,
+      create_asset_url: effective_assets.s3_uploads_url,
+      update_asset_url: "#{effective_assets.s3_uploads_url}/:id",
+    }.to_json()
+  end
+
   # Copied and modified from https://github.com/waynehoover/s3_direct_upload/blob/master/lib/s3_direct_upload/form_helper.rb
   class S3Uploader
     def initialize(options)

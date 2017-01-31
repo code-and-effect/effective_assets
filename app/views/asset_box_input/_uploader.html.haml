@@ -1,6 +1,6 @@
 .uploads
-.asset-box-uploader{:id => "s3_#{uid}", :class => ('drop-files' if drop_files) }
-  = s3_uploader_fields(:aws_acl => aws_acl)
+.asset-box-uploader{id: "s3_#{uid}", class: ('drop-files' if drop_files), 'data-input-js-options': s3_uploader_input_js_options(limit: limit, file_types: file_types) }
+  = s3_uploader_fields(aws_acl: aws_acl)
 
   - if drop_files
     %p= drop_files_help_text
@@ -20,18 +20,3 @@
         %input.asset-box-uploader-fileinput{type: 'file', name: 'file', id: uid, disabled: disabled}
 
   = render :partial => progress_bar_partial
-
-  %script{:type => 'text/javascript'}
-    :erb
-
-      $("#s3_<%= uid %>").S3Uploader({
-        url: '<%= s3_uploader_url %>',
-        progress_bar_target: $("#s3_<%= uid %>").siblings('.uploads').first(),
-        progress_bar_template: $("#s3_<%= uid %>").children("script[type='text/x-tmpl']").first(),
-        remove_completed_progress_bar: true,
-        allow_multiple_files: <%= limit > 1 %>,
-        file_types: '<%= [file_types].flatten.join('|').to_s %>',
-        create_asset_url: '<%= effective_assets.s3_uploads_url %>',
-        update_asset_url: '<%= effective_assets.s3_uploads_url %>/:id',
-        dropZone: $("#s3_<%= uid %>").parent()
-      });

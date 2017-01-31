@@ -52,7 +52,7 @@ class EffectiveAssetsUploader < CarrierWave::Uploader::Base
   end
 
   def image?(new_file)
-    new_file.present? and new_file.content_type.to_s.include?('image') and !(new_file.content_type.include?('icon'))
+    new_file.present? && (new_file.uploader.model.image? rescue false)
   end
 
   def calculate_versions_info
