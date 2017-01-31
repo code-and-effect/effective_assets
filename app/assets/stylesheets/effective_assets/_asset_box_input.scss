@@ -35,6 +35,12 @@
     }
   }
 
+  .fileinput-button.disabled {
+    input {
+      cursor: not-allowed;
+    }
+  }
+
   // Display uploader bordered area
   .drop-files {
     border: 4px dashed #cfcfcf;

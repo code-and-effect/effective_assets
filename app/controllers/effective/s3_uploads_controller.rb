@@ -14,14 +14,14 @@ module Effective
 
     def create
       # Here we initialize an empty placeholder Asset, so we can reserve the ID
-      @asset = Effective::Asset.new(:user_id => ((current_user.try(:id) || 1) rescue 1), :upload_file => 'placeholder')
+      @asset = Effective::Asset.new(user_id: ((current_user.try(:id) || 1) rescue 1), upload_file: 'placeholder')
       @asset.extra = params[:extra] if params[:extra].kind_of?(Hash)
 
       EffectiveAssets.authorized?(self, :create, @asset)
 
       begin
         @asset.save!
-        render(:body => {:id => @asset.id, :s3_key => asset_s3_key(@asset)}.to_json, :status => 200)
+        render(body: {:id => @asset.id, :s3_key => asset_s3_key(@asset)}.to_json, :status => 200)
       rescue => e
         render(:body => e.message, :status => 500)
       end
@@ -30,7 +30,7 @@ module Effective
     def update
       @asset = Effective::Asset.find(params[:id])
 
-      EffectiveAssets.authorized?(self, :update, @asset)
+      EffectiveAssets.authorized?(self, :create, @asset)
 
       unless params[:skip_update]  # This is useful for the acts_as_asset_box Attach action
         if update_placeholder_asset(@asset, params) == false

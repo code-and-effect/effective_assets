@@ -5,18 +5,18 @@
   - if drop_files
     %p= drop_files_help_text
 
-  %span.btn.btn-default.fileinput-button
+  %span.btn.btn-default.fileinput-button{class: ('disabled' if disabled)}
     %i.glyphicon.glyphicon-upload
     %span= btn_label
     - if limit > 1
       - if required
-        %input.asset-box-uploader-fileinput{type: 'file', name: 'file', id: uid, multiple: 'multiple', disabled: disabled, required: true}
+        %input.asset-box-uploader-fileinput{type: 'file', name: 'file', id: uid, multiple: 'multiple', disabled: disabled, required: true, title: btn_title}
       - else
-        %input.asset-box-uploader-fileinput{type: 'file', name: 'file', id: uid, multiple: 'multiple', disabled: disabled}
+        %input.asset-box-uploader-fileinput{type: 'file', name: 'file', id: uid, multiple: 'multiple', disabled: disabled, title: btn_title}
     - else
       - if required
-        %input.asset-box-uploader-fileinput{type: 'file', name: 'file', id: uid, disabled: disabled, required: true}
+        %input.asset-box-uploader-fileinput{type: 'file', name: 'file', id: uid, disabled: disabled, required: true, title: btn_title}
       - else
-        %input.asset-box-uploader-fileinput{type: 'file', name: 'file', id: uid, disabled: disabled}
+        %input.asset-box-uploader-fileinput{type: 'file', name: 'file', id: uid, disabled: disabled, title: btn_title}
 
   = render partial: progress_bar_partial

@@ -1,6 +1,6 @@
 module Inputs
   class AssetBox
-    delegate :content_tag, :render, :to => :@template
+    delegate :content_tag, :render, :current_user, :to => :@template
 
     def initialize(object, object_name, template, method, opts)
       @object = object
@@ -85,6 +85,14 @@ module Inputs
     end
 
     def uploader_html
+      # Check that we have permission to upload.
+      asset = Effective::Asset.new(user_id: ((current_user.try(:id) || 1) rescue 1), upload_file: 'placeholder')
+
+      unless (EffectiveAssets.authorized?(@template.controller, :create, asset) rescue false)
+        @options[:btn_title] = 'Unable to upload. (cannot :create Effective::Asset)'
+        @options[:disabled] = true
+      end
+
       render(
         :partial => 'asset_box_input/uploader',
         :locals => {
@@ -97,7 +105,8 @@ module Inputs
           :drop_files => @options[:uploader_drop_files],
           :drop_files_help_text => @options[:drop_files_help_text],
           :aws_acl => @options[:aws_acl],
-          :btn_label => @options[:btn_label]
+          :btn_label => @options[:btn_label],
+          :btn_title => @options[:btn_title]
         }
       ).html_safe
     end
@@ -158,7 +167,8 @@ module Inputs
         :dialog_url => @template.effective_assets.effective_assets_path,
         :disabled => false,
         :file_types => [:any],
-        :btn_label => "Upload..."
+        :btn_label => 'Upload...',
+        :btn_title => 'Click or drag & drop to upload a file'
       }.merge(opts).tap do |options|
         options[:method] = method.to_s
         options[:box] = method.to_s.pluralize
