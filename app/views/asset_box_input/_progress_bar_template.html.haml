@@ -1,8 +1,8 @@
-%script{:type => 'text/x-tmpl'}
+%script{type: 'text/x-tmpl'}
   .upload
     = "{%=o.name%}"
     .progress
       %span
-        = image_tag('effective_assets/spinner.gif', :class => 'spinner')
+        = image_tag('effective_assets/spinner.gif', class: 'spinner')
         Uploading...
-      .bar{:style => 'width: 0%'}
+      .bar{style: 'width: 0%'}

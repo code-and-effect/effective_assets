@@ -2,17 +2,13 @@ module EffectiveAssetsS3Helper
 
   def s3_uploader_fields(options = {})
     S3Uploader.new(options).fields.map do |name, value|
-      hidden_field_tag(name, value, :disabled => 'disabled')
+      hidden_field_tag(name, value, disabled: 'disabled')
     end.join.html_safe
-  end
-
-  def s3_uploader_url
-    Effective::Asset.s3_base_path.chomp('/') + '/'
   end
 
   def s3_uploader_input_js_options(options = {})
     {
-      url: s3_uploader_url,
+      url: (Effective::Asset.s3_base_path.chomp('/') + '/'),
       remove_completed_progress_bar: true,
       allow_multiple_files: (options[:limit].to_i > 1),
       file_types: Array(options[:file_types]).flatten.join('|').to_s,
