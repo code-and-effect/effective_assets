@@ -1,6 +1,8 @@
 class EffectiveAssetsUploader < CarrierWave::Uploader::Base
   include CarrierWave::MiniMagick
 
+  storage :aws
+
   def store_dir
     "#{EffectiveAssets.aws_path.chomp('/')}/#{model.id.to_i}"
   end
@@ -28,7 +30,11 @@ class EffectiveAssetsUploader < CarrierWave::Uploader::Base
   end
 
   def aws_write_options
-    { acl: model.aws_acl }
+    { acl: aws_acl }
+  end
+
+  def self.image?
+    proc { |uploader| (uploader.model.image? rescue false) }
   end
 
   protected

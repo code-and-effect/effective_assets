@@ -17,7 +17,7 @@ class TestAssetUploader < EffectiveAssetsUploader
   # Keep in mind, resize_to_fit will scale up images if they are smaller than 100px.
   # If you don't want it to do that, then replace that with resize_to_limit.
 
-  version :thumb, :if => :image? do
+  version :thumb, :if => image? do
     process :resize_to_fit => [70, 70]
     process :record_info => :thumb
   end

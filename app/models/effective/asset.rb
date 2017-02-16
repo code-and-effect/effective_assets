@@ -125,6 +125,10 @@ module Effective
       end
     end # End of Class methods
 
+    def to_s
+      title
+    end
+
     def title
       self[:title].presence || file_name
     end
@@ -172,17 +176,15 @@ module Effective
       content_type.include? 'audio/'
     end
 
+    def placeholder?
+      upload_file.blank? || upload_file == 'placeholder'.freeze
+    end
+
     def versions_info
       self[:versions_info] || {}
     end
 
-    def to_s
-      title
-    end
 
-    def placeholder?
-      upload_file.blank? || upload_file == 'placeholder'.freeze
-    end
 
     # This method is called asynchronously by an after_commit filter
     def process!
