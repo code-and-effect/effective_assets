@@ -17,7 +17,7 @@ module Effective
     # 3.  But it doesn't belong to anything yet.  It might be attached to a user's asset_boxes, or a page, or a post through attachments
     #
 
-    has_many :attachments, :dependent => :delete_all
+    has_many :attachments, dependent: :delete_all
 
     # structure do
     #   title           :string
@@ -186,12 +186,6 @@ module Effective
 
     # This method is called asynchronously by an after_commit filter
     def process!
-      # Make sure carrierwave-aws sets the correct permissions
-      if data.respond_to?(:aws_acl) && aws_acl.present?
-        data.aws_acl = aws_acl
-        data.versions.each { |_, data| data.aws_acl = aws_acl }
-      end
-
       if placeholder?
         puts 'Placeholder Asset processing not required (this is a soft error)'
         # Do nothing

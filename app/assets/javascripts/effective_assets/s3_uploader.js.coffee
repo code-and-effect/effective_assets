@@ -156,7 +156,7 @@ $.fn.S3Uploader = (options) ->
 
     content.filename         = file.name
     content.filesize         = file.size if 'size' of file
-    content.lastModifiedDate = file.lastModifiedDate if 'lastModifiedDate' of file
+    content.lastModified     = file.lastModified if 'lastModified' of file
     content.filetype         = file.type if 'type' of file
     content.asset_id         = file.asset_id if 'asset_id' of file
     content.relativePath     = build_relativePath(file) if has_relativePath(file)

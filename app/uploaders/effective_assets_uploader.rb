@@ -23,6 +23,14 @@ class EffectiveAssetsUploader < CarrierWave::Uploader::Base
     @aws_authenticated_url_expiration = expires_in
   end
 
+  def aws_acl
+    model.aws_acl
+  end
+
+  def aws_write_options
+    { acl: model.aws_acl }
+  end
+
   protected
 
   # record_info
