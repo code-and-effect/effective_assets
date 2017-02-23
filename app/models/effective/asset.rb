@@ -184,8 +184,6 @@ module Effective
       self[:versions_info] || {}
     end
 
-
-
     # This method is called asynchronously by an after_commit filter
     def process!
       if placeholder?
@@ -216,6 +214,22 @@ module Effective
       save!
     end
     alias_method :reprocess!, :process!
+
+    # This will set the AWS permission to aws_acl
+    def sync_aws_acl!
+      if aws_acl == EffectiveAssets::AWS_PRIVATE
+        if Net::HTTP.get_response(URI(public_url)).code.to_i != 403  # Forbidden
+          self.remote_data_url = public_url
+          save!
+        end
+      else
+        # Make sure I can access it at the public url
+        if Net::HTTP.get_response(URI(public_url)).code.to_i != 200  # Success
+          self.remote_data_url = authenticated_url
+          save!
+        end
+      end
+    end
 
     protected
 
