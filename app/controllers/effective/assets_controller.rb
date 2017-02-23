@@ -14,9 +14,11 @@ module Effective
       if params[:only] == 'images'
         @assets = @assets.images
         @file_types = [:jpg, :gif, :png, :bmp, :ico]
+        @aws_acl = EffectiveAssets::AWS_PUBLIC
       elsif params[:only] == 'nonimages'
         @assets = @assets.nonimages
         @file_types = [:pdf, :zip, :doc, :docx, :xls, :xlsx, :txt, :csv, :avi, :m4v, :m2v, :mov, :mp3, :mp4, :eml]
+        @aws_acl = EffectiveAssets.aws_acl
       end
 
       @user_uploads = IframeUploads.new(@assets)

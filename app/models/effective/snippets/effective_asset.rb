@@ -15,8 +15,16 @@ if defined?(EffectiveRegions)
           :span
         end
 
+        def private_url
+          super || aws_private?
+        end
+
         def is_private?
-          private_url == true || (asset.try(:aws_acl) == EffectiveAssets::AWS_PRIVATE)
+          private_url == true
+        end
+
+        def aws_private?
+          (asset.try(:aws_acl) == EffectiveAssets::AWS_PRIVATE)
         end
 
       end
