@@ -157,7 +157,7 @@ module Effective
     end
 
     def file_name
-      upload_file.to_s.split('/').last rescue upload_file
+      upload_file.to_s.split('/').last.gsub(/\?.+/, '') rescue upload_file
     end
 
     def video?
@@ -205,7 +205,7 @@ module Effective
         self.remote_data_url = url
       else
         puts 'Non S3 Asset downloading and processing'
-        puts 'Downloading #{asset.url}'
+        puts "Downloading #{upload_file}"
 
         self.remote_data_url = upload_file
       end
@@ -235,7 +235,7 @@ module Effective
 
     def set_content_type
       if [nil, 'null', 'unknown', 'application/octet-stream', ''].include?(content_type)
-        self.content_type = case File.extname(file_name).downcase.gsub(/\?.+/, '')
+        self.content_type = case File.extname(file_name.to_s.downcase.gsub(/\?.+/, ''))
           when '.mp3' ; 'audio/mp3'
           when '.mp4' ; 'video/mp4'
           when '.mov' ; 'video/mov'

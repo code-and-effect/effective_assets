@@ -93,4 +93,37 @@ namespace :effective_assets do
     end
   end
 
+  desc 'Download all'
+  task :download, [:start_at, :end_at, :version] => :environment do |t, args|
+    args.with_defaults(start_at: 1, end_at: Effective::Asset.unscoped.maximum(:id), version: nil)
+    args.version.gsub!(':', '') if args.version
+    ids = Range.new(args.start_at.to_i, args.end_at.to_i)
+
+    Dir.mkdir('downloads') unless File.exist?('downloads')
+
+    Effective::Asset.where(id: ids).find_each do |asset|
+      (GC.start rescue nil)
+
+      Dir.mkdir("downloads/#{asset.id}") unless File.exist?("downloads/#{asset.id}")
+
+      # This goes through all versions, and nil, the original file
+      ([nil] + Array(asset.data.try(:versions).try(:keys))).each do |version|
+        next unless (args.version.nil? || args.version == version.to_s)
+
+        url = URI(asset.url(version))
+        file_name = asset.public_url(version).to_s.split('/').last
+
+        begin
+          puts "downloading #{asset.id}/#{file_name}"
+
+          File.open("downloads/#{asset.id}/#{file_name}", 'wb') do |file|
+            file.write(open(url.to_s).read)
+          end
+        rescue => e
+          puts "ERROR: unable to download #{asset.id}/#{file_name} (#{url})"
+        end
+      end
+
+    end
+  end
 end

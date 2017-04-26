@@ -4,7 +4,7 @@ module Effective
   class Attachment < ActiveRecord::Base
     self.table_name = EffectiveAssets.attachments_table_name.to_s
 
-    belongs_to :asset
+    belongs_to :asset, class_name: 'Effective::Asset'
     belongs_to :attachable, :polymorphic => true
 
     # structure do

@@ -29,7 +29,7 @@ EffectiveAssets.setup do |config|
   config.aws_bucket = ''              # ENV.fetch('AWS_S3_BUCKET')
   config.aws_access_key_id = ''       # ENV.fetch('AWS_ACCESS_KEY_ID')
   config.aws_secret_access_key = ''   # ENV.fetch('AWS_SECRET_ACCESS_KEY')
-  config.aws_region = 'us-east-1'
+  config.aws_region = 'us-east-1'     # ENV.fetch('AWS_REGION') # ca-central-1
 
   config.aws_path = 'assets/'
 
