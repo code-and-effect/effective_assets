@@ -83,21 +83,24 @@ You will need an AWS IAM user with sufficient priviledges and a properly configu
 ### Log into AWS Console
 
 - Visit http://aws.amazon.com/console/
-- Click My Account from top-right and sign in with your AWS account.
+- Click 'Sign In to the Console' from the top-right and sign in with your AWS account.
 
 ### Create an S3 Bucket
 
 - Click Services -> S3 from the top-left menu
 - Click Create Bucket
-- Give the Bucket a name, and select the US Standard region
+- Give the Bucket a name, and select the US East (N. Virgina) region
+- Click Next, Next, Next
+- Don't configure permissions yet, we still have to create a user
+- Click Next
 
 ### Configure CORS Permissions
 
 - From the S3 All Buckets Screen (as above)
 
-- Select the desired bucket to configure and select 'Properties'
-- Expand Permissions
-- Click 'Edit CORS Configuration' and enter the following
+- Click the S3 bucket we just created
+- Click the Permissions tab
+- Click CORS configuration and enter the following:
 
 ```xml
 <CORSConfiguration>
@@ -124,23 +127,19 @@ The Bucket is now set up and ready to accept uploads, but we still need a user t
 - Click Services -> IAM from the top-left
 
 - Select Users from the left-side menu
-- Click Create New Users
+- Click Add user
+- Give it a user name
+- Check Yes Programmatic access, No AWS management console access
 
-- Create just one user with any name
-
-- Expand the Show User Security Credentials
-- This displays the AWS Access Key and Secret Access Key.
-- (important) These are the two values you should copy into the effective_assets.rb initializer file
-- Click Close.  It's okay that you didn't download the credentials.
-
-- Return to the Services -> IAM -> Users page
-- Click on the name of the user you just created (not the checkbox, but the username text)
-
-- Click Permissions tab
-- Click Attach Policy
-
-- Scroll down and Select 'AmazonS3FullAccess'
-- Click Attach Policy
+- Click Next: Permissions
+- Click Create group
+- Give it a name like 's3-full-access'
+- Sroll down and select 'AmazonS3FullAccess'
+- Click Create group
+- Click Next: Review
+- Click Create user
+- Record the Access key ID and Secret access key.  These are the two values required by the effective_assets.rb initializer
+- Click Close
 
 This user is now set up and ready to access the S3 Bucket previously created
 
@@ -155,7 +154,6 @@ config.aws_secret_access_key = 'xmowueroewairo74pacja1/werjow'
 ```
 
 You should now be able to upload to this bucket.
-
 
 ## Usage
 
