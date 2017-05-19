@@ -274,6 +274,10 @@ module Effective
     def queue_async_job
       return if processed? || placeholder?
 
+      if EffectiveAssets.async == false
+        return Effective::ProcessWithActiveJob.perform_now(id)
+      end
+
       if [:inline, :async, nil].include?((Rails.application.config.active_job[:queue_adapter] rescue nil))
         Effective::ProcessWithSuckerPunchJob.perform_async(id)
       else
