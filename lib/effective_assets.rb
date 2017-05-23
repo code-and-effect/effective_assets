@@ -1,6 +1,5 @@
 require 'carrierwave-aws'
 require 'jquery-fileupload-rails'
-require 'haml-rails'
 require 'effective_assets/engine'
 require 'effective_assets/version'
 

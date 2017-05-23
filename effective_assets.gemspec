@@ -20,7 +20,6 @@ Gem::Specification.new do |s|
   s.add_dependency 'carrierwave-aws'
   s.add_dependency 'coffee-rails'
   s.add_dependency 'jquery-rails' # For the jquery_ujs
-  s.add_dependency 'haml-rails'
   s.add_dependency 'sass-rails'
   s.add_dependency 'sucker_punch'
   s.add_dependency 'mini_magick'
