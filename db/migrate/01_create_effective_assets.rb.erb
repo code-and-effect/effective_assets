@@ -1,4 +1,4 @@
-class CreateEffectiveAssets < ActiveRecord::Migration
+class CreateEffectiveAssets < ActiveRecord::Migration[4.2]
   def self.up
     create_table <%= @assets_table_name %> do |t|
       t.string  :title
