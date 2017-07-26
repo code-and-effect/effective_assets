@@ -21,6 +21,7 @@ Rails 3.2.x and Rails4 support
 Add to your Gemfile:
 
 ```ruby
+gem 'haml-rails'       # or try using gem 'hamlit-rails'
 gem 'effective_assets'
 ```
 
