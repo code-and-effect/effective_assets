@@ -186,6 +186,12 @@ asset.url
 asset.url(:thumb)   # See image versions (below)
   => "http://aws_bucket.s3.amazonaws.com/assets/1/thumb_my_avatar.png"
 
+asset.authenticated_url   # See image versions (below)
+  => "http://aws_bucket.s3.amazonaws.com/assets/1/thumb_my_avatar.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-...""
+
+asset.authenticated_url(:thumb, expire_in: 10.minutes)
+  => "http://aws_bucket.s3.amazonaws.com/assets/1/thumb_my_avatar.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-...""
+
 user.photos
   => [Effective::Asset<1>, Effective::Asset<2>] # An array of Effective::Asset objects
 ```
