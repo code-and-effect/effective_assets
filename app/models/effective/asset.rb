@@ -137,8 +137,8 @@ module Effective
       self[:extra] || {}
     end
 
-    def url(version = nil, expire_in = nil)
-      aws_acl == EffectiveAssets::AWS_PRIVATE ? authenticated_url(version, expire_in) : public_url(version)
+    def url(version = nil, expire_in: nil)
+      aws_acl == EffectiveAssets::AWS_PRIVATE ? authenticated_url(version, expire_in: expire_in) : public_url(version)
     end
 
     def public_url(version = nil)
@@ -150,10 +150,11 @@ module Effective
       end
     end
 
-    def authenticated_url(version = nil, expire_in = 60.minutes)
-      data.aws_authenticated_url_expiration = expire_in
-      url = (version.present? ? data.send(version).file.try(:authenticated_url) : data.file.try(:authenticated_url))
-      url || '#'
+    def authenticated_url(version = nil, expire_in: nil)
+      if data.present?
+        data.aws_authenticated_url_expiration = (expire_in || 60.minutes).to_i
+        (version.present? ? data.send(version).file.try(:authenticated_url) : data.file.try(:authenticated_url))
+      end || '#'
     end
 
     def file_name

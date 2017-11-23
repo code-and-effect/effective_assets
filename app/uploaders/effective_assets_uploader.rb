@@ -18,7 +18,7 @@ class EffectiveAssetsUploader < CarrierWave::Uploader::Base
   end
 
   def aws_authenticated_url_expiration
-    @aws_authenticated_url_expiration || 10.minutes
+    @aws_authenticated_url_expiration || 10.minutes.to_i
   end
 
   def aws_authenticated_url_expiration=(expires_in)
