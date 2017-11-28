@@ -97,6 +97,7 @@ module Inputs
         :partial => 'asset_box_input/uploader',
         :locals => {
           :uid => @options[:uid],
+          :click_submit => @options[:click_submit],
           :limit => @options[:limit],
           :disabled => @options[:disabled],
           :required => (@options[:required] == true && attachments.length == 0),

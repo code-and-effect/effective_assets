@@ -14,6 +14,7 @@ module EffectiveAssetsS3Helper
       file_types: Array(options[:file_types]).flatten.join('|').to_s,
       create_asset_url: effective_assets.s3_uploads_url,
       update_asset_url: "#{effective_assets.s3_uploads_url}/:id",
+      click_submit: (options[:click_submit] == true)
     }.to_json()
   end
 

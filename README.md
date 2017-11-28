@@ -266,6 +266,8 @@ Use the custom form input for uploading (direct to S3) and attaching assets to t
 = f.input :pictures, :as => :asset_box, :limit => 2, :file_types => [:jpg, :gif, :png]
 
 = f.input :pictures, :as => :asset_box, :dialog => true, :dialog_url => '/admin/effective_assets' # Use the attach dialog
+
+= f.input :pictures, :as => :asset_box, :click_submit => true # Auto click submit button after file uploads
 ```
 
 You may also upload secure (AWS: 'authenticated-read') assets with the same uploader:

@@ -20,6 +20,7 @@ $.fn.S3Uploader = (options) ->
     create_asset_url: null
     update_asset_url: null
     file_types: 'any'
+    click_submit: false
 
   $.extend settings, options
 
@@ -247,6 +248,7 @@ $.fn.S3Uploader = (options) ->
           else
             $(this).closest('.attachment').show()
 
+        click_submit() if settings.click_submit
 
   disable_submit = ->
     $uploadForm.data('effective-assets-uploading', true)
@@ -270,6 +272,10 @@ $.fn.S3Uploader = (options) ->
         submit.val(submit.data('effective-assets-original-label') || 'Submit')
         submit.prop('disabled', false)
         submit.removeData('effective-assets-original-label')
+
+    return !anyUploading # Returns true if we submitted it
+
+  click_submit = -> $uploadForm.closest('form').submit()
 
   format_bitrate = (bits) ->
     if typeof bits != 'number'

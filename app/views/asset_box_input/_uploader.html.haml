@@ -1,5 +1,5 @@
 .uploads
-.asset-box-uploader{id: "s3_#{uid}", class: ('drop-files' if drop_files), 'data-input-js-options': s3_uploader_input_js_options(limit: limit, file_types: file_types) }
+.asset-box-uploader{id: "s3_#{uid}", class: ('drop-files' if drop_files), 'data-input-js-options': s3_uploader_input_js_options(limit: limit, file_types: file_types, click_submit: click_submit) }
   = s3_uploader_fields(aws_acl: aws_acl)
 
   - if drop_files
