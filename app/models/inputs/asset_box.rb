@@ -93,11 +93,17 @@ module Inputs
         @options[:disabled] = true
       end
 
+      html_class = [
+        ('drop-files' if @options[:uploader_drop_files]),
+        ((@options[:uploader_html] || {})[:class])
+      ].compact.join(' ')
+
       render(
         :partial => 'asset_box_input/uploader',
         :locals => {
           :uid => @options[:uid],
           :click_submit => @options[:click_submit],
+          :html_class => html_class,
           :limit => @options[:limit],
           :disabled => @options[:disabled],
           :required => (@options[:required] == true && attachments.length == 0),

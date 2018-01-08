@@ -1,5 +1,5 @@
-initialize = ->
-  $('div.asset-box-uploader:not(.initialized)').each (i, element) ->
+initialize = (target) ->
+  $(target || document).find('div.asset-box-uploader:not(.initialized)').each (i, element) ->
     element = $(element)
     options = element.data('input-js-options') || {}
 
@@ -13,3 +13,4 @@ $ -> initialize()
 $(document).on 'page:change', -> initialize()
 $(document).on 'turbolinks:load', -> initialize()
 $(document).on 'cocoon:after-insert', -> initialize()
+$(document).on 'effective-form-inputs:initialize', (event) -> initialize(event.currentTarget)
