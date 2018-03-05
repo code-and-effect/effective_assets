@@ -32,7 +32,7 @@ module EffectiveAssetsHelper
     end.gsub('"', "'").html_safe # we need all ' quotes or it breaks Insert as functionality
   end
 
-  def effective_asset_video_tag(asset)
+  def effective_asset_video_tag(asset, version = nil, options = {})
     render(:partial => 'effective/assets/video', :locals => { :asset => asset }).gsub('"', "'").html_safe # we need all ' quotes or it breaks Insert as functionality
   end
 
