@@ -4,14 +4,6 @@ module EffectiveAssets
 
     config.autoload_paths += Dir["#{config.root}/app/models/**/", "#{config.root}/app/jobs/**/"]
 
-    # Include Helpers to base application
-    initializer 'effective_assets.action_controller' do |app|
-      ActiveSupport.on_load :action_controller do
-        helper EffectiveAssetsHelper
-        helper EffectiveAssetsS3Helper
-      end
-    end
-
     # Include acts_as_addressable concern and allow any ActiveRecord object to call it
     initializer 'effective_assets.active_record' do |app|
       ActiveSupport.on_load :active_record do
