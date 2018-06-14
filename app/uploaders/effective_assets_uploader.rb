@@ -73,7 +73,9 @@ class EffectiveAssetsUploader < CarrierWave::Uploader::Base
     retval = {}
 
     self.class.versions.each do |k, v|
-      v[:uploader].processors.each do |processor|
+      processors = (v.respond_to?(:processors) ? v.processors : v[:uploader].processors)
+
+      processors.each do |processor|
         dimensions = processor[1]
 
         if processor[0].to_s.include?('resize') and dimensions.kind_of?(Array) and dimensions.length == 2
