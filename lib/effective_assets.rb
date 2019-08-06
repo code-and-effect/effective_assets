@@ -11,6 +11,7 @@ module EffectiveAssets
   # The following are all valid config keys
   mattr_accessor :assets_table_name
   mattr_accessor :attachments_table_name
+  mattr_accessor :iframe_uploads_table_name
 
   mattr_accessor :uploader
   mattr_accessor :async

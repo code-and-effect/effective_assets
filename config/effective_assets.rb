@@ -1,6 +1,7 @@
 EffectiveAssets.setup do |config|
   config.assets_table_name = :assets
   config.attachments_table_name = :attachments
+  config.iframe_uploads_table_name = :iframe_uploads
 
   config.uploader = 'AssetUploader'   # Must extend from EffectiveAssetsUploader
 

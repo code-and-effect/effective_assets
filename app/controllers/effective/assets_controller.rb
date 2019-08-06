@@ -21,7 +21,8 @@ module Effective
         @aws_acl = EffectiveAssets.aws_acl
       end
 
-      @user_uploads = IframeUploads.new(@assets)
+      @user_uploads = IframeUpload.new(@assets)
+      @user_uploads.add_to_asset_box(:uploads, @assets)
 
       render :file => 'effective/assets/iframe'
     end

@@ -31,6 +31,10 @@ class CreateEffectiveAssets < ActiveRecord::Migration[4.2]
       t.string  :box
     end
 
+    create_table <%= @iframe_uploads_table_name %> do |t|
+      t.timestamps
+    end
+
     add_index <%= @attachments_table_name %>, :asset_id
     add_index <%= @attachments_table_name %>, [:attachable_type, :attachable_id]
     add_index <%= @attachments_table_name %>, :attachable_id

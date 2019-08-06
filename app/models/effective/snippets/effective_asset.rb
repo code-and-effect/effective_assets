@@ -2,10 +2,14 @@ if defined?(EffectiveRegions)
   module Effective
     module Snippets
       class EffectiveAsset < Snippet
-        attribute :asset_id, Integer
-        attribute :html_class, String
-        attribute :link_title, String
-        attribute :private_url, Boolean
+        # attr_accessor :asset_id     #, Integer
+        # attr_accessor :html_class   #, String
+        # attr_accessor :link_title   #, String
+        # attr_accessor :private_url  # , Boolean
+
+        def snippet_attributes
+          super + [:asset_id, :html_class, :link_title, :private_url]
+        end
 
         def asset
           @asset ||= (Effective::Asset.where(:id => asset_id).first if asset_id)
