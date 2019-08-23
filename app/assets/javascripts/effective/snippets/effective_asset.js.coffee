@@ -11,7 +11,7 @@ CKEDITOR.dialog.add 'effective_asset', (editor) ->
         {
           id: 'iframe-insert',
           type: 'html',
-          html: "<div><p id='iframe-insert-loading' style='text-align: center;'><br><br><br><br><br><br><img src='<%= asset_path('effective_assets/spinner.gif') %>' /><br><br>&nbsp;&nbsp;&nbsp;Loading...</p><iframe class='effective_assets_iframe' style='width: 100%; height: 100%; min-height: 500px;' src='/effective/assets?only=nonimages'></iframe></div>"
+          html: "<div><p id='iframe-insert-loading' style='text-align: center;'><br><br><br><br><br><br><br><br>&nbsp;&nbsp;&nbsp;Loading...</p><iframe class='effective_assets_iframe' style='width: 100%; height: 100%; min-height: 500px;' src='/effective/assets?only=nonimages'></iframe></div>"
           onLoad: (evt) ->
             dialog = evt.sender # This is the CKEditor.dialog
             iframe = $('#' + dialog.getContentElement('upload', 'iframe-insert').domId).children('iframe').first()
