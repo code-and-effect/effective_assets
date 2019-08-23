@@ -24,7 +24,7 @@ if defined?(EffectiveRegions)
         end
 
         def is_private?
-          private_url == true
+          [true, 'true', '1'].include?(private_url)
         end
 
         def aws_private?
