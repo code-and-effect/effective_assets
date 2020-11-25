@@ -2,8 +2,6 @@ module EffectiveAssets
   class Engine < ::Rails::Engine
     engine_name 'effective_assets'
 
-    config.autoload_paths += Dir["#{config.root}/app/models/**/", "#{config.root}/app/jobs/**/"]
-
     # Include acts_as_addressable concern and allow any ActiveRecord object to call it
     initializer 'effective_assets.active_record' do |app|
       ActiveSupport.on_load :active_record do
@@ -23,7 +21,10 @@ module EffectiveAssets
     end
 
     initializer "effective_assets.append_precompiled_assets" do |app|
-      Rails.application.config.assets.precompile += ['effective_assets.js', 'effective_assets_iframe.js', 'effective_assets_iframe.css', 'effective_assets/*', 'mime-types/*']
+      Rails.application.config.assets.precompile += [
+        'effective_assets_manifest.js', 'effective_assets.js', 'effective_assets_iframe.js', 'effective_assets_iframe.css',
+        'effective_assets/*', 'mime-types/*'
+      ]
     end
 
     # ActiveAdmin (optional)
