@@ -4,15 +4,21 @@
 if defined?(SimpleForm)
   class AssetBoxInput < SimpleForm::Inputs::FileInput
     def input(wrapper_options = nil)
-      Inputs::AssetBox.new(object, object_name, template, attribute_name, options).to_html
+      AssetBox.new(object, object_name, template, attribute_name, options).to_html
     end
   end
 elsif defined?(Formtastic)
   class AssetBoxInput < Formtastic::Inputs::FileInput
     def to_html
       input_wrapping do
-        label_html << Inputs::AssetBox.new(@object, @object_name, @template, @method, @options).to_html
+        label_html << AssetBox.new(@object, @object_name, @template, @method, @options).to_html
       end
+    end
+  end
+else
+  class AssetBoxInput < Object
+    def to_html
+      'expected simpleform or formtastic'
     end
   end
 end

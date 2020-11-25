@@ -2,6 +2,10 @@ module EffectiveAssets
   class Engine < ::Rails::Engine
     engine_name 'effective_assets'
 
+    config.autoload_paths += Dir["#{config.root}/lib/validators/", "#{config.root}/lib/inputs/"]
+
+    config.eager_load_paths += Dir["#{config.root}/lib/validators/", "#{config.root}/lib/inputs/"]
+
     # Include acts_as_addressable concern and allow any ActiveRecord object to call it
     initializer 'effective_assets.active_record' do |app|
       ActiveSupport.on_load :active_record do
@@ -11,7 +15,7 @@ module EffectiveAssets
 
     initializer 'effective_assets.action_view' do |app|
       ActiveSupport.on_load :action_view do
-        ActionView::Helpers::FormBuilder.send(:include, Inputs::AssetBoxFormInput)
+        ActionView::Helpers::FormBuilder.send(:include, AssetBoxFormInput)
       end
     end
 
