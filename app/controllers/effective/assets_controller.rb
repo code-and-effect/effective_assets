@@ -22,7 +22,7 @@ module Effective
 
       @user_uploads = IframeUpload.new(@assets)
 
-      render :file => 'effective/assets/iframe'
+      render 'effective/assets/iframe'
     end
 
     def destroy
