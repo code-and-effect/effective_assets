@@ -1,3 +1,3 @@
 module EffectiveAssets
-  VERSION = '1.11.3'.freeze
+  VERSION = '1.11.4'.freeze
 end
