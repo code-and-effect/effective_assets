@@ -195,9 +195,6 @@ module Effective
         # Do Nothing
       elsif upload_file.include?(Effective::Asset.string_base_path)
         puts 'String-based Asset processing and uploading'
-
-        data.cache_stored_file!
-        data.retrieve_from_cache!(data.cache_name)
         data.recreate_versions!
       elsif upload_file.include?(Effective::Asset.s3_base_path)
         # Carrierwave must download the file, process it, then upload the generated versions to S3
