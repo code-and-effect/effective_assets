@@ -4,6 +4,7 @@
 # 2. Remove the acts_as_asset_box
 
 require 'timeout'
+require 'cgi'
 
 module Effective
   class AssetReplacer
@@ -69,7 +70,7 @@ module Effective
       Timeout.timeout(TIMEOUT) do
         attachable.send(box).attach(
           io: URI.open(asset.url),
-          filename: asset.file_name,
+          filename: CGI.unescape(asset.file_name.to_s),
           content_type: asset.content_type.presence,
           identify: (asset.content_type.blank?)
         )
