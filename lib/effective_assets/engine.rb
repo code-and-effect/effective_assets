@@ -8,14 +8,18 @@ module EffectiveAssets
 
     # Include acts_as_addressable concern and allow any ActiveRecord object to call it
     initializer 'effective_assets.active_record' do |app|
-      ActiveSupport.on_load :active_record do
-        ActiveRecord::Base.extend(ActsAsAssetBox::ActiveRecord)
+      app.config.to_prepare do
+        ActiveSupport.on_load :active_record do
+          ActiveRecord::Base.extend(ActsAsAssetBox::ActiveRecord)
+        end
       end
     end
 
     initializer 'effective_assets.action_view' do |app|
-      ActiveSupport.on_load :action_view do
-        ActionView::Helpers::FormBuilder.send(:include, AssetBoxFormInput)
+      app.config.to_prepare do
+        ActiveSupport.on_load :action_view do
+          ActionView::Helpers::FormBuilder.send(:include, AssetBoxFormInput)
+        end
       end
     end
 
