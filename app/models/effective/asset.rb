@@ -46,8 +46,13 @@ module Effective
     validates :height, numericality: { allow_nil: true }
     validates :width, numericality: { allow_nil: true }
 
-    serialize :versions_info, Hash
-    serialize :extra, Hash
+    if EffectiveResources.serialize_with_coder?
+      serialize :versions_info, type: Hash, coder: YAML
+      serialize :extra, type: Hash, coder: YAML
+    else
+      serialize :versions_info, Hash
+      serialize :extra, Hash
+    end
 
     before_validation :set_content_type
     before_save :update_asset_dimensions
